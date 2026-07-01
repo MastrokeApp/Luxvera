@@ -1,83 +1,209 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Skeleton",
-    "theme_version": "0.1.0",
-    "theme_author": "Shopify",
-    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
-    "theme_support_url": "https://support.shopify.com/"
+    "theme_name": "Luxvera",
+    "theme_version": "1.0.0",
+    "theme_author": "Luxvera Studio",
+    "theme_documentation_url": "https://luxvera.com/docs",
+    "theme_support_url": "https://luxvera.com/support"
   },
   {
-    "name": "t:general.typography",
-    "settings": [
-      {
-        "type": "header",
-        "content": "t:general.fonts"
-      },
-      {
-        "type": "font_picker",
-        "id": "type_primary_font",
-        "default": "work_sans_n4",
-        "label": "t:general.primary"
+  "name": "Colors",
+  "settings": [
+    {
+      "type": "color_scheme_group",
+      "id": "color_schemes",
+      "definition": [
+        {
+          "type": "color",
+          "id": "background",
+          "label": "Background",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color_background",
+          "id": "background_gradient",
+          "label": "Background Gradient",
+          "info": "Optional gradient background"
+        },
+        {
+          "type": "color",
+          "id": "text",
+          "label": "Text",
+          "default": "#121212"
+        },
+        {
+          "type": "color",
+          "id": "button",
+          "label": "Primary Button Background",
+          "default": "#121212"
+        },
+        {
+          "type": "color",
+          "id": "button_label",
+          "label": "Primary Button Text",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "secondary_button_label",
+          "label": "Secondary Button Text",
+          "default": "#121212"
+        },
+        {
+          "type": "color",
+          "id": "shadow",
+          "label": "Shadow",
+          "default": "#121212"
+        }
+      ],
+      "role": {
+        "text": "text",
+        "background": {
+          "solid": "background",
+          "gradient": "background_gradient"
+        },
+        "links": "secondary_button_label",
+        "icons": "text",
+        "primary_button": "button",
+        "on_primary_button": "button_label",
+        "primary_button_border": "button",
+        "secondary_button": "background",
+        "on_secondary_button": "secondary_button_label",
+        "secondary_button_border": "secondary_button_label"
       }
+    }
+  ]
+},
+  {
+    "name": "Typography",
+    "settings": [
+      { "type": "header", "content": "Heading Font" },
+      { "type": "font_picker", "id": "font_heading", "label": "Heading Font", "default": "playfair_display_n4" },
+      { "type": "range", "id": "font_heading_scale", "label": "Heading Scale", "min": 80, "max": 150, "step": 5, "unit": "%", "default": 100 },
+      { "type": "header", "content": "Body Font" },
+      { "type": "font_picker", "id": "font_body", "label": "Body Font", "default": "josefin_sans_n4" },
+      { "type": "range", "id": "font_body_size", "label": "Base Font Size", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 15 }
     ]
   },
   {
-    "name": "t:general.layout",
+    "name": "Layout",
     "settings": [
-      {
-        "type": "select",
-        "id": "max_page_width",
-        "label": "t:labels.page_width",
-        "options": [
-          {
-            "value": "90rem",
-            "label": "t:options.page_width.narrow"
-          },
-          {
-            "value": "110rem",
-            "label": "t:options.page_width.wide"
-          }
-        ],
-        "default": "90rem"
-      },
-      {
-        "type": "range",
-        "id": "min_page_margin",
-        "min": 10,
-        "max": 100,
-        "step": 1,
-        "unit": "px",
-        "label": "t:labels.page_margin",
-        "default": 20
-      }
+      { "type": "header", "content": "Container" },
+      { "type": "range", "id": "container_max", "label": "Max Content Width", "min": 960, "max": 1600, "step": 40, "unit": "px", "default": 1280 },
+      { "type": "range", "id": "grid_gutter", "label": "Grid Gutter", "min": 8, "max": 48, "step": 4, "unit": "px", "default": 24 },
+      { "type": "header", "content": "Logo" },
+      { "type": "range", "id": "logo_width", "label": "Logo Max Width", "min": 60, "max": 300, "step": 10, "unit": "px", "default": 140 },
+      { "type": "header", "content": "Buttons" },
+      { "type": "select", "id": "button_style", "label": "Button Style", "options": [{ "value": "sharp", "label": "Sharp (0px)" }, { "value": "soft", "label": "Soft (4px)" }, { "value": "rounded", "label": "Rounded (24px)" }], "default": "sharp" },
+      { "type": "header", "content": "Animations" },
+      { "type": "checkbox", "id": "enable_animations", "label": "Enable Scroll Animations", "default": true }
     ]
   },
   {
-    "name": "t:general.colors",
+    "name": "Social Media",
     "settings": [
+      { "type": "text", "id": "social_instagram_link", "label": "Instagram URL" },
+      { "type": "text", "id": "social_facebook_link",  "label": "Facebook URL" },
+      { "type": "text", "id": "social_pinterest_link", "label": "Pinterest URL" },
+      { "type": "text", "id": "social_tiktok_link",    "label": "TikTok URL" },
+      { "type": "text", "id": "social_youtube_link",   "label": "YouTube URL" }
+    ]
+  },
+  {
+    "name": "Favicon & SEO",
+    "settings": [
+       { "type": "image_picker", "id": "logo","label": "Logo (overrides text)" },
+      { "type": "image_picker", "id": "favicon", "label": "Favicon", "info": "Recommended: 32x32px .ico or .png file." }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      { "type": "select", "id": "cart_type", "label": "Cart Type", "options": [{ "value": "page", "label": "Page" }, { "value": "drawer", "label": "Drawer (Slide-out)" }], "default": "drawer" },
+      { "type": "checkbox", "id": "cart_notes", "label": "Enable Order Notes", "default": true },
+      { "type": "checkbox", "id": "cart_gift_notes", "label": "Enable Gift Message", "default": false },
       {
-        "type": "color",
-        "id": "background_color",
-        "default": "#FFFFFF",
-        "label": "t:labels.background"
-      },
-      {
-        "type": "color",
-        "id": "foreground_color",
-        "default": "#333333",
-        "label": "t:labels.foreground"
-      },
-      {
-        "type": "range",
-        "id": "input_corner_radius",
-        "min": 0,
-        "max": 10,
-        "step": 1,
-        "unit": "px",
-        "label": "t:labels.input_corner_radius",
-        "default": 4
-      }
+  "type": "header",
+  "content": "Cart Text Settings"
+},
+{
+  "type": "text",
+  "id": "cart_summary_title",
+  "label": "Cart Summary Title",
+  "default": "Order Summary"
+},
+{
+  "type": "text",
+  "id": "subtotal_label",
+  "label": "Subtotal Label",
+  "default": "Subtotal"
+},
+{
+  "type": "text",
+  "id": "savings_label",
+  "label": "Savings Label",
+  "default": "Savings"
+},
+{
+  "type": "checkbox",
+  "id": "enable_shipping_link",
+  "label": "Enable Shipping Link",
+  "default": true
+},
+{
+  "type": "text",
+  "id": "shipping_label",
+  "label": "Shipping Label",
+  "default": "Shipping"
+},
+{
+  "type": "text",
+  "id": "shipping_text",
+  "label": "Shipping Text",
+  "default": "Calculated at checkout"
+},
+{
+  "type": "url",
+  "id": "shipping_url",
+  "label": "Shipping URL"
+},
+{
+  "type": "text",
+  "id": "totalprice_label",
+  "label": "Total Label",
+  "default": "Total"
+},
+{
+  "type": "checkbox",
+  "id": "enable_order_note",
+  "label": "Enable Order Note",
+  "default": true
+},
+{
+  "type": "text",
+  "id": "order_note_label",
+  "label": "Order Note Label",
+  "default": "Order Note"
+},
+{
+  "type": "text",
+  "id": "order_note_placeholder",
+  "label": "Order Note Placeholder",
+  "default": "Add a note..."
+},
+{
+  "type": "text",
+  "id": "checkout_button_text",
+  "label": "Checkout Button Text",
+  "default": "Proceed to Checkout"
+},
+{
+  "type": "text",
+  "id": "continue_shopping_text",
+  "label": "Continue Shopping Text",
+  "default": "Continue Shopping"
+}
     ]
   }
 ]
