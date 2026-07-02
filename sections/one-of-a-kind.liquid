@@ -1,0 +1,180 @@
+{% comment %}
+  Section: One of a Kind
+
+  Full-bleed background image with a gradient overlay and a content block
+  (heading, subtext, button). Text/background follow the selected color scheme;
+  overlay colour and opacity are configurable. Falls back to a placeholder image.
+{% endcomment %}
+
+<div
+  class="ooak-section color-{{ section.settings.color_scheme }}"
+  id="ooak-{{ section.id }}"
+  style="
+    --ooak-pad-top-desktop:    {{ section.settings.padding_top_desktop }}px;
+    --ooak-pad-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --ooak-pad-top-mobile:     {{ section.settings.padding_top_mobile }}px;
+    --ooak-pad-bottom-mobile:  {{ section.settings.padding_bottom_mobile }}px;
+    --ooak-heading-size:       {{ section.settings.heading_size }}px;
+    --ooak-min-height:         {{ section.settings.min_height }}px;
+    --ooak-overlay-color:      {{ section.settings.overlay_color }};
+    --ooak-overlay-opacity:    {{ section.settings.overlay_opacity }}%;
+  "
+>
+  <div class="ooak-bg">
+    {%- if section.settings.background_image != blank -%}
+      <img
+        class="ooak-bg-media"
+        src="{{ section.settings.background_image | image_url: width: 1600 }}"
+        alt="{{ section.settings.background_image.alt | escape }}"
+        width="1600"
+        height="800"
+        loading="lazy"
+      >
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'ooak-bg-media ooak-bg-media--placeholder' }}
+    {%- endif -%}
+    <div class="ooak-overlay"></div>
+  </div>
+
+  <div class="ooak-content">
+    {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+    {%- if section.settings.text != blank -%}<p>{{ section.settings.text | escape }}</p>{%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a href="{{ section.settings.button_url | default: '#' }}" class="ooak-btn">{{ section.settings.button_label | escape }}</a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+.ooak-section {
+  position: relative;
+  min-height: var(--ooak-min-height, 460px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+.ooak-section .ooak-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.ooak-section .ooak-bg-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ooak-section .ooak-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--ooak-overlay-color, #f7f4f0) var(--ooak-overlay-opacity, 95%), transparent) 40%,
+    color-mix(in srgb, var(--ooak-overlay-color, #f7f4f0) 20%, transparent) 100%
+  );
+}
+
+.ooak-section .ooak-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--lv-container-max, 1280px);
+  margin: 0 auto;
+  padding: var(--ooak-pad-top-desktop, 80px) 56px var(--ooak-pad-bottom-desktop, 80px);
+}
+
+.ooak-section .ooak-content h2 {
+  font-size: var(--ooak-heading-size, 48px);
+  font-weight: 800;
+  line-height: 1.1;
+  white-space: pre-line;
+  max-width: 400px;
+  margin-bottom: 18px;
+  color: rgb(var(--color-foreground));
+}
+
+.ooak-section .ooak-content p {
+  font-size: 13px;
+  color: rgb(var(--color-foreground));
+  opacity: 0.6;
+  line-height: 1.85;
+  margin-bottom: 30px;
+  max-width: 380px;
+}
+
+.ooak-section .ooak-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--lv-color-primary, #2a1f16);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 12px 26px;
+  border: 2px solid var(--lv-color-primary, #2a1f16);
+  text-decoration: none;
+  border-radius: var(--lv-btn-radius, 0px);
+  transition: background .25s ease, color .25s ease;
+}
+
+.ooak-section .ooak-btn:hover {
+  background: transparent;
+  color: var(--lv-color-primary, #2a1f16);
+}
+
+@media (max-width: 768px) {
+  .ooak-section .ooak-content {
+    padding: var(--ooak-pad-top-mobile, 48px) 28px var(--ooak-pad-bottom-mobile, 48px);
+  }
+
+  .ooak-section .ooak-content h2 {
+    font-size: calc(var(--ooak-heading-size, 48px) * 0.65);
+  }
+}
+
+@media (max-width: 480px) {
+  .ooak-section .ooak-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "One of a Kind",
+  "tag": "section",
+  "class": "luxvera-ooak",
+  "settings": [
+    { "type": "header", "content": "Section Padding" },
+    { "type": "range", "id": "padding_top_desktop",    "label": "Padding Top — Desktop",    "min": 0, "max": 160, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "Padding Bottom — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_top_mobile",     "label": "Padding Top — Mobile",     "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_bottom_mobile",  "label": "Padding Bottom — Mobile",  "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
+    { "type": "header", "content": "Color" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "header", "content": "Background" },
+    { "type": "image_picker", "id": "background_image", "label": "Background Image", "info": "Recommended: 1600x800px. If left empty, a placeholder image is shown." },
+    { "type": "color",  "id": "overlay_color",   "label": "Overlay Colour",           "default": "#f7f4f0" },
+    { "type": "range",  "id": "overlay_opacity", "label": "Overlay Opacity (left %)", "min": 50, "max": 100, "step": 5, "default": 95 },
+    { "type": "range",  "id": "min_height",      "label": "Min Height",               "min": 300, "max": 700, "step": 20, "unit": "px", "default": 460 },
+    { "type": "header", "content": "Content", "info": "Text colors follow the selected Color scheme" },
+    { "type": "textarea", "id": "heading",      "label": "Heading",      "default": "One of A Kind,\nJust Like You" },
+    { "type": "range",    "id": "heading_size", "label": "Heading Font Size", "min": 24, "max": 80, "step": 2, "unit": "px", "default": 48 },
+    { "type": "textarea", "id": "text",         "label": "Subtext",       "default": "We're here to empower women to feel confident and beautiful in their own skin" },
+    { "type": "header", "content": "Button" },
+    { "type": "text", "id": "button_label", "label": "Button Label", "default": "Shop the Collection" },
+    { "type": "url",  "id": "button_url",   "label": "Button URL" }
+  ],
+  "presets": [{"name":"One of a Kind","category":"Image"}]
+}
+{% endschema %}

@@ -1,0 +1,425 @@
+{% comment %}
+  Section: Trust Badges
+
+  Row of trust badges (icon + title + text) as editor blocks. Each badge can
+  use an uploaded icon or falls back to a built-in SVG based on its position.
+  Ships pre-filled via presets. Colours follow the selected color scheme.
+
+  Mobile layout can be Stack (vertical) or Slide (swipe slider with
+  dots + arrows, built on native CSS scroll-snap and progressively enhanced).
+{% endcomment %}
+
+<div
+  class="trust-section color-{{ section.settings.color_scheme }} gradient"
+  id="trust-{{ section.id }}"
+  data-mobile="{{ section.settings.mobile_layout | default: 'stack' }}"
+  style="
+    --trust-pt: {{ section.settings.padding_top | default: 48 }}px;
+    --trust-pb: {{ section.settings.padding_bottom | default: 48 }}px;
+  "
+>
+  <div class="trust-container">
+    <div class="trust-grid">
+      {%- for block in section.blocks -%}
+        <div class="trust-item" {{ block.shopify_attributes }}>
+          <div class="trust-icon">
+  {% if block.settings.icon != blank %}
+    {{
+      block.settings.icon
+      | image_url: width: 80
+      | image_tag:
+        loading: 'lazy',
+        alt: block.settings.title,
+        class: 'trust-icon-image'
+    }}
+  {% else %}
+    {%- case forloop.index -%}
+      {%- when 1 -%}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+
+      {%- when 2 -%}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="3" width="15" height="13" rx="1"/>
+          <path d="M16 8h4l3 5v3h-7V8z"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/>
+          <circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+
+      {%- when 3 -%}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+          <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/>
+          <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+        </svg>
+
+      {%- else -%}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+    {%- endcase -%}
+  {% endif %}
+</div>
+          <h4>{{ block.settings.title | escape }}</h4>
+          <p>{{ block.settings.text | escape }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.mobile_layout == 'slide' and section.blocks.size > 1 -%}
+      <div class="trust-slider-nav">
+        <button type="button" class="trust-arrow trust-arrow--prev" aria-label="Previous">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+
+        <div class="trust-dots">
+          {%- for block in section.blocks -%}
+            <button
+              type="button"
+              class="trust-dot{% if forloop.first %} is-active{% endif %}"
+              data-index="{{ forloop.index0 }}"
+              aria-label="Go to badge {{ forloop.index }}"
+            ></button>
+          {%- endfor -%}
+        </div>
+
+        <button type="button" class="trust-arrow trust-arrow--next" aria-label="Next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+.trust-section {
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  padding-top: var(--trust-pt, 48px);
+  padding-bottom: var(--trust-pb, 48px);
+}
+
+.trust-section .trust-container {
+  max-width: var(--lv-container-max, 1280px);
+  margin: 0 auto;
+  padding: 0 56px;
+}
+
+.trust-section .trust-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.trust-section .trust-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 48px;
+}
+
+.trust-section .trust-item:first-child {
+  padding-left: 0;
+}
+
+.trust-section .trust-item:last-child {
+  padding-right: 0;
+}
+
+.trust-section .trust-item + .trust-item {
+  border-left: 1px solid rgba(var(--color-foreground), 0.12);
+}
+
+.trust-section .trust-icon {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  color: rgb(var(--color-foreground));
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trust-section .trust-icon svg {
+  width: 36px !important;
+  height: 36px !important;
+  stroke-width: 1.4;
+  display: block;
+  flex-shrink: 0;
+}
+
+.trust-section .trust-item h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: rgb(var(--color-foreground));
+}
+
+.trust-section .trust-item p {
+  font-size: 13px;
+  color: rgb(var(--color-foreground));
+  opacity: 0.6;
+  line-height: 1.6;
+}
+
+/* Slider navigation (dots + arrows) — hidden until mobile + slide + JS */
+.trust-section .trust-slider-nav {
+  display: none;
+}
+
+.trust-section .trust-arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--color-foreground), 0.2);
+  background: transparent;
+  color: rgb(var(--color-foreground));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity .2s, background .2s;
+}
+
+.trust-section .trust-arrow svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.trust-section .trust-arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.trust-section .trust-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trust-section .trust-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgb(var(--color-foreground));
+  opacity: 0.25;
+  cursor: pointer;
+  transition: opacity .2s, transform .2s;
+}
+
+.trust-section .trust-dot.is-active {
+  opacity: 1;
+  transform: scale(1.25);
+}
+
+@media (max-width: 1024px) {
+  .trust-section .trust-container {
+    padding: 0 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .trust-section .trust-container {
+    padding: 0 20px;
+  }
+
+  /* Default mobile layout: stack (vertical), centered */
+  .trust-section .trust-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-section .trust-item {
+    padding: 20px 0;
+    border-left: none !important;
+    border-top: 1px solid rgba(var(--color-foreground), 0.12);
+    align-items: center;
+    text-align: center;
+  }
+
+  .trust-section .trust-item:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  /* Mobile layout: slide (one full card at a time via CSS scroll-snap) */
+  .trust-section[data-mobile="slide"] .trust-grid {
+    display: flex;
+    grid-template-columns: none;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+  }
+
+  .trust-section[data-mobile="slide"] .trust-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .trust-section[data-mobile="slide"] .trust-item {
+    flex: 0 0 100%;
+    box-sizing: border-box;
+    scroll-snap-align: start;
+    border-left: none !important;
+    border-top: none !important;
+    padding: 8px 0;
+  }
+
+  .trust-section[data-mobile="slide"] .trust-item:first-child {
+    padding-top: 8px;
+  }
+
+  /* Reveal slider controls only on mobile + slide + JS */
+  .trust-section.trust-js[data-mobile="slide"] .trust-slider-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .trust-section .trust-container {
+    padding: 0 16px;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function initTrust(root) {
+    if (root.dataset.lvTrustInit) return;
+
+    var nav = root.querySelector('.trust-slider-nav');
+    var grid = root.querySelector('.trust-grid');
+    if (!nav || !grid) return; // only slide-enabled sections render nav
+
+    root.dataset.lvTrustInit = '1';
+    root.classList.add('trust-js');
+
+    var items = Array.prototype.slice.call(root.querySelectorAll('.trust-item'));
+    var dots = Array.prototype.slice.call(root.querySelectorAll('.trust-dot'));
+    var prev = root.querySelector('.trust-arrow--prev');
+    var next = root.querySelector('.trust-arrow--next');
+    if (items.length === 0) return;
+
+    var active = 0;
+
+    function setActive(i) {
+      active = Math.max(0, Math.min(i, items.length - 1));
+      dots.forEach(function (d, di) { d.classList.toggle('is-active', di === active); });
+      if (prev) prev.disabled = active <= 0;
+      if (next) next.disabled = active >= items.length - 1;
+    }
+
+    function goTo(i) {
+      i = Math.max(0, Math.min(i, items.length - 1));
+      items[i].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+      setActive(i);
+    }
+
+    dots.forEach(function (d, di) {
+      d.addEventListener('click', function () { goTo(di); });
+    });
+    if (prev) prev.addEventListener('click', function () { goTo(active - 1); });
+    if (next) next.addEventListener('click', function () { goTo(active + 1); });
+
+    // Track the active badge as the user swipes.
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+          var idx = items.indexOf(entry.target);
+          if (idx > -1) setActive(idx);
+        }
+      });
+    }, { root: grid, threshold: [0.55, 0.8] });
+
+    items.forEach(function (it) { io.observe(it); });
+    root._lvTrustIO = io;
+
+    setActive(0);
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.trust-section[data-mobile="slide"]').forEach(initTrust);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+
+  document.addEventListener('shopify:section:unload', function (e) {
+    var root = e.target.querySelector ? e.target.querySelector('.trust-section') : null;
+    if (root && root._lvTrustIO) {
+      root._lvTrustIO.disconnect();
+      root._lvTrustIO = null;
+    }
+  });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Trust Badges",
+  "tag": "section",
+  "class": "luxvera-trust",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "header", "content": "Section Padding" },
+    { "type": "range", "id": "padding_top",    "label": "Padding Top",    "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
+    { "type": "header", "content": "Mobile" },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "info": "Slide shows a swipeable carousel with dots and arrows.",
+      "default": "stack",
+      "options": [
+        { "value": "stack", "label": "Stack (vertical)" },
+        { "value": "slide", "label": "Slide (swipe carousel)" }
+      ]
+    }
+  ],
+  "blocks": [{
+    "type": "badge", "name": "Badge", "limit": 6,
+    "settings": [
+      { "type": "text", "id": "title", "label": "Title",       "default": "100% Authentic" },
+      {"type": "image_picker","id": "icon","label": "Icon"},
+      { "type": "text", "id": "text",  "label": "Description", "default": "Shop with confidence, genuine and always original." }
+    ]
+  }],
+  "presets": [
+    {
+      "name": "Trust Badges",
+      "category": "Branding",
+      "blocks": [
+        { "type": "badge", "settings": { "title": "100% Authentic", "text": "Shop with confidence, genuine and always original." } },
+        { "type": "badge", "settings": { "title": "Free Delivery", "text": "Save more with free shipping on every eligible order." } },
+        { "type": "badge", "settings": { "title": "Support 24/7", "text": "Always here when you need us. Hassle free contact." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

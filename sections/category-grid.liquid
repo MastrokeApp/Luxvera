@@ -1,0 +1,307 @@
+{%- comment -%}
+  Section: Category Grid
+
+  Responsive grid of collection cards. Each card pulls image, title and
+  URL from a chosen collection, with optional image/label/link overrides.
+{%- endcomment -%}
+
+<section
+  class="luxvera-section category-grid-section color-{{ section.settings.color_scheme }} gradient"
+  id="category-grid-{{ section.id }}"
+  style="--cgs-pt: {{ section.settings.padding_top | default: 48 }}px; --cgs-pb: {{ section.settings.padding_bottom | default: 48 }}px;"
+>
+  <div class="lv-container">
+    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+      <div class="sec-head">
+        {%- if section.settings.title != blank -%}
+          <h2 class="sec-title">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subtitle != blank -%}
+          <p class="sec-sub">{{ section.settings.subtitle | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      {%- assign cards_limit = section.settings.cards_to_show | plus: 0 -%}
+      <div class="categories-grid" style="--cols-desktop: {{ section.settings.columns_desktop }};">
+        {%- for block in section.blocks limit: cards_limit -%}
+          {%- if block.type == 'category_card' -%}
+            {%- assign col = nil -%}
+            {%- if block.settings.collection != blank -%}
+              {%- assign col = block.settings.collection -%}
+            {%- endif -%}
+
+            {%- if block.settings.custom_link != blank -%}
+              {%- assign card_url = block.settings.custom_link -%}
+            {%- elsif col != nil -%}
+              {%- assign card_url = col.url -%}
+            {%- else -%}
+              {%- assign card_url = '#' -%}
+            {%- endif -%}
+
+            {%- if block.settings.custom_label != blank -%}
+              {%- assign card_label = block.settings.custom_label -%}
+            {%- elsif col != nil -%}
+              {%- assign card_label = col.title -%}
+            {%- else -%}
+              {%- assign card_label = '' -%}
+            {%- endif -%}
+
+            <a class="cat-card" href="{{ card_url }}" aria-label="{{ card_label | escape }}" {{ block.shopify_attributes }}>
+              {%- if block.settings.custom_image != blank -%}
+                <img
+                  src="{{ block.settings.custom_image | image_url: width: 600, height: 600, crop: 'center' }}"
+                  alt="{{ card_label | escape }}"
+                  width="600"
+                  height="600"
+                  loading="lazy"
+                >
+              {%- elsif col != nil and col.featured_image != nil -%}
+                <img
+                  src="{{ col.featured_image | image_url: width: 600, height: 600, crop: 'center' }}"
+                  alt="{{ card_label | escape }}"
+                  width="600"
+                  height="600"
+                  loading="lazy"
+                >
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'cat-placeholder' }}
+              {%- endif -%}
+
+              {%- if card_label != blank -%}
+                <div class="cat-label">{{ card_label | escape }}</div>
+              {%- endif -%}
+
+              {%- if col != nil -%}
+                <div class="cat-count">{{ col.products_count }} items</div>
+              {%- endif -%}
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+.category-grid-section {
+  padding-top: var(--cgs-pt, 48px);
+  padding-bottom: var(--cgs-pb, 48px);
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+.category-grid-section .lv-container {
+  max-width: var(--lv-container-max, 1280px);
+  margin: 0 auto;
+  padding: 0 56px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.category-grid-section .sec-head {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.category-grid-section .sec-title {
+  font-size: 28px;
+  font-weight: 500;
+  color: rgb(var(--color-foreground));
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+
+.category-grid-section .sec-sub {
+  font-size: 15px;
+  color: rgb(var(--color-foreground));
+  opacity: 0.6;
+  margin: 0;
+}
+
+.category-grid-section .categories-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols-desktop, 4), 1fr);
+  gap: 12px;
+  margin-top: 36px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.category-grid-section .cat-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  display: block;
+  text-decoration: none;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+/* Fallback for browsers that don't support aspect-ratio */
+@supports not (aspect-ratio: 1) {
+  .category-grid-section .cat-card::before {
+    content: '';
+    display: block;
+    padding-top: 100%;
+  }
+
+  .category-grid-section .cat-card img,
+  .category-grid-section .cat-card svg {
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.category-grid-section .cat-card img,
+.category-grid-section .cat-card svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+}
+
+.category-grid-section .cat-card:hover img,
+.category-grid-section .cat-card:hover svg {
+  transform: scale(1.06);
+}
+
+.category-grid-section .cat-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.62));
+  color: rgb(var(--color-background));
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 36px 12px 14px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.category-grid-section .cat-count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(var(--color-background), 0.88);
+  color: rgb(var(--color-foreground));
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  .category-grid-section .lv-container {
+    padding: 0 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .category-grid-section .lv-container {
+    padding: 0 20px;
+  }
+
+  .category-grid-section .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-grid-section .lv-container {
+    padding: 0 16px;
+  }
+
+  .category-grid-section .categories-grid {
+    gap: 8px;
+  }
+
+  .category-grid-section .sec-title {
+    font-size: 22px;
+  }
+
+  .category-grid-section .cat-label {
+    font-size: 10px;
+    padding: 24px 8px 10px;
+  }
+
+  .category-grid-section .cat-count {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Category Grid",
+  "tag": "section",
+  "class": "luxvera-category-grid",
+  "settings": [
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "title", "label": "Section Title", "default": "Collections For You To Explore" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Everything you need to make your look fantastic" },
+
+    { "type": "header", "content": "Layout" },
+    {
+      "type": "select",
+      "id": "cards_to_show",
+      "label": "Cards to Show",
+      "options": [
+        { "value": "4", "label": "4 Cards" },
+        { "value": "8", "label": "8 Cards" },
+        { "value": "12", "label": "12 Cards" },
+        { "value": "16", "label": "16 Cards" }
+      ],
+      "default": "8"
+    },
+    { "type": "range", "id": "columns_desktop", "label": "Columns (Desktop)", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "range", "id": "padding_top", "label": "Padding Top", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 48 },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "blocks": [
+    {
+      "type": "category_card",
+      "name": "Category Card",
+      "settings": [
+        { "type": "header", "content": "Collection (Auto)" },
+        { "type": "collection", "id": "collection", "label": "Collection", "info": "Pulls image, title and URL automatically." },
+
+        { "type": "header", "content": "Overrides (Optional)" },
+        { "type": "image_picker", "id": "custom_image", "label": "Custom Image" },
+        { "type": "text", "id": "custom_label", "label": "Custom Label" },
+        { "type": "url", "id": "custom_link", "label": "Custom Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category Grid",
+      "category": "Collection",
+      "blocks": [
+        { "type": "category_card" },
+        { "type": "category_card" },
+        { "type": "category_card" },
+        { "type": "category_card" },
+        { "type": "category_card" },
+        { "type": "category_card" },
+        { "type": "category_card" },
+        { "type": "category_card" }
+      ]
+    }
+  ]
+}
+{% endschema %}

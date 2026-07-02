@@ -1,0 +1,389 @@
+{% comment %}
+  Section: Dress Looks
+
+  Swiper carousel of product-card snippets from a chosen collection, with a
+  size-picker modal and AJAX add-to-cart. Falls back to placeholder cards when
+  the collection is empty. Styles live in assets/dress-looks.css; Swiper is
+  loaded globally in theme.liquid.
+{% endcomment %}
+
+{{ 'lv-variant-modal.css' | asset_url | stylesheet_tag }}
+{{ 'dress-looks.css' | asset_url | stylesheet_tag }}
+
+{%- assign dl_col = collections[section.settings.collection] -%}
+{%- assign products_limit = section.settings.products_limit | default: 8 -%}
+
+{%- capture placeholder_cards -%}
+  {%- assign placeholder_titles = 'Floral Midi Dress,Summer Wrap Dress,Boho Maxi Dress,Classic Shirt Dress,Off-Shoulder Dress,Linen Slip Dress,Ruffle Hem Dress,Belted Blazer Dress' | split: ',' -%}
+  {%- assign placeholder_prices = '$49.00,$59.00,$39.00,$69.00,$45.00,$55.00,$35.00,$75.00' | split: ',' -%}
+  {%- assign placeholder_old = '$79.00,$89.00,$59.00,$99.00,$65.00,$85.00,$55.00,$105.00' | split: ',' -%}
+  {%- assign placeholder_svgs = 'product-1,product-2,product-3,product-4,product-1,product-2,product-3,product-4' | split: ',' -%}
+
+  {%- for i in (0..7) -%}
+    <div class="swiper-slide">
+      <div class="product-card product-card--placeholder">
+        <div class="product-img-wrap" aria-hidden="true">
+          {{ placeholder_svgs[i] | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+
+        <div class="product-info">
+          <span class="product-name">{{ placeholder_titles[i] }}</span>
+          <div class="price-color-row">
+            <span class="price-new">{{ placeholder_prices[i] }}</span>
+            <span class="price-old">{{ placeholder_old[i] }}</span>
+          </div>
+          <button class="add-to-cart" disabled aria-disabled="true">
+            {{ section.settings.atc_label | default: 'Add To Cart' }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  {%- endfor -%}
+{%- endcapture -%}
+
+<div class="lv-variant-modal" id="lv-vm-dl-{{ section.id }}" role="dialog" aria-modal="true" aria-label="Select size">
+  <div class="lv-variant-modal__box">
+    <div class="lv-variant-modal__head">
+      <span class="lv-variant-modal__title" id="lv-vm-dl-title-{{ section.id }}"></span>
+      <button class="lv-variant-modal__close" id="lv-vm-dl-close-{{ section.id }}" aria-label="Close">&times;</button>
+    </div>
+    <p class="lv-variant-modal__label">Select Size</p>
+    <div class="lv-variant-modal__options" id="lv-vm-dl-opts-{{ section.id }}"></div>
+    <button class="lv-variant-modal__atc" id="lv-vm-dl-atc-{{ section.id }}" disabled>Choose a size</button>
+  </div>
+</div>
+
+<div
+  class="section dress-section color-{{ section.settings.color_scheme }}"
+  id="dress-looks-{{ section.id }}"
+  data-dl-id="{{ section.id }}"
+  style="
+    --dl-padding-top-desktop: {{ section.settings.padding_top_desktop | default: 64 }}px;
+    --dl-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop | default: 64 }}px;
+    --dl-padding-top-tablet: {{ section.settings.padding_top_tablet | default: 44 }}px;
+    --dl-padding-bottom-tablet: {{ section.settings.padding_bottom_tablet | default: 44 }}px;
+    --dl-padding-top-mobile: {{ section.settings.padding_top_mobile | default: 28 }}px;
+    --dl-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile | default: 28 }}px;
+    --dl-heading-align: {{ section.settings.heading_alignment | default: 'center' }};
+    --dl-heading-size: {{ section.settings.heading_size | default: 32 }}px;
+    --dl-heading-size-mobile: {{ section.settings.heading_size | default: 32 | times: 0.72 | round }}px;
+    --dl-subtitle-size: {{ section.settings.subtitle_size | default: 13 }}px;
+  "
+>
+  <div class="container">
+    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+      <div class="sec-head">
+        {%- if section.settings.title != blank -%}
+          <h2 class="sec-title">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subtitle != blank -%}
+          <p class="sec-sub">{{ section.settings.subtitle | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="swiper swiper-dresses-{{ section.id }}">
+      <div class="swiper-wrapper">
+        {%- if dl_col != blank and dl_col.products.size > 0 -%}
+          {%- for product in dl_col.products limit: products_limit -%}
+            <div class="swiper-slide">
+              {% render 'product-card',
+                product: product,
+                card_context: 'dress-looks',
+                section_id: section.id,
+                atc_label: section.settings.atc_label,
+                image_ratio: 'portrait'
+              %}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {{ placeholder_cards }}
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="swiper-nav">
+      <button class="sw-prev" id="lv-dress-prev-{{ section.id }}" aria-label="Previous">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <button class="sw-next" id="lv-dress-next-{{ section.id }}" aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function whenSwiperReady(cb) {
+    if (typeof Swiper !== 'undefined') { cb(); return; }
+    var n = 0;
+    var t = setInterval(function () {
+      if (typeof Swiper !== 'undefined') { clearInterval(t); cb(); }
+      else if (++n > 60) { clearInterval(t); }
+    }, 100);
+  }
+
+  function initDressLooks(root) {
+    if (root.dataset.lvDlInit) return;
+    root.dataset.lvDlInit = '1';
+
+    var SID = root.dataset.dlId;
+
+    var modal      = document.getElementById('lv-vm-dl-' + SID);
+    var modalTitle = document.getElementById('lv-vm-dl-title-' + SID);
+    var modalOpts  = document.getElementById('lv-vm-dl-opts-' + SID);
+    var modalAtc   = document.getElementById('lv-vm-dl-atc-' + SID);
+    var modalClose = document.getElementById('lv-vm-dl-close-' + SID);
+    var selectedVid = null;
+
+    function openModal(btn) {
+      if (!modal || !modalTitle || !modalOpts || !modalAtc) return;
+
+      modalTitle.textContent = btn.dataset.productTitle || '';
+      modalOpts.innerHTML = '';
+      selectedVid = null;
+      modalAtc.disabled = true;
+      modalAtc.textContent = 'Choose a size';
+
+      (btn.dataset.variants || '').split('::').forEach(function (v) {
+        if (!v) return;
+
+        var p = v.split('||'),
+            vid = p[0],
+            vtitle = p[1],
+            avail = p[2];
+
+        if (!vid || !vtitle) return;
+
+        var opt = document.createElement('button');
+        opt.className = 'lv-variant-modal__opt';
+        opt.textContent = vtitle;
+
+        if (avail === 'false') {
+          opt.disabled = true;
+          opt.title = 'Sold out';
+        }
+
+        opt.addEventListener('click', function () {
+          if (opt.disabled) return;
+
+          modalOpts.querySelectorAll('.lv-variant-modal__opt').forEach(function (o) {
+            o.classList.remove('selected');
+          });
+
+          opt.classList.add('selected');
+          selectedVid = vid;
+          modalAtc.disabled = false;
+          modalAtc.textContent = 'Add To Cart — ' + vtitle;
+        });
+
+        modalOpts.appendChild(opt);
+      });
+
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      selectedVid = null;
+    }
+
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modal) {
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+      });
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal && modal.classList.contains('open')) {
+        closeModal();
+      }
+    });
+
+    function doATC(vid, btn, origHTML) {
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+          id: parseInt(vid, 10),
+          quantity: 1
+        })
+      })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function () {
+        if (btn) {
+          btn.classList.remove('adding');
+          btn.classList.add('added');
+          btn.innerHTML = 'Added &#10003;<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
+
+          setTimeout(function () {
+            if (btn) {
+              btn.innerHTML = origHTML;
+              btn.classList.remove('added');
+            }
+          }, 2200);
+        }
+
+        document.dispatchEvent(new CustomEvent('cart:updated', {
+          bubbles: true,
+          detail: { variantId: vid }
+        }));
+
+        closeModal();
+      })
+      .catch(function (err) {
+        console.warn('[Dress Looks ATC]', err);
+        if (btn) {
+          btn.classList.remove('adding');
+          btn.innerHTML = origHTML;
+        }
+        closeModal();
+      });
+    }
+
+    if (modalAtc) {
+      modalAtc.addEventListener('click', function () {
+        if (!selectedVid) return;
+
+        var orig = modalAtc.textContent;
+        modalAtc.disabled = true;
+        modalAtc.textContent = 'Adding…';
+        doATC(selectedVid, null, orig);
+      });
+    }
+
+    var el = root.querySelector('.swiper-dresses-' + SID);
+    if (!el) return;
+
+    if (el.swiper) {
+      el.swiper.destroy(true, true);
+    }
+
+    var sw = new Swiper(el, {
+      grabCursor: true,
+      loop: false,
+      observer: true,
+      observeParents: true,
+      breakpoints: {
+        0:    { slidesPerView: 1.2, spaceBetween: 12 },
+        480:  { slidesPerView: 2,   spaceBetween: 14 },
+        768:  { slidesPerView: 3,   spaceBetween: 16 },
+        1024: { slidesPerView: 4,   spaceBetween: 20 }
+      }
+    });
+
+    var prevBtn = document.getElementById('lv-dress-prev-' + SID);
+    var nextBtn = document.getElementById('lv-dress-next-' + SID);
+
+    if (prevBtn) prevBtn.onclick = function () { sw.slidePrev(); };
+    if (nextBtn) nextBtn.onclick = function () { sw.slideNext(); };
+
+    root.addEventListener('click', function (e) {
+      var btn = e.target.closest('.add-to-cart');
+      if (!btn || btn.disabled || btn.getAttribute('aria-disabled') === 'true') return;
+      if (btn.classList.contains('adding') || btn.classList.contains('added')) return;
+
+      var vid = btn.dataset.variantId,
+          isMulti = btn.dataset.multi === 'true';
+
+      if (isMulti) {
+        openModal(btn);
+        return;
+      }
+
+      if (!vid || vid === '' || vid === 'undefined') {
+        window.location.href = btn.dataset.productUrl || '/';
+        return;
+      }
+
+      var origHTML = btn.innerHTML;
+      btn.classList.add('adding');
+      btn.innerHTML = 'Adding…<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
+      doATC(vid, btn, origHTML);
+    });
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.dress-section').forEach(function (root) {
+      whenSwiperReady(function () { initDressLooks(root); });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Dress Looks",
+  "tag": "section",
+  "class": "luxvera-dress-looks",
+  "settings": [
+    { "type": "header", "content": "Section Padding" },
+    { "type": "range", "id": "padding_top_desktop", "label": "Padding Top — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "Padding Bottom — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_top_tablet", "label": "Padding Top — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
+    { "type": "range", "id": "padding_bottom_tablet", "label": "Padding Bottom — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Padding Top — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Padding Bottom — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
+
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "title", "label": "Section Title", "default": "Dresses Looks" },
+    { "type": "range", "id": "heading_size", "label": "Heading Font Size", "min": 16, "max": 72, "step": 2, "unit": "px", "default": 32 },
+    { "type": "select", "id": "heading_alignment", "label": "Heading Alignment", "options": [
+      { "value": "left", "label": "Left" },
+      { "value": "center", "label": "Center" },
+      { "value": "right", "label": "Right" }
+    ], "default": "center" },
+
+    { "type": "header", "content": "Subtitle" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Some of our new looks you will love" },
+    { "type": "range", "id": "subtitle_size", "label": "Subtitle Font Size", "min": 10, "max": 24, "step": 1, "unit": "px", "default": 13 },
+
+    { "type": "header", "content": "Add to Cart Button" },
+    { "type": "text", "id": "atc_label", "label": "Button Label (single variant)", "default": "Add To Cart" },
+
+    { "type": "header", "content": "Products" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_limit", "label": "Max Products to Show", "min": 4, "max": 20, "step": 2, "default": 8 }
+  ],
+  "presets": [
+    {
+      "name": "Dress Looks",
+      "category": "Products"
+    }
+  ]
+}
+{% endschema %}

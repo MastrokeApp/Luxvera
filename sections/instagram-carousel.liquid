@@ -1,0 +1,465 @@
+{% comment %}Instagram Carousel — updated with theme color schema support{% endcomment %}
+
+<style>
+#instagram-{{ section.id }} {
+  background: rgb(var(--color-background));
+  padding-top: {{ section.settings.padding_top_desktop | default: 64 }}px;
+  padding-bottom: {{ section.settings.padding_bottom_desktop | default: 64 }}px;
+}
+
+#instagram-{{ section.id }} .container {
+  max-width: var(--lv-container-max, 1280px);
+  margin: 0 auto;
+  padding: 0 56px;
+}
+
+#instagram-{{ section.id }} .sec-head {
+  text-align: {{ section.settings.heading_alignment | default: 'center' }};
+  margin-bottom: 40px;
+}
+
+#instagram-{{ section.id }} .sec-title {
+  font-size: {{ section.settings.heading_size | default: 32 }}px;
+  font-weight: 700;
+  color: rgb(var(--color-foreground));
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+
+#instagram-{{ section.id }} .sec-sub {
+  font-size: {{ section.settings.subtitle_size | default: 13 }}px;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+#instagram-{{ section.id }} .swiper {
+  width: 100%;
+  overflow: hidden !important;
+}
+
+#instagram-{{ section.id }} .swiper-wrapper {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch;
+  box-sizing: content-box;
+}
+
+#instagram-{{ section.id }} .swiper-slide {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: auto;
+}
+
+#instagram-{{ section.id }} .insta-card {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  border-radius: {{ section.settings.card_border_radius | default: 12 }}px;
+  cursor: pointer;
+  background: rgba(var(--color-foreground), 0.08);
+}
+
+#instagram-{{ section.id }} .insta-card img,
+#instagram-{{ section.id }} .insta-card .placeholder-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .4s ease;
+}
+
+#instagram-{{ section.id }} .insta-card:hover img,
+#instagram-{{ section.id }} .insta-card:hover .placeholder-svg {
+  transform: scale(1.05);
+}
+
+#instagram-{{ section.id }} .insta-icon-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  background: rgba(var(--color-background), 0.9);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+#instagram-{{ section.id }} .insta-icon-badge svg {
+  width: 16px;
+  height: 16px;
+  color: rgb(var(--color-foreground));
+}
+
+#instagram-{{ section.id }} .insta-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  background: rgba(var(--color-background), 0.88);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  transition: background .2s, transform .2s;
+}
+
+#instagram-{{ section.id }} .insta-play-btn svg {
+  width: 16px;
+  height: 16px;
+  color: rgb(var(--color-foreground));
+  margin-left: 2px;
+}
+
+#instagram-{{ section.id }} .insta-card:hover .insta-play-btn {
+  background: rgba(var(--color-background), 1);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+#instagram-{{ section.id }} .swiper-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 36px;
+}
+
+#instagram-{{ section.id }} .swiper-nav .sw-prev,
+#instagram-{{ section.id }} .swiper-nav .sw-next {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity .2s, transform .15s;
+  flex-shrink: 0;
+}
+
+#instagram-{{ section.id }} .swiper-nav .sw-prev:hover,
+#instagram-{{ section.id }} .swiper-nav .sw-next:hover {
+  opacity: 0.82;
+  transform: scale(1.06);
+}
+
+#instagram-{{ section.id }} .swiper-nav svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 1024px) {
+  #instagram-{{ section.id }} .container {
+    padding: 0 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  #instagram-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_tablet | default: 44 }}px;
+    padding-bottom: {{ section.settings.padding_bottom_tablet | default: 44 }}px;
+  }
+
+  #instagram-{{ section.id }} .container {
+    padding: 0 20px;
+  }
+
+  #instagram-{{ section.id }} .sec-title {
+    font-size: {{ section.settings.heading_size | default: 32 | times: 0.72 | round }}px;
+  }
+}
+
+@media (max-width: 480px) {
+  #instagram-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_mobile | default: 28 }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default: 28 }}px;
+  }
+
+  #instagram-{{ section.id }} .container {
+    padding: 0 16px;
+  }
+
+  #instagram-{{ section.id }} .sec-title {
+    font-size: {{ section.settings.heading_size | default: 32 | times: 0.62 | round }}px;
+  }
+}
+
+.insta-card video,
+.insta-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.insta-card .shopify-video {
+  width: 100%;
+  height: 100%;
+}
+
+.insta-card .shopify-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+</style>
+
+<section class="section instagram-section color-{{ section.settings.color_scheme }}" id="instagram-{{ section.id }}">
+  <div class="container">
+    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+      <div class="sec-head">
+        {%- if section.settings.title != blank -%}
+          <h2 class="sec-title">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subtitle != blank -%}
+          <p class="sec-sub">{{ section.settings.subtitle | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="swiper swiper-instagram-{{ section.id }}">
+      <div class="swiper-wrapper">
+        {%- for block in section.blocks -%}
+          <div class="swiper-slide" {{ block.shopify_attributes }}>
+            <div class="insta-card">
+             {%- if block.settings.image != blank -%}
+
+  <img
+    src="{{ block.settings.image | image_url: width: 500, height: 660, crop: 'center' }}"
+    alt="{{ block.settings.alt | default: 'Instagram post' | escape }}"
+    width="500"
+    height="660"
+    loading="lazy"
+  >
+
+{%- elsif block.settings.video != blank -%}
+
+{% assign source = block.settings.video.sources | first %}
+
+<video
+  autoplay
+  muted
+  loop
+  playsinline
+  preload="none"
+  class="insta-video">
+  <source src="{{ source.url }}" type="{{ source.mime_type }}">
+</video>
+{% else %}
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+{% if section.settings.insta_link != blank %}
+  <a
+    href="{{ section.settings.insta_link }}"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+{% endif %}
+
+<div class="insta-icon-badge">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+    <rect x="2" y="2" width="20" height="20" rx="5"/>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+  </svg>
+</div>
+
+{% if section.settings.insta_link != blank %}
+  </a>
+{% endif %}
+              <div class="insta-play-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        {%- else -%}
+          {%- assign _imgs = "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=500&h=660&q=80&fit=crop,https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&h=660&q=80&fit=crop,https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=500&h=660&q=80&fit=crop,https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=500&h=660&q=80&fit=crop,https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=500&h=660&q=80&fit=crop,https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=500&h=660&q=80&fit=crop,https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&h=660&q=80&fit=crop,https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&h=660&q=80&fit=crop" | split: "," -%}
+          {%- for img in _imgs -%}
+            <div class="swiper-slide">
+              <div class="insta-card">
+                <img src="{{ img }}" alt="Instagram post" loading="lazy" width="500" height="660">
+                <div class="insta-icon-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="2" y="2" width="20" height="20" rx="5"/>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                  </svg>
+                </div>
+                <div class="insta-play-btn">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="swiper-nav">
+      <button class="sw-prev" id="lv-insta-prev-{{ section.id }}" aria-label="Previous">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <button class="sw-next" id="lv-insta-next-{{ section.id }}" aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+  var sid = '{{ section.id }}';
+  var autoplay = {{ section.settings.autoplay | json }};
+  var delay = {{ section.settings.autoplay_delay }} * 1000;
+
+  function initInstaSwiper() {
+    if (typeof Swiper === 'undefined') {
+      setTimeout(initInstaSwiper, 80);
+      return;
+    }
+
+    var el = document.querySelector('#instagram-' + sid + ' .swiper-instagram-' + sid);
+    if (!el) return;
+
+    if (el.swiper) {
+      el.swiper.destroy(true, true);
+    }
+
+    var config = {
+      grabCursor: true,
+      loop: true,
+      observer: true,
+      observeParents: true,
+      watchOverflow: true,
+      breakpoints: {
+        0: { slidesPerView: 2, spaceBetween: 8 },
+        480: { slidesPerView: 3, spaceBetween: 10 },
+        768: { slidesPerView: 4, spaceBetween: 12 },
+        1024: { slidesPerView: 5, spaceBetween: 14 }
+      }
+    };
+
+    if (autoplay) {
+      config.autoplay = {
+        delay: delay,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true
+      };
+    }
+
+    var sw = new Swiper(el, config);
+
+    var prevBtn = document.getElementById('lv-insta-prev-' + sid);
+    var nextBtn = document.getElementById('lv-insta-next-' + sid);
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        sw.slidePrev();
+        if (autoplay) {
+          sw.autoplay.stop();
+          sw.autoplay.start();
+        }
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        sw.slideNext();
+        if (autoplay) {
+          sw.autoplay.stop();
+          sw.autoplay.start();
+        }
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initInstaSwiper);
+  } else {
+    initInstaSwiper();
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Instagram Carousel",
+  "tag": "section",
+  "class": "luxvera-instagram",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+
+    { "type": "header", "content": "Section Padding" },
+    { "type": "range", "id": "padding_top_desktop", "label": "Padding Top — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "Padding Bottom — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_top_tablet", "label": "Padding Top — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
+    { "type": "range", "id": "padding_bottom_tablet", "label": "Padding Bottom — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Padding Top — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Padding Bottom — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
+
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Follow Us On Instagram" },
+    { "type": "range", "id": "heading_size", "label": "Heading Font Size", "min": 16, "max": 72, "step": 2, "unit": "px", "default": 32 },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+  "type": "url",
+  "id": "insta_link",
+  "label": "Instagram Link"
+},
+
+    { "type": "header", "content": "Subtitle" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Some of our new looks you will love" },
+    { "type": "range", "id": "subtitle_size", "label": "Subtitle Font Size", "min": 10, "max": 24, "step": 1, "unit": "px", "default": 13 },
+
+    { "type": "header", "content": "Cards" },
+    { "type": "range", "id": "card_border_radius", "label": "Card Border Radius", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 12 },
+
+    { "type": "header", "content": "Autoplay" },
+    { "type": "checkbox", "id": "autoplay", "label": "Enable Autoplay", "default": true },
+    { "type": "range", "id": "autoplay_delay", "label": "Autoplay Delay (seconds)", "min": 1, "max": 10, "step": 1, "default": 3 }
+  ],
+  "blocks": [
+    {
+      "type": "post",
+      "name": "Instagram Post",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "alt", "label": "Alt Text", "default": "Instagram post" },
+        {
+  "type": "video",
+  "id": "video",
+  "label": "Video"
+}
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Instagram Carousel", "category": "Social" }
+  ]
+}
+{% endschema %}

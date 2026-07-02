@@ -1,0 +1,513 @@
+{% comment %}
+  Section: Image with Text
+
+  Two-column image + text with configurable image width, placement, content
+  position/alignment (desktop & mobile), optional content overlap, and an
+  optional ambient zoom on hover. Container uses the selected color scheme.
+{% endcomment %}
+
+{%- liquid
+  assign layout = section.settings.layout
+  assign content_layout = section.settings.content_layout
+
+  case section.settings.desktop_image_width
+    when 'small'
+      assign iwt_cols = '0.8fr 1.2fr'
+    when 'medium'
+      assign iwt_cols = '1fr 1fr'
+    else
+      assign iwt_cols = '1.2fr 0.8fr'
+  endcase
+
+  case section.settings.desktop_content_position
+    when 'top'
+      assign iwt_content_align = 'flex-start'
+    when 'middle'
+      assign iwt_content_align = 'center'
+    else
+      assign iwt_content_align = 'flex-end'
+  endcase
+
+  case section.settings.desktop_content_alignment
+    when 'center'
+      assign iwt_text_align = 'center'
+      assign iwt_items_align = 'center'
+    when 'right'
+      assign iwt_text_align = 'right'
+      assign iwt_items_align = 'flex-end'
+    else
+      assign iwt_text_align = 'left'
+      assign iwt_items_align = 'flex-start'
+  endcase
+
+  case section.settings.mobile_content_alignment
+    when 'center'
+      assign iwt_text_align_m = 'center'
+      assign iwt_items_align_m = 'center'
+    when 'right'
+      assign iwt_text_align_m = 'right'
+      assign iwt_items_align_m = 'flex-end'
+    else
+      assign iwt_text_align_m = 'left'
+      assign iwt_items_align_m = 'flex-start'
+  endcase
+
+  assign pad_top_m = section.settings.padding_top | times: 0.75 | round: 0
+  assign pad_bottom_m = section.settings.padding_bottom | times: 0.75 | round: 0
+-%}
+
+<div
+  id="image-with-text-{{ section.id }}"
+  class="image-with-text-section color-{{ section.settings.section_color_scheme }} gradient"
+  data-layout="{{ layout }}"
+  data-content-layout="{{ content_layout }}"
+  data-image-behavior="{{ section.settings.image_behavior }}"
+  style="
+    --iwt-cols: {{ iwt_cols }};
+    --iwt-content-align: {{ iwt_content_align }};
+    --iwt-text-align: {{ iwt_text_align }};
+    --iwt-items-align: {{ iwt_items_align }};
+    --iwt-text-align-m: {{ iwt_text_align_m }};
+    --iwt-items-align-m: {{ iwt_items_align_m }};
+    --iwt-pad-top: {{ section.settings.padding_top }}px;
+    --iwt-pad-bottom: {{ section.settings.padding_bottom }}px;
+    --iwt-pad-top-m: {{ pad_top_m }}px;
+    --iwt-pad-bottom-m: {{ pad_bottom_m }}px;
+    --iwt-img-h: {{ section.settings.image_height_desktop }}px;
+    --iwt-img-h-m: {{ section.settings.image_height_mobile }}px;
+    --iwt-heading-size: {{ section.settings.heading_size }}px;
+  "
+>
+  <div class="image-text-wrapper">
+    <div class="image-text-inner">
+
+      <div class="image-text-media">
+        {%- if section.settings.image != blank -%}
+          <img
+            src="{{ section.settings.image | image_url: width: 1600 }}"
+            alt="{{ section.settings.image.alt | escape }}"
+            loading="lazy"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+          >
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg image-text-placeholder' }}
+        {%- endif -%}
+      </div>
+
+      <div class="image-text-content-wrap">
+        <div class="image-text-content color-{{ section.settings.color_scheme }}">
+          <div class="image-text-content-inner">
+
+            {%- if section.settings.heading != blank -%}
+              <h2 class="image-text-heading">{{ section.settings.heading }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.text != blank -%}
+              <div class="image-text-text">
+                <p>{{ section.settings.text }}</p>
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.button_label != blank -%}
+              <a
+                {% if section.settings.button_link != blank %}
+                  href="{{ section.settings.button_link }}"
+                {% else %}
+                  role="link"
+                  aria-disabled="true"
+                {% endif %}
+                class="image-text-button"
+              >
+                {{ section.settings.button_label | escape }}
+              </a>
+            {%- endif -%}
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.image-with-text-section {
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+.image-with-text-section .image-text-wrapper {
+  padding-top: var(--iwt-pad-top, 36px);
+  padding-bottom: var(--iwt-pad-bottom, 36px);
+}
+
+.image-with-text-section .image-text-inner {
+  max-width: var(--lv-container-max, 1280px);
+  margin: 0 auto;
+  padding-left: 56px;
+  padding-right: 56px;
+  display: grid;
+  gap: 0;
+  align-items: stretch;
+  grid-template-columns: var(--iwt-cols, 1fr 1fr);
+}
+
+/* Desktop image placement */
+.image-with-text-section[data-layout="text_first"] .image-text-media {
+  order: 2;
+}
+
+.image-with-text-section[data-layout="text_first"] .image-text-content-wrap {
+  order: 1;
+}
+
+.image-with-text-section[data-layout="image_first"] .image-text-media {
+  order: 1;
+}
+
+.image-with-text-section[data-layout="image_first"] .image-text-content-wrap {
+  order: 2;
+}
+
+.image-with-text-section .image-text-media {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: var(--iwt-img-h, 280px);
+}
+
+.image-with-text-section .image-text-media img,
+.image-with-text-section .image-text-media svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.image-with-text-section .image-text-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  display: block;
+  background: #f4f4f4;
+}
+
+/* Image hover behavior */
+.image-with-text-section[data-image-behavior="zoom-in"] .image-text-media img {
+  transition: transform .5s ease;
+}
+
+.image-with-text-section[data-image-behavior="zoom-in"]:hover .image-text-media img {
+  transform: scale(1.05);
+}
+
+.image-with-text-section .image-text-content-wrap {
+  display: flex;
+  position: relative;
+  z-index: 2;
+  align-items: var(--iwt-content-align, center);
+}
+
+.image-with-text-section .image-text-content {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 4rem;
+  min-height: var(--iwt-img-h, 280px);
+  display: flex;
+  border: none;
+}
+
+/* Overlap (desktop only) */
+@media screen and (min-width: 990px) {
+  .image-with-text-section[data-content-layout="overlap"][data-layout="image_first"] .image-text-content {
+    margin-left: -80px;
+  }
+
+  .image-with-text-section[data-content-layout="overlap"][data-layout="text_first"] .image-text-content {
+    margin-right: -80px;
+  }
+}
+
+.image-with-text-section .image-text-content-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  width: 100%;
+  justify-content: center;
+  text-align: var(--iwt-text-align, left);
+  align-items: var(--iwt-items-align, flex-start);
+}
+
+.image-with-text-section .image-text-heading {
+  margin: 0;
+  font-size: var(--iwt-heading-size, 48px);
+  line-height: 1.1;
+}
+
+.image-with-text-section .image-text-text {
+  margin: 0;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+.image-with-text-section .image-text-text p {
+  margin: 0;
+}
+
+.image-with-text-section .image-text-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 1.2rem 2.4rem;
+    text-decoration: none;
+    border: 1px solid currentColor;
+    transition: all .25s ease;
+    background: black;
+    color: white;
+}
+
+.image-with-text-section .image-text-button:hover {
+  opacity: .85;
+  background: transparent;
+  color: #000;
+}
+
+/* Tablet / mobile */
+@media screen and (max-width: 989px) {
+  .image-with-text-section .image-text-inner {
+    grid-template-columns: 1fr;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    gap: 0;
+  }
+
+  .image-with-text-section .image-text-media,
+  .image-with-text-section .image-text-content-wrap {
+    order: unset !important;
+  }
+
+  .image-with-text-section .image-text-content {
+    margin: 0 !important;
+    max-width: 100%;
+    padding: 3rem 2rem;
+    min-height: auto;
+    border: none;
+  }
+
+  /* Mobile content alignment */
+  .image-with-text-section .image-text-content-inner {
+    text-align: var(--iwt-text-align-m, left);
+    align-items: var(--iwt-items-align-m, flex-start);
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .image-with-text-section .image-text-wrapper {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+
+  .image-with-text-section .image-text-inner {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .image-with-text-section .image-text-media {
+    height: var(--iwt-img-h-m, 220px);
+  }
+
+  .image-with-text-section .image-text-content {
+    min-height: auto;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Image with text",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_height_desktop",
+      "label": "Image height (desktop)",
+      "min": 200,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "image_height_mobile",
+      "label": "Image height (mobile)",
+      "min": 160,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "default": 220
+    },
+    {
+      "type": "select",
+      "id": "desktop_image_width",
+      "label": "Desktop image width",
+      "default": "medium",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Desktop image placement",
+      "default": "image_first",
+      "options": [
+        { "value": "image_first", "label": "Image left" },
+        { "value": "text_first", "label": "Image right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_position",
+      "label": "Desktop content position",
+      "default": "middle",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "middle", "label": "Middle" },
+        { "value": "bottom", "label": "Bottom" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "label": "Desktop content alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "content_layout",
+      "label": "Content layout",
+      "default": "no-overlap",
+      "options": [
+        { "value": "no-overlap", "label": "No overlap" },
+        { "value": "overlap", "label": "Overlap" }
+      ]
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Container color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "label": "Section background color scheme",
+      "info": "Background for the whole section, behind the image and text.",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "image_behavior",
+      "label": "Image behavior",
+      "default": "none",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "zoom-in", "label": "Ambient zoom" }
+      ]
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Image with text",
+      "label": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 18,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Pair text with an image to focus on your chosen product, collection, or blog post."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "Shop now",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "label": "Mobile content alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text"
+    }
+  ]
+}
+{% endschema %}

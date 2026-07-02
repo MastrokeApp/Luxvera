@@ -1,0 +1,287 @@
+{% comment %}
+  Section: Announcement Ticker
+
+  Seamless scrolling ticker bar with configurable messages, speed,
+  background colour, text colour and separator. The row is duplicated
+  by JS until it fills the viewport, so the loop never shows a blank gap.
+{% endcomment %}
+
+{%- assign items = section.blocks | where: "type", "ticker_item" -%}
+
+{% if items.size > 0 %}
+<div
+  class="ticker"
+  id="ticker-{{ section.id }}"
+  aria-label="Announcements"
+  style="
+    --ticker-bg:        {{ section.settings.background_color }};
+    --ticker-color:     {{ section.settings.text_color }};
+    --ticker-sep-color: {{ section.settings.separator_color }};
+    --ticker-speed:     {{ section.settings.scroll_speed }}s;
+    --ticker-size:      {{ section.settings.font_size }}px;
+    --ticker-padding:   {{ section.settings.vertical_padding }}px;
+  "
+>
+  <div class="ticker-track">
+    <div class="ticker-group">
+      {%- for block in items -%}
+        <span class="ticker-item" {{ block.shopify_attributes }}>
+          {{- block.settings.text | escape -}}
+        </span>
+        <span class="ticker-sep" aria-hidden="true">
+          {{ section.settings.separator_char }}
+        </span>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% stylesheet %}
+.luxvera-announcement-ticker .ticker {
+  background: var(--ticker-bg, #F7FCD8);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: var(--ticker-padding, 12px) 0;
+  width: 100%;
+  position: relative;
+}
+
+.luxvera-announcement-ticker .ticker-track {
+  display: inline-flex;
+  align-items: center;
+}
+
+.luxvera-announcement-ticker .ticker.is-loaded .ticker-track {
+  animation: luxvera-ticker-scroll var(--ticker-speed, 25s) linear infinite;
+  will-change: transform;
+}
+
+/* Pause on hover for accessibility */
+.luxvera-announcement-ticker .ticker.is-loaded:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+.luxvera-announcement-ticker .ticker-group {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.luxvera-announcement-ticker .ticker-item {
+  font-size: var(--ticker-size, 13px);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--ticker-color, #1a1a1a);
+  padding: 0 28px;
+  flex-shrink: 0;
+}
+
+.luxvera-announcement-ticker .ticker-sep {
+  color: var(--ticker-sep-color, #999999);
+  font-size: calc(var(--ticker-size, 13px) + 1px);
+  flex-shrink: 0;
+  padding: 0 4px;
+  user-select: none;
+}
+
+@keyframes luxvera-ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-1 * var(--ticker-shift, 50%)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .luxvera-announcement-ticker .ticker-track {
+    animation: none !important;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  // Remember each ticker's pristine single-group markup so rebuilds are clean.
+  var originals = new WeakMap();
+
+  function buildTicker(root) {
+    var track = root.querySelector('.ticker-track');
+    if (!track) return;
+
+    // Reset to one pristine group before measuring.
+    track.innerHTML = originals.get(root);
+
+    var group = track.querySelector('.ticker-group');
+    if (!group) return;
+
+    var groupWidth = group.getBoundingClientRect().width;
+    var containerWidth = root.getBoundingClientRect().width;
+    if (groupWidth === 0 || containerWidth === 0) return;
+
+    // Enough copies that the row always overflows the viewport — no blank gap.
+    // Needs (copies - 1) * groupWidth >= containerWidth.
+    var copies = Math.ceil(containerWidth / groupWidth) + 1;
+    if (copies < 2) copies = 2;
+
+    for (var i = 1; i < copies; i++) {
+      var clone = group.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      track.appendChild(clone);
+    }
+
+    // Scroll exactly one group width → the next identical group lands in place,
+    // so the reset is invisible (seamless loop).
+    root.style.setProperty('--ticker-shift', groupWidth + 'px');
+    root.classList.add('is-loaded');
+  }
+
+  function initTicker(root) {
+    if (!originals.has(root)) {
+      var track = root.querySelector('.ticker-track');
+      if (!track) return;
+      originals.set(root, track.innerHTML);
+    }
+    requestAnimationFrame(function () { buildTicker(root); });
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.ticker').forEach(initTicker);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  // Web fonts change text width after load — re-measure once they're ready.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { initAll(); });
+  }
+
+  // Re-measure on resize (debounced).
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { initAll(); }, 200);
+  });
+
+  // Theme editor: rebuild when the section is re-rendered.
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Announcement Ticker",
+  "tag": "div",
+  "class": "luxvera-announcement-ticker",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Colour",
+      "default": "#F7FCD8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Colour",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "separator_color",
+      "label": "Separator Colour",
+      "default": "#999999"
+    },
+    {
+      "type": "text",
+      "id": "separator_char",
+      "label": "Separator Character",
+      "default": "|",
+      "info": "Character shown between ticker items."
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font Size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "vertical_padding",
+      "label": "Vertical Padding",
+      "min": 4,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Scroll Speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "default": 25,
+      "info": "Lower = faster. Higher = slower."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ticker_item",
+      "name": "Ticker Message",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Message",
+          "default": "GRAB The Deal Upto 80% Off & Extra 15% Off"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement Ticker",
+      "category": "Promotional",
+      "blocks": [
+        {
+          "type": "ticker_item",
+          "settings": { "text": "GRAB The Deal Upto 80% Off & Extra 15% Off" }
+        },
+        {
+          "type": "ticker_item",
+          "settings": { "text": "Free Shipping on all orders" }
+        },
+        {
+          "type": "ticker_item",
+          "settings": { "text": "New arrivals every week — shop now" }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

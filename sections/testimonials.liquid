@@ -1,0 +1,511 @@
+{% comment %}
+  Section: Testimonials
+
+  Swiper carousel of customer review cards. Reviews are editor blocks; the
+  section ships pre-filled with sample reviews via presets. Uses the Swiper
+  library loaded globally in theme.liquid.
+{% endcomment %}
+
+<div
+  class="section testimonials-section color-{{ section.settings.color_scheme }}"
+  id="testimonials-{{ section.id }}"
+  data-ts-id="{{ section.id }}"
+  style="
+    --ts-pt-d: {{ section.settings.padding_top_desktop | default: 64 }}px;
+    --ts-pb-d: {{ section.settings.padding_bottom_desktop | default: 64 }}px;
+    --ts-pt-t: {{ section.settings.padding_top_tablet | default: 44 }}px;
+    --ts-pb-t: {{ section.settings.padding_bottom_tablet | default: 44 }}px;
+    --ts-pt-m: {{ section.settings.padding_top_mobile | default: 28 }}px;
+    --ts-pb-m: {{ section.settings.padding_bottom_mobile | default: 28 }}px;
+    --ts-heading-size: {{ section.settings.heading_size | default: 28 }}px;
+    --ts-heading-size-t: {{ section.settings.heading_size | default: 28 | times: 0.78 | round }}px;
+    --ts-subheading-size: {{ section.settings.subheading_size | default: 13 }}px;
+  "
+>
+  <div class="container">
+    <div class="reviews-head">
+      <div class="reviews-head-left">
+        <h2>{{ section.settings.heading | default: "What They're Saying" | escape }}</h2>
+        <p>{{ section.settings.subheading | default: 'Loved by 17k+ Customers' | escape }}</p>
+      </div>
+    </div>
+
+    <div class="swiper swiper-testimonials-{{ section.id }}">
+      <div class="swiper-wrapper">
+        {%- for block in section.blocks -%}
+          <div class="swiper-slide" {{ block.shopify_attributes }}>
+            <div class="review-card">
+              <div class="review-card-top">
+                <div class="review-stars">
+                  {%- assign stars = block.settings.stars | default: 5 -%}
+                  {%- for i in (1..stars) -%}★{%- endfor -%}
+                </div>
+               
+              </div>
+
+              <div class="review-author-row">
+                <span class="review-name">{{ block.settings.name | default: 'Customer' | escape }}</span>
+                {%- if block.settings.verified -%}
+                  <span class="review-verified" title="Verified purchase">
+                    <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                      <polyline points="2 5 4 7.5 8 3"/>
+                    </svg>
+                  </span>
+                {%- endif -%}
+              </div>
+
+              <p class="review-text">{{ block.settings.text | escape }}</p>
+              <span class="review-date">{{ block.settings.date | default: '' | escape }}</span>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="swiper-nav">
+      <button class="sw-prev" id="lv-test-prev-{{ section.id }}" aria-label="Previous">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <button class="sw-next" id="lv-test-next-{{ section.id }}" aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.testimonials-section {
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  padding-top: var(--ts-pt-d, 64px);
+  padding-bottom: var(--ts-pb-d, 64px);
+}
+
+.testimonials-section .container {
+  max-width: var(--lv-container-max, 1280px);
+  margin: 0 auto;
+  padding: 0 56px;
+}
+
+.testimonials-section .reviews-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.testimonials-section .reviews-head-left h2 {
+  font-size: var(--ts-heading-size, 28px);
+  font-weight: 700;
+  color: rgb(var(--color-foreground));
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.testimonials-section .reviews-head-left p {
+  font-size: var(--ts-subheading-size, 13px);
+  color: rgba(var(--color-foreground), 0.65);
+}
+
+.testimonials-section .reviews-head-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.testimonials-section .reviews-filter-btn {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 6px;
+  background: rgb(var(--color-background));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(var(--color-foreground));
+  transition: background .25s;
+  cursor: pointer;
+}
+
+.testimonials-section .reviews-filter-btn:hover {
+  background: rgba(var(--color-foreground), 0.06);
+}
+
+.testimonials-section .reviews-filter-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.testimonials-section .reviews-sort {
+  height: 36px;
+  padding: 0 12px;
+  border: 1.5px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 6px;
+  font-size: 13px;
+  color: rgb(var(--color-foreground));
+  background: rgb(var(--color-background));
+  outline: none;
+  cursor: pointer;
+}
+
+.testimonials-section .reviews-write-btn {
+  height: 36px;
+  padding: 0 18px;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  border: none;
+  border-radius: var(--lv-btn-radius, 0px);
+  transition: opacity .2s;
+  cursor: pointer;
+}
+
+.testimonials-section .reviews-write-btn:hover {
+  opacity: 0.82;
+}
+
+.testimonials-section .swiper {
+  width: 100%;
+  overflow: hidden !important;
+}
+
+.testimonials-section .swiper-wrapper {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch;
+}
+
+.testimonials-section .swiper-slide {
+  height: auto !important;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.testimonials-section .review-card {
+  background: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 10px;
+  padding: 20px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.testimonials-section .review-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.testimonials-section .review-stars {
+  color: #e6a817;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.testimonials-section .review-menu-btn {
+  background: none;
+  border: none;
+  color: rgba(var(--color-foreground), 0.5);
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 2px;
+  cursor: pointer;
+  transition: opacity .25s;
+}
+
+.testimonials-section .review-menu-btn:hover {
+  opacity: 1;
+}
+
+.testimonials-section .review-author-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.testimonials-section .review-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+}
+
+.testimonials-section .review-verified {
+  width: 14px;
+  height: 14px;
+  background: #22a861;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.testimonials-section .review-verified svg {
+  width: 8px;
+  height: 8px;
+  stroke: #ffffff;
+  display: block;
+}
+
+.testimonials-section .review-text {
+  font-size: 13px;
+  color: rgba(var(--color-foreground), 0.78);
+  line-height: 1.75;
+  flex: 1;
+  margin-bottom: 16px;
+}
+
+.testimonials-section .review-date {
+  font-size: 11.5px;
+  color: rgba(var(--color-foreground), 0.5);
+  margin-top: auto;
+}
+
+.testimonials-section .swiper-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 36px;
+}
+
+.testimonials-section .swiper-nav .sw-prev,
+.testimonials-section .swiper-nav .sw-next {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity .2s, transform .15s;
+  flex-shrink: 0;
+}
+
+.testimonials-section .swiper-nav .sw-prev:hover,
+.testimonials-section .swiper-nav .sw-next:hover {
+  opacity: 0.75;
+  transform: scale(1.06);
+}
+
+.testimonials-section .swiper-nav svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 1024px) {
+  .testimonials-section .container {
+    padding: 0 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .testimonials-section {
+    padding-top: var(--ts-pt-t, 44px);
+    padding-bottom: var(--ts-pb-t, 44px);
+  }
+
+  .testimonials-section .container {
+    padding: 0 20px;
+  }
+
+  .testimonials-section .reviews-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .testimonials-section .reviews-head-left h2 {
+    font-size: var(--ts-heading-size-t, 22px);
+  }
+}
+
+@media (max-width: 480px) {
+  .testimonials-section {
+    padding-top: var(--ts-pt-m, 28px);
+    padding-bottom: var(--ts-pb-m, 28px);
+  }
+
+  .testimonials-section .container {
+    padding: 0 16px;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function whenSwiperReady(cb) {
+    if (typeof Swiper !== 'undefined') { cb(); return; }
+    var n = 0;
+    var t = setInterval(function () {
+      if (typeof Swiper !== 'undefined') { clearInterval(t); cb(); }
+      else if (++n > 60) { clearInterval(t); }
+    }, 100);
+  }
+
+  function initTestimonials(root) {
+    if (root.dataset.lvTsInit) return;
+    root.dataset.lvTsInit = '1';
+
+    var SID = root.dataset.tsId;
+
+    var el = root.querySelector('.swiper-testimonials-' + SID);
+    if (!el) return;
+
+    if (el.swiper) {
+      el.swiper.destroy(true, true);
+    }
+
+    var sw = new Swiper(el, {
+      grabCursor: true,
+      loop: true,
+      observer: true,
+      observeParents: true,
+      watchOverflow: true,
+      breakpoints: {
+        0:    { slidesPerView: 1, spaceBetween: 14 },
+        640:  { slidesPerView: 2, spaceBetween: 16 },
+        1024: { slidesPerView: 3, spaceBetween: 20 }
+      }
+    });
+
+    var prevBtn = document.getElementById('lv-test-prev-' + SID);
+    var nextBtn = document.getElementById('lv-test-next-' + SID);
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { sw.slidePrev(); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { sw.slideNext(); });
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.testimonials-section').forEach(function (root) {
+      whenSwiperReady(function () { initTestimonials(root); });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "class": "luxvera-testimonials",
+  "settings": [
+    { "type": "header", "content": "Section Padding" },
+    { "type": "range", "id": "padding_top_desktop", "label": "Padding Top — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "Padding Bottom — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_top_tablet", "label": "Padding Top — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
+    { "type": "range", "id": "padding_bottom_tablet", "label": "Padding Bottom — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Padding Top — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Padding Bottom — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
+
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What They're Saying" },
+    { "type": "range", "id": "heading_size", "label": "Heading Font Size", "min": 16, "max": 48, "step": 2, "unit": "px", "default": 28 },
+
+    { "type": "header", "content": "Subheading" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Loved by 17k+ Customers" },
+    { "type": "range", "id": "subheading_size", "label": "Subheading Font Size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 13 },
+
+    { "type": "header", "content": "Buttons" },
+    { "type": "text", "id": "write_review_label", "label": "Write a Review Label", "default": "Write a Review" }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Reviewer Name", "default": "Customer" },
+        { "type": "range", "id": "stars", "label": "Stars", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "checkbox", "id": "verified", "label": "Verified Purchase", "default": true },
+        { "type": "textarea", "id": "text", "label": "Review Text" },
+        { "type": "text", "id": "date", "label": "Date", "default": "Posted on January 1, 2025" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "category": "Social proof",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "name": "Shay Shults",
+            "stars": 5,
+            "verified": true,
+            "text": "“I absolutely love this t-shirt! The design is unique and the fabric feels so comfortable. It’s become my favorite go-to shirt.”",
+            "date": "Posted on October 22, 2025"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "name": "Jessica Wert",
+            "stars": 5,
+            "verified": true,
+            "text": "“The fit is amazing! Great pair of jeans and an amazing price on them!”",
+            "date": "Posted on September 28, 2025"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "name": "Stephanie",
+            "stars": 5,
+            "verified": true,
+            "text": "“If I could give more than 5 stars I would!! Perfect cardigan!!! The best!!!”",
+            "date": "Posted on August 14, 2025"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "name": "Amber Rose",
+            "stars": 5,
+            "verified": true,
+            "text": "“Absolutely obsessed with my new jacket! The fringe detail is stunning and I get compliments every single time I wear it.”",
+            "date": "Posted on July 30, 2025"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "name": "Miranda Cole",
+            "stars": 5,
+            "verified": true,
+            "text": "“The fabric quality is incredible for the price point. I’ve washed it three times and it still looks brand new.”",
+            "date": "Posted on July 5, 2025"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
