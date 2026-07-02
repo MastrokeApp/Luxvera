@@ -1,0 +1,283 @@
+/* =========================
+   Dress Looks Section
+========================= */
+.dress-section {
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  padding-top: var(--dl-padding-top-desktop, 64px);
+  padding-bottom: var(--dl-padding-bottom-desktop, 64px);
+}
+
+.dress-section .container {
+  max-width: var(--dl-container-max, 1280px);
+  margin: 0 auto;
+  padding: 0 56px;
+}
+
+.dress-section .sec-head {
+  text-align: var(--dl-heading-align, center);
+  margin-bottom: 40px;
+}
+
+.dress-section .sec-title {
+  font-size: var(--dl-heading-size, 32px);
+  font-weight: 700;
+  color: var(--lv-color-text, #1a1a1a);
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+
+.dress-section .sec-sub {
+  font-size: var(--dl-subtitle-size, 13px);
+  color: var(--lv-color-text, #1a1a1a);
+  opacity: 0.55;
+}
+
+/* =========================
+   Swiper
+========================= */
+.dress-section .swiper {
+  width: 100%;
+  overflow: hidden;
+}
+
+.dress-section .swiper-wrapper {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch;
+  box-sizing: content-box;
+}
+
+.dress-section .swiper-slide {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: auto;
+}
+
+/* =========================
+   Placeholder Product Card
+========================= */
+.dress-section .product-card--placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.dress-section .product-card--placeholder .product-img-wrap {
+  position: relative;
+  overflow: hidden; /* changed from clip */
+  aspect-ratio: 3/4;
+  background: var(--lv-color-bg-alt, #f7f4f0);
+  border-radius: 6px 6px 0 0;
+  display: block;
+  pointer-events: none;
+}
+
+.dress-section .product-card--placeholder .product-img-wrap .placeholder-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+
+.dress-section .product-card--placeholder .product-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(255,255,255,.95);
+  border-radius: 20px;
+  padding: 3px 9px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0,0,0,.1);
+  color: var(--lv-color-text, #1a1a1a);
+  pointer-events: none;
+}
+
+.dress-section .product-card--placeholder .product-info {
+  background: var(--lv-color-bg-alt, #f7f4f0);
+  border: 1px solid var(--lv-color-border, #e5e0d8);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 12px 12px 14px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dress-section .product-card--placeholder .product-name {
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 4px;
+  color: var(--lv-color-text, #1a1a1a);
+  line-height: 1.45;
+  display: block;
+}
+
+.dress-section .product-card--placeholder .price-color-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.dress-section .product-card--placeholder .price-new {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--lv-color-text, #1a1a1a);
+}
+
+.dress-section .product-card--placeholder .price-old {
+  font-size: 13px;
+  color: var(--lv-color-text, #1a1a1a);
+  opacity: 0.5;
+  text-decoration: line-through;
+  margin-left: 4px;
+}
+
+.dress-section .product-card--placeholder .add-to-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--lv-color-primary, #2a1f16);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border-radius: var(--lv-btn-radius, 0px);
+  padding: 13px 16px;
+  border: none;
+  margin-top: auto;
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+.dress-section .product-card--placeholder .add-to-cart svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+
+
+/* Real product cards (collection assigned) */
+.dress-section .product-card--dress-looks {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.dress-section .product-card--dress-looks .product-img-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3/4;
+  background: var(--lv-color-bg-alt, #f7f4f0);
+  border-radius: 6px 6px 0 0;
+  display: block;
+}
+
+.dress-section .product-card--dress-looks .product-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.dress-section .product-card--dress-looks .product-info {
+  background: var(--lv-color-bg-alt, #f7f4f0);
+  border: 1px solid var(--lv-color-border, #e5e0d8);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  
+  /*padding: 12px 12px 14px;*/
+  padding: 11px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.price-color-row {
+    padding: 5px 0px;
+}
+/* =========================
+   Slider Navigation
+========================= */
+.dress-section .swiper-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 36px;
+}
+
+.dress-section .swiper-nav .sw-prev,
+.dress-section .swiper-nav .sw-next {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--lv-color-primary, #2a1f16);
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .2s, transform .15s;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.dress-section .swiper-nav .sw-prev:hover,
+.dress-section .swiper-nav .sw-next:hover {
+  opacity: 0.75;
+  transform: scale(1.06);
+}
+
+.dress-section .swiper-nav svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 1024px) {
+  .dress-section .container {
+    padding: 0 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dress-section {
+    padding-top: var(--dl-padding-top-tablet, 44px);
+    padding-bottom: var(--dl-padding-bottom-tablet, 44px);
+  }
+
+  .dress-section .container {
+    padding: 0 20px;
+  }
+
+  .dress-section .sec-title {
+    font-size: var(--dl-heading-size-mobile, 23px);
+  }
+}
+
+@media (max-width: 480px) {
+  .dress-section {
+    padding-top: var(--dl-padding-top-mobile, 28px);
+    padding-bottom: var(--dl-padding-bottom-mobile, 28px);
+  }
+
+  .dress-section .container {
+    padding: 0 16px;
+  }
+}
