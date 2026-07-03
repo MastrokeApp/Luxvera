@@ -1,0 +1,86 @@
+{% comment %}
+  Cart notification drawer
+
+  Slide-out confirmation shown after an item is added to the cart. Populated by
+  assets/cart-notification.js, which listens for the "cart:open" event. Rendered
+  once in theme.liquid before the closing body tag via render 'cart-notification'.
+{% endcomment %}
+
+{{ 'cart-notification.css' | asset_url | stylesheet_tag }}
+
+<div
+  id="cart-notification"
+  class="cart-notif"
+  role="dialog"
+  aria-modal="false"
+  aria-label="Cart updated"
+  aria-live="polite"
+  data-currency="{{ shop.currency }}"
+  data-free-shipping-threshold="{{ settings.free_shipping_threshold | default: 15000 }}"
+  hidden
+>
+  <div class="cart-notif__inner">
+
+    <div class="cart-notif__header">
+      <span class="cart-notif__heading">
+        <svg class="cart-notif__check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="10" cy="10" r="9"/>
+          <path d="M6 10l3 3 5-5"/>
+        </svg>
+        Added to cart
+      </span>
+      <button
+        type="button"
+        class="cart-notif__close"
+        id="cart-notif-close"
+        aria-label="Close notification"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    {%- comment -%} Product snapshot (populated by JS) {%- endcomment -%}
+    <div class="cart-notif__product" id="cart-notif-product">
+      <div class="cart-notif__product-img-wrap">
+        <img id="cart-notif-img" src="" alt="" width="72" height="90" class="cart-notif__product-img">
+      </div>
+      <div class="cart-notif__product-details">
+        <p class="cart-notif__product-title" id="cart-notif-title"></p>
+        <p class="cart-notif__product-variant" id="cart-notif-variant"></p>
+        <p class="cart-notif__product-price" id="cart-notif-price"></p>
+      </div>
+    </div>
+
+    {%- comment -%} Cart summary {%- endcomment -%}
+    <div class="cart-notif__summary">
+      <span class="cart-notif__summary-label">Subtotal</span>
+      <span class="cart-notif__summary-value" id="cart-notif-subtotal"></span>
+    </div>
+
+    {%- comment -%} Free shipping progress {%- endcomment -%}
+    <div class="cart-notif__shipping" id="cart-notif-shipping">
+      <p class="cart-notif__shipping-msg" id="cart-notif-shipping-msg"></p>
+      <div class="cart-notif__shipping-bar">
+        <div class="cart-notif__shipping-progress" id="cart-notif-shipping-progress" style="width:0%"></div>
+      </div>
+    </div>
+
+    {%- comment -%} Actions {%- endcomment -%}
+    <div class="cart-notif__actions">
+      <button type="button" class="cart-notif__btn cart-notif__btn--continue" id="cart-notif-close-btn">
+        Continue Shopping
+      </button>
+      <a href="{{ routes.cart_url }}" class="cart-notif__btn cart-notif__btn--cart">
+        View Cart
+      </a>
+    </div>
+
+  </div>
+</div>
+
+{%- comment -%} Backdrop {%- endcomment -%}
+<div class="cart-notif__backdrop" id="cart-notif-backdrop" hidden></div>
+
+{{ 'cart-notification.js' | asset_url | script_tag }}
