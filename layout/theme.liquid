@@ -1,36 +1,179 @@
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
-  <head>
-    {% # Inlined CSS Variables %}
-    {% render 'css-variables' %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="{{ settings.color_primary }}">
+  <link rel="canonical" href="{{ canonical_url }}">
 
-    {% comment %}
-      Font preloading:
-      1. Preconnect to font CDN for faster connection
-      2. Preload only the critical font variant (base weight)
-      3. Additional variants load on-demand via @font-face
-    {% endcomment %}
-    {% unless settings.type_primary_font.system? %}
-      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
 
-      {% comment %} Preload the base font variant for initial page render {% endcomment %}
-      {{ settings.type_primary_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
-    {% endunless %}
+  <title>
+    {{ page_title -}}
+    {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+    {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+    {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+  </title>
 
-    {% # Load and preload the critical CSS %}
-    {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
 
-    {% # Social, title, etc. %}
-    {% render 'meta-tags' %}
+  {%- comment -%}
+    Font preloading: preconnect to Shopify's font CDN, then preload only the
+    base heading + body variants used for initial render. Other weights load
+    on demand via the @font-face rules below.
+  {%- endcomment -%}
+  {%- unless settings.font_heading.system? and settings.font_body.system? -%}
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+  {%- endunless -%}
+  {%- unless settings.font_heading.system? -%}
+    {{ settings.font_heading | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+  {%- endunless -%}
+  {%- unless settings.font_body.system? -%}
+    {{ settings.font_body | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+  {%- endunless -%}
 
-    {{ content_for_header }}
-  </head>
+  {{ content_for_header }}
 
-  <body>
-    {% sections 'header-group' %}
+  {%- assign btn_radius = '0px' -%}
+  {%- if settings.button_style == 'soft' -%}{%- assign btn_radius = '4px' -%}{%- endif -%}
+  {%- if settings.button_style == 'rounded' -%}{%- assign btn_radius = '24px' -%}{%- endif -%}
 
+  {%- assign font_heading_family   = settings.font_heading.family   | default: 'Playfair Display' -%}
+  {%- assign font_heading_fallback = settings.font_heading.fallback_families | default: 'serif' -%}
+  {%- assign font_body_family      = settings.font_body.family      | default: 'Josefin Sans' -%}
+  {%- assign font_body_fallback    = settings.font_body.fallback_families | default: 'sans-serif' -%}
+
+  <style>
+    {{ settings.font_heading | font_face: font_display: 'swap' }}
+    {{ settings.font_body    | font_face: font_display: 'swap' }}
+
+    :root {
+      --lv-color-primary:  {{ settings.color_primary  | default: '#2a1f16' }};
+      --lv-color-accent:   {{ settings.color_accent   | default: '#c9a96e' }};
+      --lv-color-text:     {{ settings.color_text     | default: '#1a1a1a' }};
+      --lv-color-bg:       {{ settings.color_bg       | default: '#ffffff' }};
+      --lv-color-bg-alt:   {{ settings.color_bg_alt   | default: '#f7f4f0' }};
+      --lv-color-border:   {{ settings.color_border   | default: '#e5e0d8' }};
+      --lv-font-heading:   '{{ font_heading_family }}', {{ font_heading_fallback }};
+      --lv-font-body:      '{{ font_body_family }}',    {{ font_body_fallback }};
+      --lv-font-body-size: {{ settings.font_body_size  | default: 15 }}px;
+      --lv-container-max:  {{ settings.container_max  | default: 1280 }}px;
+      --lv-grid-gutter:    {{ settings.grid_gutter    | default: 24 }}px;
+      --lv-logo-width:     {{ settings.logo_width     | default: 140 }}px;
+      --lv-btn-radius:     {{ btn_radius }};
+    }
+    body {
+      font-family: var(--lv-font-body);
+      font-size:   var(--lv-font-body-size);
+      color:       var(--lv-color-text);
+      background:  var(--lv-color-bg);
+    }
+    h1,h2,h3,h4,h5,h6 { font-family: var(--lv-font-heading); }
+    a { color: inherit; }
+    .btn,.button,[class*="lv-btn"],[class*="hero-btn"] { border-radius: var(--lv-btn-radius); }
+    {%- if settings.enable_animations -%}
+    .lv-reveal { opacity:0; transform:translateY(20px); transition:opacity .55s ease,transform .55s ease; }
+    .lv-reveal.lv-revealed { opacity:1; transform:translateY(0); }
+    {%- endif -%}
+
+
+    {% for scheme in settings.color_schemes -%}
+        {% assign scheme_classes = scheme_classes | append: ', .color-' | append: scheme.id %}
+        {% if forloop.index == 1 -%}
+          :root,
+        {%- endif %}
+        .color-{{ scheme.id }} {
+          --color-background: {{ scheme.settings.background.red }},{{ scheme.settings.background.green }},{{ scheme.settings.background.blue }};
+        {% if scheme.settings.background_gradient != empty %}
+          --gradient-background: {{ scheme.settings.background_gradient }};
+        {% else %}
+          --gradient-background: {{ scheme.settings.background }};
+        {% endif %}
+
+        {% liquid
+          assign background_color = scheme.settings.background
+          assign background_color_brightness = background_color | color_brightness
+          if background_color_brightness <= 26
+            assign background_color_contrast = background_color | color_lighten: 50
+          elsif background_color_brightness <= 65
+            assign background_color_contrast = background_color | color_lighten: 5
+          else
+            assign background_color_contrast = background_color | color_darken: 25
+          endif
+        %}
+
+        --color-foreground: {{ scheme.settings.text.red }},{{ scheme.settings.text.green }},{{ scheme.settings.text.blue }};
+        --color-background-contrast: {{ background_color_contrast.red }},{{ background_color_contrast.green }},{{ background_color_contrast.blue }};
+        --color-shadow: {{ scheme.settings.shadow.red }},{{ scheme.settings.shadow.green }},{{ scheme.settings.shadow.blue }};
+        --color-button: {{ scheme.settings.button.red }},{{ scheme.settings.button.green }},{{ scheme.settings.button.blue }};
+        --color-button-text: {{ scheme.settings.button_label.red }},{{ scheme.settings.button_label.green }},{{ scheme.settings.button_label.blue }};
+        --color-secondary-button: {{ scheme.settings.background.red }},{{ scheme.settings.background.green }},{{ scheme.settings.background.blue }};
+        --color-secondary-button-text: {{ scheme.settings.secondary_button_label.red }},{{ scheme.settings.secondary_button_label.green }},{{ scheme.settings.secondary_button_label.blue }};
+        --color-link: {{ scheme.settings.secondary_button_label.red }},{{ scheme.settings.secondary_button_label.green }},{{ scheme.settings.secondary_button_label.blue }};
+        --color-badge-foreground: {{ scheme.settings.text.red }},{{ scheme.settings.text.green }},{{ scheme.settings.text.blue }};
+        --color-badge-background: {{ scheme.settings.background.red }},{{ scheme.settings.background.green }},{{ scheme.settings.background.blue }};
+        --color-badge-border: {{ scheme.settings.text.red }},{{ scheme.settings.text.green }},{{ scheme.settings.text.blue }};
+        --payment-terms-background-color: rgb({{ scheme.settings.background.rgb }});
+      }
+      {% endfor %}
+
+      {{ scheme_classes | prepend: 'body' }} {
+        color: rgba(var(--color-foreground), 1);
+        background-color: rgb(var(--color-background));
+      }
+
+  </style>
+
+  {{ 'luxvera.css' | asset_url | stylesheet_tag }}
+
+  {%- comment -%} Swiper stylesheet (self-hosted), loaded non-render-blocking. {%- endcomment -%}
+  <link
+    rel="stylesheet"
+    href="{{ 'swiper-bundle.min.css' | asset_url }}"
+    media="print"
+    onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="{{ 'swiper-bundle.min.css' | asset_url }}">
+  </noscript>
+</head>
+
+<body class="template-{{ template.name }}">
+
+  {%- sections 'header-group' -%}
+
+  {%- comment -%} Global cart mini-drawer {%- endcomment -%}
+  {%- render 'cart-notification' -%}
+
+  <main id="main-content" role="main" tabindex="-1">
     {{ content_for_layout }}
+  </main>
 
-    {% sections 'footer-group' %}
-  </body>
+  {%- sections 'footer-group' -%}
+
+  {%- comment -%} Swiper library (self-hosted) {%- endcomment -%}
+  <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
+  {{ 'luxvera-global.js' | asset_url | script_tag }}
+  {{ 'luxvera.js'        | asset_url | script_tag }}
+
+  {%- if settings.enable_animations -%}
+  <script>
+  (function(){
+    var els=document.querySelectorAll('.lv-reveal');
+    if(!els.length)return;
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){e.target.classList.add('lv-revealed');obs.unobserve(e.target);}
+      });
+    },{threshold:0.12});
+    els.forEach(function(el){obs.observe(el);});
+  })();
+  </script>
+  {%- endif -%}
+
+
+</body>
 </html>
