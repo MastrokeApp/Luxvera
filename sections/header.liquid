@@ -1,77 +1,204 @@
-<header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
+{{ 'lv-currency.css' | asset_url | stylesheet_tag }}
+{{ 'lv-header.css' | asset_url | stylesheet_tag }}
 
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
+<script src="{{ 'lv-currency.js' | asset_url }}" defer></script>
+<script src="{{ 'lv-header.js' | asset_url }}" defer></script>
+
+<div class="lv-header-wrap{% if section.settings.sticky %} lv-header-wrap--sticky{% endif %}">
+
+  {%- if section.settings.show_top_bar -%}
+  <div class="lv-top-bar color-{{ section.settings.top_bar_color_scheme }}">
+    <div class="lv-top-bar__inner">
+   
+      {% render 'currency-switcher', position: 'topbar' %}
+      <!-- Centre -->
+      <span>{{ section.settings.top_bar_center | default: 'Welcome to our Store' }}</span>
+      <!-- Right -->
+      {% if section.settings.top_bar_link_url != blank %}
+  <a href="{{ section.settings.top_bar_link_url }}">
+    {{ section.settings.top_bar_right | default: 'Sign In / Register' }}
+  </a>
+{% endif %}
+    </div>
   </div>
+  {%- endif -%}
 
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      <shopify-account menu="{{ section.settings.customer_account_menu }}">
-        {{ 'icon-account.svg' | inline_asset_content }}
-      </shopify-account>
+  <!-- HEADER -->
+  <header
+    class="lv-header color-{{ section.settings.header_color_scheme }}"
+    id="lv-header-{{ section.id }}"
+    style="--lv-hdr-height:{{ section.settings.header_height }}px;"
+  >
+    <nav class="lv-nav" aria-label="Main navigation">
+      <div class="lv-nav__left">
+        <button class="lv-hamburger" id="lvHamburger" aria-label="Open menu" aria-expanded="false" aria-controls="lvMobileMenu"><span></span><span></span><span></span></button>
+        <div class="lv-nav__links">
+         {%- for link in linklists[section.settings.menu].links -%}
+  {%- if link.links.size > 0 -%}
+
+    {%- assign is_mega = false -%}
+
+    {%- if section.settings.enable_mega_menu -%}
+      {%- assign is_mega = true -%}
+    {%- endif -%}
+
+    <div class="lv-nav__item" data-lv-dropdown>
+      <button
+        class="lv-nav__link"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        {{ link.title }}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+
+      {%- if is_mega -%}
+        {% render 'lv-menu-mega', link: link %}
+      {%- else -%}
+        {% render 'lv-menu-dropdown', link: link %}
+      {%- endif -%}
+    </div>
+
+  {%- else -%}
+
+    <div class="lv-nav__item">
+      <a class="lv-nav__link" href="{{ link.url }}">{{ link.title }}</a>
+    </div>
+
+  {%- endif -%}
+{%- endfor -%}
+        </div>
+      </div>
+
+      <a href="{{ routes.root_url }}" class="lv-logo" aria-label="{{ shop.name }} home">
+        {%- if settings.logo != blank -%}
+          <img src="{{ settings.logo | image_url: width: 160 }}" alt="{{ shop.name }}" width="160" loading="eager">
+        {%- else -%}
+          <span class="lv-logo__name">{{ section.settings.brand_name | default: shop.name | upcase }}</span>
+          <div class="lv-logo__sub-row"><span class="lv-logo__line"></span><span class="lv-logo__sub">{{ section.settings.brand_tagline | default: 'Fashion' }}</span><span class="lv-logo__line"></span></div>
+        {%- endif -%}
+      </a>
+
+      <div class="lv-nav__right">
+        <button class="lv-icon-btn" id="lvSearchBtn" aria-label="Search">
+           {{ 'icon-search.svg' | inline_asset_content }} </button>
+        <a href="{{ routes.account_url }}" class="lv-icon-btn" aria-label="Account">
+          {{ 'icon-account.svg' | inline_asset_content }}</a>
+
+{% if settings.cart_type == 'page' %}
+
+  <a href="{{ routes.cart_url }}"
+     class="lv-icon-btn lv-icon-btn--cart"
+     aria-label="Cart">
+
+      {% if cart == empty %}
+          <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
+        {% else %}
+          <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
+        {% endif %}
+
+    {% if cart.item_count > 0 %}
+      <span class="lv-cart-badge">{{ cart.item_count }}</span>
     {% endif %}
 
-    <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
-      {% endif %}
+  </a>
 
-      {{ 'icon-cart.svg' | inline_asset_content }}
-    </a>
+{% else %}
+
+  <button
+    type="button"
+    class="lv-icon-btn lv-icon-btn--cart js-cart-drawer-open"
+    aria-label="Cart">
+
+      {% if cart == empty %}
+           <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
+        {% else %}
+          <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
+        {% endif %}
+
+    {% if cart.item_count > 0 %}
+      <span class="lv-cart-badge">{{ cart.item_count }}</span>
+    {% endif %}
+
+  </button>
+
+{% endif %}
+      </div>
+    </nav>
+  </header>
+</div>
+
+<!-- MOBILE DRAWER -->
+<div class="lv-mobile-menu" id="lvMobileMenu" aria-hidden="true">
+  <div class="lv-mobile-drawer color-{{ section.settings.header_color_scheme }}">
+    <div class="lv-drawer-head">
+      <span class="lv-drawer-logo">{{ section.settings.brand_name | default: shop.name | upcase }}</span>
+      <button class="lv-drawer-close" id="lvDrawerClose" aria-label="Close menu">✕</button>
+    </div>
+    <nav class="lv-drawer-nav">
+      {%- for link in linklists[section.settings.menu].links -%}
+        <div class="lv-drawer-item">
+          {%- if link.links.size > 0 -%}
+            <button class="lv-drawer-link" data-lv-drawer-toggle aria-expanded="false">{{ link.title }}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <div class="lv-drawer-sub">{%- for child in link.links -%}<a href="{{ child.url }}">{{ child.title }}</a>{%- endfor -%}</div>
+          {%- else -%}
+            <a class="lv-drawer-link" href="{{ link.url }}">{{ link.title }}</a>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </nav>
+    <div class="lv-drawer-footer">
+      {% render 'currency-switcher', position: 'mobile' %}
+      <a href="{{ routes.account_url }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Account</a>
+    </div>
   </div>
-</header>
+</div>
 
-{% stylesheet %}
-  header {
-    height: 5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  header a {
-    position: relative;
-    text-decoration: none;
-    color: var(--color-foreground);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  header a sup {
-    position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--page-margin);
-  }
-  header svg {
-    width: 2rem;
-  }
-  header .header__menu,
-  header .header__icons {
-    display: flex;
-    gap: 1rem;
-  }
-{% endstylesheet %}
+<!-- SEARCH OVERLAY -->
+<div class="lv-search-overlay" id="lvSearchOverlay" role="dialog" aria-modal="true" aria-label="Search">
+  <div class="lv-search-box color-{{ section.settings.header_color_scheme }}">
+    <form action="{{ routes.search_url }}" method="get" role="search">
+      <input type="search" name="q" placeholder="{{ section.settings.search_placeholder | default: 'Search products, styles, collections…' }}" id="lvSearchInput" autocomplete="off" aria-label="Search">
+    </form>
+    <button class="lv-search-close" id="lvSearchClose" aria-label="Close search">✕</button>
+  </div>
+</div>
+
+
 
 {% schema %}
 {
-  "name": "t:general.header",
+  "name": "Header",
   "settings": [
-    {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
-    },
-    {
-      "type": "link_list",
-      "id": "customer_account_menu",
-      "label": "t:labels.customer_account_menu",
-      "default": "customer-account-main-menu"
-    }
-  ]
+    { "type": "header", "content": "Top Bar" },
+    { "type": "checkbox", "id": "show_top_bar", "label": "Show Top Bar", "default": true },
+    { "type": "color_scheme", "id": "top_bar_color_scheme", "label": "Top bar color scheme", "default": "scheme-1" },
+    { "type": "text", "id": "top_bar_center", "label": "Centre Text", "default": "Welcome to Our Store" },
+    { "type": "text", "id": "top_bar_right", "label": "Right Link Text", "default": "Sign In / Register" },
+    { "type": "url", "id": "top_bar_link_url", "label": "Right Link URL" },
+
+    { "type": "header", "content": "Header" },
+    { "type": "text", "id": "brand_name", "label": "Brand Name", "default": "LUXVERA" },
+    { "type": "text", "id": "brand_tagline", "label": "Brand Tagline", "default": "Fashion" },
+    { "type": "color_scheme", "id": "header_color_scheme", "label": "Header color scheme", "default": "scheme-1" },
+    { "type": "range", "id": "header_height", "label": "Header Height", "min": 56, "max": 120, "step": 4, "unit": "px", "default": 64 },
+    { "type": "checkbox", "id": "sticky", "label": "Sticky Header", "default": true },
+{
+  "type": "checkbox",
+  "id": "enable_mega_menu",
+  "label": "Enable Mega Menu",
+  "default": false
+},
+    { "type": "header", "content": "Navigation" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "text", "id": "mega_col1_label", "label": "Mega Menu Col 1 Heading", "default": "By Style" },
+    { "type": "text", "id": "mega_col2_label", "label": "Mega Menu Col 2 Heading", "default": "By Category" },
+
+    { "type": "header", "content": "Search" },
+    { "type": "text", "id": "search_placeholder", "label": "Search Placeholder", "default": "Search products, styles, collections…" }
+  ],
+  "presets": [{ "name": "Header" }]
 }
 {% endschema %}

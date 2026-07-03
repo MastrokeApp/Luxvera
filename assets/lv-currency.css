@@ -1,0 +1,87 @@
+/* ============================================================
+   Luxvera — Currency Switcher Styles
+   Covers all three positions: footer, topbar, mobile
+   ============================================================ */
+
+/* ── Shared base ── */
+.lv-currency__form { margin: 0; }
+.lv-currency__inner { position: relative; display: inline-flex; align-items: center; }
+.lv-currency__globe { flex-shrink: 0; pointer-events: none; }
+.lv-currency__chevron { position: absolute; right: 10px; pointer-events: none; }
+.lv-currency__select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  font-weight: 400;
+}
+
+/* ── Footer variant ── */
+.lv-currency--footer .lv-currency__inner {
+  gap: 0;
+}
+.lv-currency--footer .lv-currency__globe {
+  width: 14px; height: 14px;
+  color: #888;
+  margin-right: -22px; /* sits inside the left padding of select */
+  position: relative; z-index: 1;
+}
+.lv-currency--footer .lv-currency__select {
+  border: 1.5px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 30px 6px 26px;
+  font-size: 12px;
+  color: #555;
+  min-width: 200px;
+  transition: border-color .2s, color .2s;
+}
+.lv-currency--footer .lv-currency__select:hover,
+.lv-currency--footer .lv-currency__select:focus {
+  border-color: #999;
+  color: #111;
+}
+.lv-currency--footer .lv-currency__chevron {
+  width: 10px; height: 6px;
+  color: #888;
+}
+
+/* ── Top bar variant ── */
+.lv-currency--topbar .lv-currency__select {
+  border: none;
+  padding: 0 16px 0 0;
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: inherit;
+  opacity: .85;
+  transition: opacity .2s;
+}
+.lv-currency--topbar .lv-currency__select:hover,
+.lv-currency--topbar .lv-currency__select:focus { opacity: 1; }
+.lv-currency--topbar .lv-currency__chevron {
+  width: 8px; height: 5px;
+  color: currentColor;
+  opacity: .7;
+  right: 2px;
+}
+
+/* ── Mobile drawer variant ── */
+.lv-currency--mobile {
+  padding: 12px 20px;
+  border-bottom: 1px solid #f0ede8;
+}
+.lv-currency--mobile .lv-currency__inner { width: 100%; }
+.lv-currency--mobile .lv-currency__select {
+  width: 100%;
+  border: 1px solid #e8e4df;
+  border-radius: 4px;
+  padding: 10px 30px 10px 12px;
+  font-size: 13px;
+  color: #555;
+  background: #fafafa;
+}
+.lv-currency--mobile .lv-currency__chevron {
+  width: 10px; height: 6px;
+  color: #888;
+}

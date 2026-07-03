@@ -1,0 +1,681 @@
+.lv-header-wrap {
+  width: 100%;
+  z-index: 200;
+}
+
+.lv-header-wrap--sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 999;
+  background: rgb(var(--color-background));
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.lv-top-bar {
+  font-size: 11px;
+  letter-spacing: .05em;
+  padding: 7px 0;
+}
+
+.lv-top-bar__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.lv-top-bar a {
+  opacity: .8;
+  transition: opacity .2s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.lv-top-bar a:hover {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .lv-top-bar {
+    display: none;
+  }
+}
+
+.lv-header {
+  border-bottom: 1px solid rgba(0, 0, 0, .08);
+}
+
+.lv-nav {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 56px;
+  height: var(--lv-hdr-height, 64px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.lv-nav__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.lv-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lv-nav__item {
+  position: relative;
+}
+
+.lv-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: rgb(var(--color-foreground));
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  background: none;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.lv-nav__link svg {
+  width: 12px;
+  height: 12px;
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+
+.lv-nav__link:hover,
+.lv-nav__item.open > .lv-nav__link {
+  color: rgba(var(--color-foreground), .75);
+}
+
+.lv-nav__item.open > .lv-nav__link svg {
+  transform: rotate(180deg);
+}
+
+.lv-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 300;
+  background: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), .12);
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .12);
+  min-width: 200px;
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+
+.lv-nav__item.open .lv-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.lv-dropdown a {
+  display: block;
+  padding: 10px 18px;
+  font-size: 13px;
+  color: rgba(var(--color-foreground), .8);
+  transition: background .2s, color .2s;
+  text-decoration: none;
+}
+
+.lv-dropdown a:hover {
+  background: rgba(var(--color-foreground), .05);
+  color: rgb(var(--color-foreground));
+}
+
+.lv-dropdown-divider {
+  height: 1px;
+  background: rgba(var(--color-foreground), .12);
+  margin: 6px 0;
+}
+
+.lv-dropdown--mega {
+  min-width: 480px;
+  display: grid;
+  grid-template-columns: repeat(var(--lv-mega-cols, 2), minmax(160px, 1fr));
+  padding: 0;
+}
+
+.lv-mega-col {
+  padding: 16px 0;
+}
+
+.lv-mega-col + .lv-mega-col {
+  border-left: 1px solid rgba(var(--color-foreground), .12);
+}
+
+.lv-mega-heading {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), .55);
+  padding: 6px 18px 10px;
+}
+
+.lv-mega-heading a {
+  color: inherit;
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.lv-mega-heading a:hover {
+  color: rgb(var(--color-foreground));
+}
+
+/* Level-2 items with no children of their own — heading doubles as
+   the only link in that column, so give it normal link weight. */
+.lv-mega-heading--link {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+  color: rgba(var(--color-foreground), .8);
+  padding: 10px 18px;
+}
+
+/* Level 3 — items listed under each mega column heading */
+.lv-mega-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lv-mega-list a {
+  display: block;
+  padding: 10px 18px;
+  font-size: 13px;
+  color: rgba(var(--color-foreground), .8);
+  transition: background .2s, color .2s;
+  text-decoration: none;
+}
+
+.lv-mega-list a:hover {
+  background: rgba(var(--color-foreground), .05);
+  color: rgb(var(--color-foreground));
+}
+
+/* Standard dropdown — level 2 items ------------------------------------- */
+
+.lv-dropdown__item {
+  position: relative;
+}
+
+.lv-dropdown__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 18px;
+  font-size: 13px;
+  color: rgba(var(--color-foreground), .8);
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+  text-decoration: none;
+}
+
+.lv-dropdown__link:hover,
+.lv-dropdown__item.open > .lv-dropdown__link {
+  background: rgba(var(--color-foreground), .05);
+  color: rgb(var(--color-foreground));
+}
+
+.lv-dropdown__link--has-sub svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  transition: transform .2s;
+}
+
+.lv-dropdown__item.open > .lv-dropdown__link--has-sub svg {
+  transform: rotate(90deg);
+}
+
+/* Level 3 — flyout submenu, opens to the right of its parent item */
+.lv-dropdown__flyout {
+  position: absolute;
+  top: -8px;
+  left: calc(100% + 6px);
+  z-index: 310;
+  background: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), .12);
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .12);
+  min-width: 180px;
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(6px);
+  transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+
+.lv-dropdown__item.open .lv-dropdown__flyout {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.lv-dropdown__flyout a {
+  display: block;
+  padding: 10px 18px;
+  font-size: 13px;
+  color: rgba(var(--color-foreground), .8);
+  transition: background .2s, color .2s;
+  text-decoration: none;
+}
+
+.lv-dropdown__flyout a:hover {
+  background: rgba(var(--color-foreground), .05);
+  color: rgb(var(--color-foreground));
+}
+
+/* Flyouts that would overflow the viewport on the right open to the
+   left instead — toggled by JS adding this class when it detects
+   an overflow. */
+.lv-dropdown__item.lv-dropdown__item--flip .lv-dropdown__flyout {
+  left: auto;
+  right: calc(100% + 6px);
+  transform: translateX(-6px);
+}
+
+.lv-dropdown__item.lv-dropdown__item--flip.open .lv-dropdown__flyout {
+  transform: translateX(0);
+}
+
+.lv-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.lv-logo img {
+  max-height: 48px;
+  width: auto;
+  display: block;
+}
+
+.lv-logo__name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgb(var(--color-foreground));
+  line-height: 1;
+}
+
+.lv-logo__sub-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.lv-logo__line {
+  height: 1px;
+  background: rgb(var(--color-foreground));
+  width: 26px;
+}
+
+.lv-logo__sub {
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: rgb(var(--color-foreground));
+  white-space: nowrap;
+}
+
+.lv-nav__right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.lv-icon-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(var(--color-foreground));
+  position: relative;
+  transition: color .2s;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.lv-icon-btn:hover {
+  color: rgba(var(--color-foreground), .75);
+}
+
+.lv-icon-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.lv-cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+  font-size: 9px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lv-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  padding: 4px;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.lv-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: rgb(var(--color-foreground));
+  border-radius: 2px;
+  transition: transform .3s, opacity .3s;
+}
+
+.lv-hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.lv-hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.lv-hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.lv-mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, .45);
+}
+
+.lv-mobile-menu.open {
+  display: block;
+}
+
+.lv-mobile-drawer {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: min(320px, 88vw);
+  height: 100%;
+  background: rgb(var(--color-background));
+  overflow-y: auto;
+  padding-bottom: 32px;
+  transform: translateX(-100%);
+  transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+  z-index: 2001;
+}
+
+.lv-mobile-menu.open .lv-mobile-drawer {
+  transform: translateX(0);
+}
+
+.lv-drawer-head {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(var(--color-foreground), .12);
+}
+
+.lv-drawer-logo {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgb(var(--color-foreground));
+}
+
+.lv-drawer-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: rgb(var(--color-foreground));
+  padding: 4px;
+  cursor: pointer;
+}
+
+.lv-drawer-close:hover {
+  color: rgba(var(--color-foreground), .75);
+}
+
+.lv-drawer-nav {
+  padding: 12px 0;
+}
+
+.lv-drawer-item {
+  border-bottom: 1px solid rgba(var(--color-foreground), .08);
+}
+
+.lv-drawer-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(var(--color-foreground));
+  background: none;
+  border: none;
+  text-align: left;
+  text-decoration: none;
+  transition: color .2s;
+  cursor: pointer;
+}
+
+.lv-drawer-link:hover {
+  color: rgba(var(--color-foreground), .75);
+}
+
+.lv-drawer-link svg {
+  width: 14px;
+  height: 14px;
+  transition: transform .25s;
+  flex-shrink: 0;
+}
+
+.lv-drawer-item.open .lv-drawer-link svg {
+  transform: rotate(180deg);
+}
+
+.lv-drawer-sub {
+  display: none;
+  background: rgba(var(--color-foreground), .04);
+  padding: 6px 0 10px;
+}
+
+.lv-drawer-item.open .lv-drawer-sub {
+  display: block;
+}
+
+.lv-drawer-sub a {
+  display: block;
+  padding: 9px 32px;
+  font-size: 13px;
+  color: rgba(var(--color-foreground), .75);
+  transition: color .2s;
+  text-decoration: none;
+}
+
+.lv-drawer-sub a:hover {
+  color: rgb(var(--color-foreground));
+}
+
+.lv-drawer-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(var(--color-foreground), .12);
+  margin-top: 8px;
+}
+
+.lv-drawer-footer a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  font-size: 13px;
+  color: rgba(var(--color-foreground), .75);
+  transition: color .2s;
+  text-decoration: none;
+}
+
+.lv-drawer-footer a:hover {
+  color: rgb(var(--color-foreground));
+}
+
+.lv-drawer-footer a svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.lv-search-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0, 0, 0, .55);
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 90px;
+}
+
+.lv-search-overlay.open {
+  display: flex;
+}
+
+.lv-search-box {
+  background: rgb(var(--color-background));
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+}
+
+.lv-search-box form {
+  flex: 1;
+  display: flex;
+}
+
+.lv-search-box input {
+  flex: 1;
+  padding: 16px 20px;
+  font-size: 15px;
+  border: none;
+  outline: none;
+  background: none;
+  color: rgb(var(--color-foreground));
+}
+
+.lv-search-box input::placeholder {
+  color: rgba(var(--color-foreground), .6);
+}
+
+.lv-search-close {
+  padding: 16px 18px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: rgba(var(--color-foreground), .6);
+  cursor: pointer;
+}
+
+.lv-search-close:hover {
+  color: rgb(var(--color-foreground));
+}
+
+@media (max-width: 1024px) {
+  .lv-nav {
+    padding: 0 32px;
+  }
+
+  .lv-top-bar__inner {
+    padding: 0 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .lv-nav {
+    padding: 0 20px;
+  }
+
+  .lv-nav__links {
+    display: none;
+  }
+
+  .lv-hamburger {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .lv-nav {
+    padding: 0 16px;
+  }
+
+  .lv-search-overlay {
+    padding-top: 70px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

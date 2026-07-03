@@ -1,0 +1,49 @@
+{% comment %}
+  Reusable Currency Switcher — Luxvera Theme
+  Uses Shopify native localization form (type: localization).
+  Only renders if store has more than 1 enabled currency/country.
+  Usage: {% render 'currency-switcher', position: 'footer' %}
+  position: 'footer' | 'topbar' | 'mobile'
+{% endcomment %}
+
+{%- if localization.available_countries.size > 1 -%}
+
+  {%- assign form_id = 'lv-currency-' | append: position -%}
+
+  <div class="lv-currency lv-currency--{{ position | default: 'footer' }}">
+    {%- form 'localization', id: form_id -%}
+      <div class="lv-currency__inner">
+
+        {%- if position == 'footer' -%}
+          <svg class="lv-currency__globe" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <circle cx="10" cy="10" r="8"/>
+            <path d="M10 2c0 0-3.5 3.5-3.5 8S10 18 10 18m0-16c0 0 3.5 3.5 3.5 8S10 18 10 18M2 10h16"/>
+          </svg>
+        {%- endif -%}
+
+        <select
+          name="country_code"
+          class="lv-currency__select"
+          aria-label="Select currency"
+          data-lv-currency-select
+          onchange="this.form.submit()"
+        >
+          {%- for country in localization.available_countries -%}
+            <option
+              value="{{ country.iso_code }}"
+              {%- if country.iso_code == localization.country.iso_code %} selected{%- endif -%}
+            >
+              {{- country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol -}})
+            </option>
+          {%- endfor -%}
+        </select>
+
+        <svg class="lv-currency__chevron" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <polyline points="1 1 5 5 9 1"/>
+        </svg>
+
+      </div>
+    {%- endform -%}
+  </div>
+
+{%- endif -%}
