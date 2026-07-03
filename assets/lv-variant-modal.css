@@ -1,0 +1,142 @@
+/*
+ * Variant (size) picker modal
+ * Shared by the Product Tabs and Dress Looks sections. Opened from a product
+ * card's "Select Size" button; colours use the brand tokens (--lv-color-*)
+ * with hard-coded fallbacks.
+ */
+
+.lv-variant-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, .5);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.lv-variant-modal.open {
+  display: flex;
+}
+
+.lv-variant-modal__box {
+  background: var(--lv-color-bg, #ffffff);
+  width: 100%;
+  max-width: 440px;
+  border-radius: 12px;
+  padding: 28px 24px 32px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+  animation: lvFadeScale .22s ease;
+}
+
+@keyframes lvFadeScale {
+  from {
+    transform: scale(.94);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.lv-variant-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.lv-variant-modal__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lv-color-text, #111111);
+  line-height: 1.4;
+  padding-right: 12px;
+}
+
+.lv-variant-modal__close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #888888;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.lv-variant-modal__close:hover {
+  color: var(--lv-color-text, #111111);
+}
+
+.lv-variant-modal__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #888888;
+  margin-bottom: 10px;
+}
+
+.lv-variant-modal__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.lv-variant-modal__opt {
+  padding: 8px 18px;
+  border: 1.5px solid var(--lv-color-border, #e5e0d8);
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  background: var(--lv-color-bg, #ffffff);
+}
+
+.lv-variant-modal__opt:hover {
+  border-color: var(--lv-color-primary, #2a1f16);
+}
+
+.lv-variant-modal__opt.selected {
+  border-color: var(--lv-color-primary, #2a1f16);
+  background: var(--lv-color-primary, #2a1f16);
+  color: #ffffff;
+}
+
+.lv-variant-modal__opt[disabled] {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.lv-variant-modal__atc {
+  width: 100%;
+  padding: 14px;
+  background: var(--lv-color-primary, #2a1f16);
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.lv-variant-modal__atc:hover {
+  opacity: .82;
+}
+
+.lv-variant-modal__atc[disabled] {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .lv-variant-modal {
+    padding: 16px;
+  }
+}
