@@ -1,56 +1,314 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+{{ 'lv-footer.css' | asset_url | stylesheet_tag }}
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
+{%- assign nl_form_id = 'FooterNewsletterForm-' | append: section.id -%}
+
+<div
+  id="lv-footer-{{ section.id }}"
+  class="lv-footer color-{{ section.settings.color_scheme }}{% if section.settings.enable_accordion %} lv-footer--accordion{% endif %}"
+  style="
+    --footer-body-size: {{ section.settings.body_font_size | default: 13 }}px;
+    --footer-heading-size: {{ section.settings.col_heading_size | default: 12 }}px;
+  "
+  data-accordion-enabled="{{ section.settings.enable_accordion }}"
+>
+  <div class="lv-footer-grid">
+
+    {% for block in section.blocks %}
+      {% if block.settings.enable_block %}
+        {% case block.type %}
+
+          {% when 'brand' %}
+            <div class="lv-footer-brand" {{ block.shopify_attributes }}>
+              <div>
+                {% if block.settings.logo != blank %}
+                   <a href="{{ root.url }}" class="lv-footer-brand-link">
+                  <img
+                    src="{{ block.settings.logo | image_url: width: 160 }}"
+                    alt="{{ shop.name }}"
+                    class="lv-footer-logo"
+                    width="160"
+                    loading="lazy"
+                  >
+                  </a>
+                 
+                {% else %}
+                  <div class="lv-footer-brand-name">
+                     <a href="{{ root.url }}" class="lv-footer-brand-link">
+                    {{ block.settings.brand_name | default: shop.name | upcase }}
+                    <div class="lv-logo__sub-row"><span class="lv-logo__line"></span><span class="lv-logo__sub">{{ section.settings.brand_sub | default: 'Fashion' }}</span><span class="lv-logo__line"></span></div>
+                     </a>
+                  </div>
+                {% endif %}
+              </div>
+
+              {% if block.settings.brand_description != blank %}
+                <p>{{ block.settings.brand_description }}</p>
+              {% endif %}
+
+             {% if section.settings.show_social_icons %}
+              <div class="lv-footer-social-row">
+                {% render 'social-media-link' %}
+              </div>
+            {% endif %}
+            </div>
+
+          {% when 'menu' %}
+            {%- assign lv_col_id = 'lv-footer-col-' | append: block.id -%}
+           <div class="lv-footer-col{% if block.settings.enable_accordion %} lv-accordion-item{% endif %}">
+              {% if block.settings.heading != blank %}
+                {% if block.settings.enable_accordion %}
+                  <h5>
+                   <button
+                  type="button"
+                  class="lv-accordion-trigger"
+                  aria-expanded="false"
+                  aria-controls="{{ lv_col_id }}"
+                >
+                  <span>{{ block.settings.heading }}</span>
+                  <span class="lv-accordion-icon" aria-hidden="true"></span>
+                </button>
+                  </h5>
+                {% else %}
+                  <h5>{{ block.settings.heading }}</h5>
+                {% endif %}
+              {% endif %}
+
+              {% if block.settings.menu != blank %}
+                <ul
+                  id="{{ lv_col_id }}"
+                  class="lv-accordion-panel"
+                  {% if section.settings.enable_accordion %}hidden{% endif %}
+                >
+                  {% for link in block.settings.menu.links %}
+                    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+
+          {% when 'newsletter' %}
+            {%- assign lv_nl_id = 'lv-footer-col-' | append: block.id -%}
+           <div class="lv-footer-col{% if block.settings.enable_accordion %} lv-accordion-item{% endif %}">
+              {% if block.settings.heading != blank %}
+                {% if block.settings.enable_accordion %}
+                  <h5>
+                    <button
+                      type="button"
+                      class="lv-accordion-trigger"
+                      aria-expanded="false"
+                      aria-controls="{{ lv_col_id }}"
+                    >
+                      <span>{{ block.settings.heading }}</span>
+                      <span class="lv-accordion-icon" aria-hidden="true"></span>
+                    </button>
+                   
+                  </h5>
+                {% else %}
+                  <h5>{{ block.settings.heading }}</h5>
+                {% endif %}
+              {% endif %}
+
+              <div
+                id="{{ lv_nl_id }}"
+                class="lv-accordion-panel"
+                {% if block.settings.enable_accordion %}hidden{% endif %}
+              >
+                {% form 'customer', id: nl_form_id %}
+                  {% if form.posted_successfully? %}
+                    <p class="newsletter-success">{{ block.settings.thankyou_msg }}</p>
+                  {% endif %}
+
+                  {% if form.errors %}
+                    <div class="newsletter-error">{{ form.errors | default_errors }}</div>
+                  {% endif %}
+
+                  <input type="hidden" name="contact[tags]" value="newsletter">
+
+                  <div class="lv-newsletter-form">
+                    <input
+                      type="email"
+                      name="contact[email]"
+                      placeholder="{{ section.settings.newsletter_placeholder }}"
+                      required
+                    >
+                    <button type="submit" aria-label="Subscribe">
+                      {{ 'icon-subscribe.svg' | inline_asset_content }}
+                    </button>
+                  </div>
+
+                  <label class="lv-newsletter-consent">
+                    <input type="checkbox" required>
+                    <span>{{ block.settings.newsletter_consent }}</span>
+                  </label>
+                {% endform %}
+              </div>
+            </div>
+
+        {% endcase %}
+      {% endif %}
     {% endfor %}
+
   </div>
 
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
+  <div class="lv-footer-bottom">
+    <p>
+      &copy; {{ 'now' | date: '%Y' }}
+      {% assign footer_brand_name = shop.name %}
+      {% for block in section.blocks %}
+        {% if block.type == 'brand' and block.settings.brand_name != blank %}
+          {% assign footer_brand_name = block.settings.brand_name %}
+          {% break %}
+        {% endif %}
       {% endfor %}
-    {% endif %}
-  </div>
-</footer>
+      {{ footer_brand_name }} {{ section.settings.bottom_tagline | default: 'Fashion. All rights reserved.' }}
+    </p>
 
-{% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-  }
-  footer a {
-    text-decoration: none;
-    color: var(--color-foreground);
-  }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
-  }
-{% endstylesheet %}
+    <div class="lv-footer-bottom-right">
+      {%- if section.settings.show_currency_switcher -%}
+        {% render 'currency-switcher', position: 'footer' %}
+      {%- endif -%}
+
+      {%- if section.settings.show_payment_icons -%}
+        {%- comment -%} Use the store's actually-enabled payment providers; fall back to a default set. {%- endcomment -%}
+        {%- assign pay_types = shop.enabled_payment_types -%}
+        {%- if pay_types.size == 0 -%}
+          {%- assign pay_types = 'visa,master,american_express,apple_pay,google_pay,shopify_pay' | split: ',' -%}
+        {%- endif -%}
+        <ul class="lv-pay-icons" role="list" aria-label="Accepted payment methods">
+          {%- for type in pay_types -%}
+            <li class="lv-pay-icon">{{ type | payment_type_svg_tag: class: 'lv-pay-svg' }}</li>
+          {%- endfor -%}
+
+          
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+
+
 
 {% schema %}
 {
-  "name": "t:general.footer",
+  "name": "Footer",
   "settings": [
     {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_accordion",
+      "label": "Enable accordion for footer columns",
+      "info": "Collapses menu and newsletter columns into expandable accordions (recommended for mobile).",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme"
+    },
+    {
+      "type": "text",
+      "id": "brand_sub",
+      "label": "Brand sub-label",
+      "default": "Fashion"
+    },
+    {
+      "type": "text",
+      "id": "bottom_tagline",
+      "label": "Bottom tagline",
+      "default": "Fashion. All rights reserved."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_icons",
+      "label": "Show social icons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency_switcher",
+      "label": "Show currency switcher",
+      "default": false
     },
     {
       "type": "checkbox",
       "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
+      "label": "Show payment icons",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "newsletter_placeholder",
+      "label": "Newsletter email placeholder",
+      "default": "Enter your email"
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Body font size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "col_heading_size",
+      "label": "Column heading size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "settings": [
+        { "type": "checkbox", "id": "enable_block", "label": "Enable", "default": true },
+        { "type": "image_picker", "id": "logo", "label": "Logo" },
+        { "type": "text", "id": "brand_name", "label": "Brand name" },
+        { "type": "textarea", "id": "brand_description", "label": "Description" }
+      ]
+    },
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        { "type": "checkbox", "id": "enable_block", "label": "Enable", "default": true },
+        { "type": "checkbox", "id": "enable_accordion", "label": "Enable accordion", "default": true },
+        { "type": "text", "id": "heading", "label": "Heading" },
+        { "type": "link_list", "id": "menu", "label": "Menu" }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "settings": [
+        { "type": "checkbox", "id": "enable_block", "label": "Enable", "default": true },
+        { "type": "checkbox", "id": "enable_accordion", "label": "Enable accordion", "default": true },
+        { "type": "text", "id": "heading", "label": "Heading" },
+        { "type": "text", "id": "thankyou_msg", "label": "Thank you message", "default": "Thanks for subscribing!" },
+        { "type": "text", "id": "newsletter_consent", "label": "Consent text", "default": "I agree to receive marketing emails." }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Footer",
+      "blocks": [
+        { "type": "brand" },
+        { "type": "menu" },
+        { "type": "menu" },
+        { "type": "newsletter" }
+      ]
     }
   ]
 }
