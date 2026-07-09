@@ -1,52 +1,605 @@
 {% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
+  Section: Main Product
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
+  Block-based, fully dynamic product page (PDP). Supports variants with native
+  option swatches, a multi-image media gallery, quantity selector, dynamic
+  checkout, availability, description, collapsible rows, trust badges, share
+  links, custom Liquid, and app blocks. Includes variant JSON and Product
+  JSON-LD for SEO.
+
+  Depends on:
+    - assets/main-product.css
 {% endcomment %}
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
+{{ 'main-product.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant | default: product.variants.first
+  assign product_form_id = 'product-form-' | append: section.id
+-%}
+
+<div
+  class="lv-pdp"
+  id="lv-pdp-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="product"
+  data-money-format="{{ shop.money_format | escape }}"
+  style="
+    --lv-pdp-pt: {{ section.settings.padding_top_mobile }}px;
+    --lv-pdp-pb: {{ section.settings.padding_bottom_mobile }}px;
+    --lv-pdp-pt-d: {{ section.settings.padding_top_desktop }}px;
+    --lv-pdp-pb-d: {{ section.settings.padding_bottom_desktop }}px;
+  "
+>
+
+  {%- comment -%} Breadcrumb {%- endcomment -%}
+  <nav class="lv-pdp-breadcrumb" aria-label="Breadcrumb">
+    <ol class="lv-pdp-breadcrumb__list">
+      <li><a href="{{ routes.root_url }}">Home</a></li>
+      {%- if product.collections.first -%}
+        <li><a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a></li>
+      {%- endif -%}
+      <li aria-current="page">{{ product.title }}</li>
+    </ol>
+  </nav>
+
+  <div class="lv-pdp-layout">
+    {%- comment -%} ── MEDIA GALLERY ── {%- endcomment -%}
+    <div class="lv-pdp-gallery" id="lv-pdp-gallery-{{ section.id }}">
+      <div class="lv-pdp-gallery__main">
+        {%- if product.media.size > 0 -%}
+          {%- for media in product.media -%}
+            <div
+              class="lv-pdp-gallery__media"
+              data-media-id="{{ media.id }}"
+              {% unless media == current_variant.featured_media or forloop.first and current_variant.featured_media == blank %}hidden{% endunless %}
+            >
+              <img
+                src="{{ media.preview_image | image_url: width: 1000 }}"
+                alt="{{ media.preview_image.alt | escape | default: product.title }}"
+                width="{{ media.preview_image.width }}"
+                height="{{ media.preview_image.height }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                {% if forloop.first %}fetchpriority="high"{% endif %}
+              >
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          <div class="lv-pdp-gallery__media">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+        {%- endif -%}
+
+        {%- if current_variant.compare_at_price > current_variant.price -%}
+          {%- assign pct = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round -%}
+          <span class="lv-pdp-badge" data-sale-badge>{{ pct }}% Off</span>
+        {%- endif -%}
+      </div>
+
+      {%- if product.media.size > 1 -%}
+        <div class="lv-pdp-gallery__thumbs" role="list" aria-label="Product media">
+          {%- for media in product.media -%}
+            <button
+              type="button"
+              class="lv-pdp-gallery__thumb"
+              data-thumb-for="{{ media.id }}"
+              aria-current="{% if media == current_variant.featured_media or forloop.first and current_variant.featured_media == blank %}true{% else %}false{% endif %}"
+              aria-label="View image {{ forloop.index }}"
+            >
+              <img src="{{ media.preview_image | image_url: width: 150 }}" alt="" width="75" height="75" loading="lazy">
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ── PRODUCT INFO (blocks) ── {%- endcomment -%}
+    <div class="lv-pdp-info">
+
+      {%- form 'product', product, id: product_form_id, novalidate: 'novalidate', class: 'lv-pdp-form' -%}
+        <input type="hidden" name="id" id="variant-id-{{ section.id }}" value="{{ current_variant.id }}">
+
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+
+          {%- when 'vendor' -%}
+            {%- if product.vendor != blank -%}
+              <p class="lv-pdp-block lv-pdp-vendor" {{ block.shopify_attributes }}>{{ product.vendor }}</p>
+            {%- endif -%}
+
+          {%- when 'title' -%}
+            <h1 class="lv-pdp-block lv-pdp-title" {{ block.shopify_attributes }}>{{ product.title }}</h1>
+
+          {%- when '@app' -%}
+            <div class="lv-pdp-block lv-pdp-app-block" {{ block.shopify_attributes }}>
+              {% render block %}
+            </div>
+
+          {%- when 'price' -%}
+            <div class="lv-pdp-block lv-pdp-price" id="lv-pdp-price-{{ section.id }}" {{ block.shopify_attributes }}>
+              {%- if current_variant.compare_at_price > current_variant.price -%}
+                <span class="lv-pdp-price__current is-sale">{{ current_variant.price | money }}</span>
+                <span class="lv-pdp-price__compare">{{ current_variant.compare_at_price | money }}</span>
+              {%- else -%}
+                <span class="lv-pdp-price__current">{{ current_variant.price | money }}</span>
+              {%- endif -%}
+              {%- if cart.taxes_included -%}<span class="lv-pdp-price__tax">Tax included.</span>{%- endif -%}
+            </div>
+
+          {%- when 'variant_picker' -%}
+            {%- unless product.has_only_default_variant -%}
+              <div class="lv-pdp-block lv-pdp-variant-picker" {{ block.shopify_attributes }}>
+                {%- for option in product.options_with_values -%}
+                  <fieldset class="lv-pdp-option" data-option-position="{{ option.position }}">
+                    <legend class="lv-pdp-option__label">
+                      {{ option.name }}:
+                      <span class="lv-pdp-option__selected" data-selected-for="{{ option.position }}">{{ option.selected_value }}</span>
+                    </legend>
+                    <div class="lv-pdp-option__values">
+                      {%- for value in option.values -%}
+                        {%- assign input_id = section.id | append: '-' | append: option.position | append: '-' | append: forloop.index0 -%}
+                        <input
+                          type="radio"
+                          class="lv-pdp-opt-input"
+                          id="{{ input_id }}"
+                          name="option-{{ option.position }}"
+                          value="{{ value | escape }}"
+                          data-option-position="{{ option.position }}"
+                          {% if value.selected %}checked{% endif %}
+                        >
+                        {%- if value.swatch.image -%}
+                          <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
+                            <span class="lv-pdp-swatch__img" style="background-image:url({{ value.swatch.image | image_url: width: 100 }})"></span>
+                            <span class="visually-hidden">{{ value }}</span>
+                          </label>
+                        {%- elsif value.swatch.color -%}
+                          <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
+                            <span class="lv-pdp-swatch__color" style="background:{{ value.swatch.color }}"></span>
+                            <span class="visually-hidden">{{ value }}</span>
+                          </label>
+                        {%- else -%}
+                          <label class="lv-pdp-opt-label lv-pdp-pill" for="{{ input_id }}">{{ value }}</label>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </div>
+                  </fieldset>
+                {%- endfor -%}
+              </div>
+            {%- endunless -%}
+
+          {%- when 'availability' -%}
+            <p class="lv-pdp-block lv-pdp-availability{% unless current_variant.available %} is-out{% endunless %}" id="lv-pdp-availability-{{ section.id }}" {{ block.shopify_attributes }}>
+              <span class="lv-pdp-availability__dot"></span>
+              <span class="lv-pdp-availability__text">{% if current_variant.available %}In stock{% else %}Sold out{% endif %}</span>
+            </p>
+
+          {%- when 'quantity' -%}
+            <div class="lv-pdp-block lv-pdp-qty" {{ block.shopify_attributes }}>
+              <label class="lv-pdp-qty__label" for="qty-{{ section.id }}">Quantity</label>
+              <div class="lv-pdp-qty__controls">
+                <button type="button" class="lv-pdp-qty__btn" data-qty-minus aria-label="Decrease quantity">&minus;</button>
+                <input type="number" id="qty-{{ section.id }}" name="quantity" value="1" min="1" class="lv-pdp-qty__input" aria-label="Quantity">
+                <button type="button" class="lv-pdp-qty__btn" data-qty-plus aria-label="Increase quantity">+</button>
+              </div>
+            </div>
+
+          {%- when 'buy_buttons' -%}
+            <div class="lv-pdp-block lv-pdp-buy" {{ block.shopify_attributes }}>
+              <button
+                type="submit"
+                name="add"
+                class="lv-pdp-buy__atc"
+                id="lv-pdp-atc-{{ section.id }}"
+                {% unless current_variant.available %}disabled{% endunless %}
+              >
+                <span class="lv-pdp-buy__text">{% if current_variant.available %}Add to Cart{% else %}Sold out{% endif %}</span>
+                <span class="lv-pdp-buy__loading">Adding…</span>
+              </button>
+
+              {%- if block.settings.show_dynamic_checkout -%}
+                {{ form | payment_button }}
+              {%- endif -%}
+
+              <p class="lv-pdp-buy__error" id="lv-pdp-error-{{ section.id }}" role="alert"></p>
+            </div>
+
+          {%- when 'description' -%}
+            {%- if product.description != blank -%}
+              <div class="lv-pdp-block lv-pdp-description rte" {{ block.shopify_attributes }}>{{ product.description }}</div>
+            {%- endif -%}
+
+          {%- when 'collapsible_row' -%}
+            {%- if block.settings.heading != blank -%}
+              <details class="lv-pdp-block lv-pdp-collapsible" {% if block.settings.open_by_default %}open{% endif %} {{ block.shopify_attributes }}>
+                <summary class="lv-pdp-collapsible__summary">
+                  {{ block.settings.heading }}
+                  <svg class="lv-pdp-collapsible__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </summary>
+                <div class="lv-pdp-collapsible__body rte">
+                  {%- if block.settings.content != blank -%}{{ block.settings.content }}{%- endif -%}
+                  {%- if block.settings.page != blank -%}{{ block.settings.page.content }}{%- endif -%}
+                </div>
+              </details>
+            {%- endif -%}
+
+          {%- when 'trust' -%}
+            <ul class="lv-pdp-block lv-pdp-trust" {{ block.shopify_attributes }}>
+              {%- if block.settings.line_1 != blank -%}<li class="lv-pdp-trust__item"><svg class="lv-pdp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>{{ block.settings.line_1 }}</li>{%- endif -%}
+              {%- if block.settings.line_2 != blank -%}<li class="lv-pdp-trust__item"><svg class="lv-pdp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 9l9-6 9 6v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>{{ block.settings.line_2 }}</li>{%- endif -%}
+              {%- if block.settings.line_3 != blank -%}<li class="lv-pdp-trust__item"><svg class="lv-pdp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg>{{ block.settings.line_3 }}</li>{%- endif -%}
+            </ul>
+
+          {%- when 'share' -%}
+            <div class="lv-pdp-block lv-pdp-share" {{ block.shopify_attributes }}>
+              <span class="lv-pdp-share__label">{{ block.settings.label | default: 'Share' }}</span>
+              <a class="lv-pdp-share__btn" href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ product.url }}" target="_blank" rel="noopener" aria-label="Share on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+              <a class="lv-pdp-share__btn" href="https://pinterest.com/pin/create/button/?url={{ shop.url }}{{ product.url }}&description={{ product.title | url_encode }}" target="_blank" rel="noopener" aria-label="Share on Pinterest"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12c0 4.2 2.6 7.8 6.4 9.3-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.6c0-1.5.9-2.6 1.9-2.6.9 0 1.3.7 1.3 1.5 0 .9-.6 2.3-.9 3.5-.2 1 .5 1.9 1.6 1.9 1.9 0 3.1-2.4 3.1-5.2 0-2.2-1.5-3.7-3.6-3.7-2.4 0-3.8 1.8-3.8 3.7 0 .7.3 1.5.6 1.9.1.1.1.2.1.3l-.2 1c0 .2-.2.2-.3.1-1.1-.5-1.7-2.1-1.7-3.4 0-2.7 2-5.2 5.7-5.2 3 0 5.3 2.1 5.3 5 0 3-1.9 5.4-4.5 5.4-.9 0-1.7-.5-2-1l-.5 2.1c-.2.8-.7 1.7-1.1 2.3.8.3 1.7.4 2.6.4 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg></a>
+              <a class="lv-pdp-share__btn" href="mailto:?subject={{ product.title | url_encode }}&body={{ shop.url }}{{ product.url }}" aria-label="Share by email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></a>
+            </div>
+
+          {%- when 'custom_liquid' -%}
+            <div class="lv-pdp-block" {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
+
+          {%- endcase -%}
+        {%- endfor -%}
+      {%- endform -%}
+    </div>{%- comment -%} /lv-pdp-info {%- endcomment -%}
+  </div>
+
+  {%- comment -%} Variant data for the picker script {%- endcomment -%}
+  <script type="application/json" id="lv-pdp-variants-{{ section.id }}">{{ product.variants | json }}</script>
 </div>
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
+{%- comment -%} Product JSON-LD for SEO {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "url": {{ shop.url | append: product.url | json }},
+  "description": {{ product.description | strip_html | truncate: 1000 | json }},
+  {% if product.featured_media %}"image": {{ product.featured_media.preview_image | image_url: width: 1200 | prepend: 'https:' | json }},{% endif %}
+  "brand": { "@type": "Brand", "name": {{ product.vendor | default: shop.name | json }} },
+  "offers": [
+    {%- for variant in product.variants -%}
+    {
+      "@type": "Offer",
+      "sku": {{ variant.sku | json }},
+      "price": {{ variant.price | divided_by: 100.0 | json }},
+      "priceCurrency": {{ cart.currency.iso_code | json }},
+      "availability": "https://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+      "url": {{ shop.url | append: variant.url | json }}
+    }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>
 
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
+{% stylesheet %}
+.lv-pdp {
+  padding-top: var(--lv-pdp-pt, 24px);
+  padding-bottom: var(--lv-pdp-pb, 24px);
+}
 
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
+@media screen and (min-width: 750px) {
+  .lv-pdp {
+    padding-top: var(--lv-pdp-pt-d, 40px);
+    padding-bottom: var(--lv-pdp-pb-d, 40px);
+  }
+}
+{% endstylesheet %}
 
-    <input type="text" name="quantity" min="1" value="1">
+{% javascript %}
+(function () {
+  'use strict';
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+  function initProduct(root) {
+    if (root.dataset.lvPdpInit) return;
+    root.dataset.lvPdpInit = '1';
+
+    var SID = root.dataset.sectionId;
+    var moneyFmt = root.dataset.moneyFormat || '${{amount}}';
+
+    var variantsEl = document.getElementById('lv-pdp-variants-' + SID);
+    var variants = [];
+    try { variants = JSON.parse(variantsEl.textContent); } catch (e) { variants = []; }
+
+    var idInput = document.getElementById('variant-id-' + SID);
+    var priceEl = document.getElementById('lv-pdp-price-' + SID);
+    var atcBtn  = document.getElementById('lv-pdp-atc-' + SID);
+    var availEl = document.getElementById('lv-pdp-availability-' + SID);
+    var errorEl = document.getElementById('lv-pdp-error-' + SID);
+    var form    = document.getElementById('product-form-' + SID);
+
+    function formatMoney(cents) {
+      var amt = (cents / 100).toFixed(2);
+      return moneyFmt.replace(/\{\{\s*amount\s*\}\}/, amt)
+                     .replace(/\{\{\s*amount_no_decimals\s*\}\}/, Math.round(cents / 100))
+                     .replace(/\{\{\s*amount_with_comma_separator\s*\}\}/, amt);
+    }
+
+    function getSelectedOptions() {
+      var opts = [];
+      root.querySelectorAll('.lv-pdp-option').forEach(function (fs) {
+        var checked = fs.querySelector('.lv-pdp-opt-input:checked');
+        if (checked) opts.push(checked.value);
+      });
+      return opts;
+    }
+
+    function findVariant(opts) {
+      return variants.find(function (v) {
+        return v.options.length === opts.length && v.options.every(function (o, i) { return o === opts[i]; });
+      });
+    }
+
+    function updateGallery(variant) {
+      if (!variant || !variant.featured_media) return;
+      var mid = String(variant.featured_media.id);
+      root.querySelectorAll('.lv-pdp-gallery__media').forEach(function (m) {
+        m.hidden = m.dataset.mediaId !== mid;
+      });
+      root.querySelectorAll('.lv-pdp-gallery__thumb').forEach(function (t) {
+        t.setAttribute('aria-current', t.dataset.thumbFor === mid ? 'true' : 'false');
+      });
+    }
+
+    function updateUI(variant) {
+      root.querySelectorAll('.lv-pdp-option').forEach(function (fs) {
+        var checked = fs.querySelector('.lv-pdp-opt-input:checked');
+        var label = fs.querySelector('.lv-pdp-option__selected');
+        if (checked && label) label.textContent = checked.value;
+      });
+
+      if (!variant) {
+        if (atcBtn) {
+          atcBtn.disabled = true;
+          atcBtn.querySelector('.lv-pdp-buy__text').textContent = 'Unavailable';
+        }
+        return;
+      }
+
+      idInput.value = variant.id;
+
+      if (priceEl) {
+        var html = '';
+        if (variant.compare_at_price && variant.compare_at_price > variant.price) {
+          html += '<span class="lv-pdp-price__current is-sale">' + formatMoney(variant.price) + '</span>';
+          html += '<span class="lv-pdp-price__compare">' + formatMoney(variant.compare_at_price) + '</span>';
+        } else {
+          html += '<span class="lv-pdp-price__current">' + formatMoney(variant.price) + '</span>';
+        }
+        priceEl.innerHTML = html;
+      }
+
+      if (atcBtn) {
+        atcBtn.disabled = !variant.available;
+        atcBtn.querySelector('.lv-pdp-buy__text').textContent = variant.available ? 'Add to Cart' : 'Sold out';
+      }
+
+      if (availEl) {
+        availEl.classList.toggle('is-out', !variant.available);
+        var txt = availEl.querySelector('.lv-pdp-availability__text');
+        if (txt) txt.textContent = variant.available ? 'In stock' : 'Sold out';
+      }
+
+      updateGallery(variant);
+
+      var url = new URL(window.location.href);
+      url.searchParams.set('variant', variant.id);
+      window.history.replaceState({}, '', url.toString());
+    }
+
+    root.querySelectorAll('.lv-pdp-opt-input').forEach(function (input) {
+      input.addEventListener('change', function () {
+        updateUI(findVariant(getSelectedOptions()));
+      });
+    });
+
+    root.querySelectorAll('.lv-pdp-gallery__thumb').forEach(function (thumb) {
+      thumb.addEventListener('click', function () {
+        var mid = thumb.dataset.thumbFor;
+        root.querySelectorAll('.lv-pdp-gallery__media').forEach(function (m) {
+          m.hidden = m.dataset.mediaId !== mid;
+        });
+        root.querySelectorAll('.lv-pdp-gallery__thumb').forEach(function (t) {
+          t.setAttribute('aria-current', t === thumb ? 'true' : 'false');
+        });
+      });
+    });
+
+    var qty = document.getElementById('qty-' + SID);
+    var minus = root.querySelector('[data-qty-minus]');
+    var plus = root.querySelector('[data-qty-plus]');
+    if (minus) minus.addEventListener('click', function () { qty.value = Math.max(1, (parseInt(qty.value, 10) || 1) - 1); });
+    if (plus) plus.addEventListener('click', function () { qty.value = (parseInt(qty.value, 10) || 1) + 1; });
+
+    if (form) {
+      // Append the subscription app's selected selling plan, if any
+      form.addEventListener('submit', function () {
+        if (form.querySelector('input[name="selling_plan"]')) return;
+        var selected = document.querySelector('[name="selling_plan"]:checked') ||
+                       document.querySelector('select[name="selling_plan"]');
+        if (!selected) return;
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'selling_plan';
+        input.value = selected.value;
+        form.appendChild(input);
+      });
+
+      form.addEventListener('submit', function (e) {
+        if (!window.fetch) return;
+        e.preventDefault();
+        if (atcBtn) { atcBtn.classList.add('is-loading'); atcBtn.disabled = true; }
+        if (errorEl) errorEl.classList.remove('is-visible');
+
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+          body: new FormData(form)
+        })
+        .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+        .then(function (res) {
+          if (!res.ok) throw res.data;
+          document.dispatchEvent(new CustomEvent('cart:updated', { bubbles: true, detail: { action: 'add' } }));
+          document.dispatchEvent(new CustomEvent('cart:open'));
+        })
+        .catch(function (err) {
+          if (errorEl) {
+            errorEl.textContent = (err && err.description) ? err.description : 'Could not add to cart.';
+            errorEl.classList.add('is-visible');
+          }
+        })
+        .finally(function () {
+          if (atcBtn) { atcBtn.classList.remove('is-loading'); atcBtn.disabled = false; }
+        });
+      });
+    }
+
+    updateUI(findVariant(getSelectedOptions()));
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.lv-pdp').forEach(initProduct);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+})();
+{% endjavascript %}
 
 {% schema %}
 {
-  "name": "t:general.product",
-  "settings": [],
-  "disabled_on": {
-    "groups": ["header", "footer"]
-  }
+  "name": "Product",
+  "tag": "section",
+  "class": "section section-main-product",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Desktop bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Mobile top padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    }
+  ],
+  "blocks": [
+    { "type": "vendor", "name": "Vendor", "limit": 1 },
+    { "type": "title", "name": "Title", "limit": 1 },
+    { "type": "price", "name": "Price", "limit": 1 },
+    { "type": "variant_picker", "name": "Variant picker", "limit": 1 },
+    { "type": "availability", "name": "Availability", "limit": 1 },
+    { "type": "quantity", "name": "Quantity selector", "limit": 1 },
+    {
+      "type": "buy_buttons",
+      "name": "Buy buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "label": "Show dynamic checkout buttons",
+          "default": true,
+          "info": "Shows Shop Pay / PayPal etc. when enabled in checkout settings."
+        }
+      ]
+    },
+    { "type": "description", "name": "Description", "limit": 1 },
+    {
+      "type": "collapsible_row",
+      "name": "Collapsible row",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shipping & Returns" },
+        { "type": "richtext", "id": "content", "label": "Content" },
+        { "type": "page", "id": "page", "label": "Content from page" },
+        { "type": "checkbox", "id": "open_by_default", "label": "Open by default", "default": false }
+      ]
+    },
+    {
+      "type": "trust",
+      "name": "Trust badges",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "line_1", "label": "Line 1", "default": "Free shipping over $75" },
+        { "type": "text", "id": "line_2", "label": "Line 2", "default": "Easy 30-day returns" },
+        { "type": "text", "id": "line_3", "label": "Line 3", "default": "Secure checkout" }
+      ]
+    },
+    {
+      "type": "share",
+      "name": "Share",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Share" }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Custom Liquid",
+      "settings": [
+        { "type": "liquid", "id": "custom_liquid", "label": "Custom Liquid" }
+      ]
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product",
+      "blocks": [
+        { "type": "vendor" },
+        { "type": "title" },
+        { "type": "price" },
+        { "type": "variant_picker" },
+        { "type": "availability" },
+        { "type": "quantity" },
+        { "type": "buy_buttons" },
+        { "type": "trust" },
+        { "type": "description" },
+        { "type": "collapsible_row", "settings": { "heading": "Shipping & Returns" } },
+        { "type": "collapsible_row", "settings": { "heading": "Care Instructions" } },
+        { "type": "share" }
+      ]
+    }
+  ]
 }
 {% endschema %}
