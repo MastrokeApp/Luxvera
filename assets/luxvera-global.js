@@ -76,3 +76,58 @@
   );
 
 });
+
+// Footer Accordion
+document.addEventListener('DOMContentLoaded', function () {
+  var footer = document.querySelector('.lv-footer');
+
+  if (!footer || footer.dataset.accordionEnabled !== 'true') return;
+
+  var mobileBreakpoint = 768;
+
+  function initAccordion() {
+    var isMobile = window.innerWidth < mobileBreakpoint;
+
+    footer.querySelectorAll('.lv-accordion-item').forEach(function (item) {
+      var trigger = item.querySelector('.lv-accordion-trigger');
+      var panel = item.querySelector('.lv-accordion-panel');
+
+      if (!trigger || !panel) return;
+
+      if (!isMobile) {
+        trigger.setAttribute('aria-expanded', 'true');
+        panel.removeAttribute('hidden');
+        item.classList.remove('is-open');
+        return;
+      }
+
+      if (!trigger.dataset.bound) {
+        trigger.dataset.bound = 'true';
+
+        trigger.addEventListener('click', function () {
+          var expanded = trigger.getAttribute('aria-expanded') === 'true';
+
+          trigger.setAttribute('aria-expanded', String(!expanded));
+          item.classList.toggle('is-open', !expanded);
+
+          if (expanded) {
+            panel.setAttribute('hidden', '');
+          } else {
+            panel.removeAttribute('hidden');
+          }
+        });
+      }
+
+      if (item.classList.contains('is-open')) {
+        trigger.setAttribute('aria-expanded', 'true');
+        panel.removeAttribute('hidden');
+      } else {
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.setAttribute('hidden', '');
+      }
+    });
+  }
+
+  initAccordion();
+  window.addEventListener('resize', initAccordion);
+});
