@@ -11,10 +11,464 @@
   "sections": {
     "main": {
       "type": "hello-world",
+      "disabled": true,
       "settings": {}
+    },
+    "hero_banner_bHfJMf": {
+      "type": "hero-banner",
+      "blocks": {
+        "slide_mf9RTD": {
+          "type": "slide",
+          "settings": {
+            "overlay_color": "#100a04",
+            "overlay_opacity": 60,
+            "heading": "Western Soul, Modern Style",
+            "subtext": "From laid-back daytime to summer nights — discover Western style crafted for you.",
+            "button_label": "Shop the Collection",
+            "button_url": "/collections/all",
+            "button_open_new_tab": false
+          }
+        },
+        "slide_VLKVTj": {
+          "type": "slide",
+          "settings": {
+            "overlay_color": "#100a04",
+            "overlay_opacity": 60,
+            "heading": "New Arrivals Are Here",
+            "subtext": "Explore our latest styles — fresh drops every week.",
+            "button_label": "Shop New Arrivals",
+            "button_url": "/collections/new-arrival",
+            "button_open_new_tab": false
+          }
+        }
+      },
+      "block_order": [
+        "slide_mf9RTD",
+        "slide_VLKVTj"
+      ],
+      "name": "Hero Banner",
+      "settings": {
+        "height_desktop": 580,
+        "height_tablet": 420,
+        "height_mobile": 360,
+        "content_alignment": "flex-start",
+        "color_scheme": "",
+        "heading_size": 48,
+        "autoplay": false,
+        "autoplay_speed": 5
+      }
+    },
+    "announcement_ticker_qd9XG3": {
+      "type": "announcement-ticker",
+      "blocks": {
+        "ticker_item_Kx94jN": {
+          "type": "ticker_item",
+          "settings": {
+            "text": "GRAB The Deal Upto 80% Off & Extra 15% Off"
+          }
+        },
+        "ticker_item_pRdqRm": {
+          "type": "ticker_item",
+          "settings": {
+            "text": "Free Shipping on all orders"
+          }
+        },
+        "ticker_item_pc9Y8n": {
+          "type": "ticker_item",
+          "settings": {
+            "text": "New arrivals every week — shop now"
+          }
+        }
+      },
+      "block_order": [
+        "ticker_item_Kx94jN",
+        "ticker_item_pRdqRm",
+        "ticker_item_pc9Y8n"
+      ],
+      "name": "Announcement Ticker",
+      "settings": {
+        "background_color": "#F7FCD8",
+        "text_color": "#1a1a1a",
+        "separator_color": "#999999",
+        "separator_char": "|",
+        "font_size": 13,
+        "vertical_padding": 12,
+        "scroll_speed": 25
+      }
+    },
+    "category_grid_JzzWFE": {
+      "type": "category-grid",
+      "blocks": {
+        "category_card_UxkbDQ": {
+          "type": "category_card",
+          "settings": {
+            "collection": "",
+            "custom_label": "",
+            "custom_link": ""
+          }
+        },
+        "category_card_3g4rGw": {
+          "type": "category_card",
+          "settings": {
+            "collection": "",
+            "custom_label": "",
+            "custom_link": ""
+          }
+        },
+        "category_card_WBH4rC": {
+          "type": "category_card",
+          "settings": {
+            "collection": "",
+            "custom_label": "",
+            "custom_link": ""
+          }
+        },
+        "category_card_iVifn4": {
+          "type": "category_card",
+          "settings": {
+            "collection": "",
+            "custom_label": "",
+            "custom_link": ""
+          }
+        },
+        "category_card_MDXgYR": {
+          "type": "category_card",
+          "settings": {
+            "collection": "",
+            "custom_label": "",
+            "custom_link": ""
+          }
+        },
+        "category_card_VRRaFd": {
+          "type": "category_card",
+          "settings": {
+            "collection": "",
+            "custom_label": "",
+            "custom_link": ""
+          }
+        },
+        "category_card_DnCQwn": {
+          "type": "category_card",
+          "settings": {
+            "collection": "",
+            "custom_label": "",
+            "custom_link": ""
+          }
+        },
+        "category_card_LLjpGk": {
+          "type": "category_card",
+          "settings": {
+            "collection": "",
+            "custom_label": "",
+            "custom_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "category_card_UxkbDQ",
+        "category_card_3g4rGw",
+        "category_card_WBH4rC",
+        "category_card_iVifn4",
+        "category_card_MDXgYR",
+        "category_card_VRRaFd",
+        "category_card_DnCQwn",
+        "category_card_LLjpGk"
+      ],
+      "name": "Category Grid",
+      "settings": {
+        "title": "Collections For You To Explore",
+        "subtitle": "Everything you need to make your look fantastic",
+        "cards_to_show": "8",
+        "columns_desktop": 4,
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "color_scheme": ""
+      }
+    },
+    "sale_countdown_7RBL9T": {
+      "type": "sale-countdown",
+      "name": "Sale Countdown",
+      "settings": {
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "heading_size": 28,
+        "eyebrow": "Sale is live now",
+        "heading": "Upto 80% Off & Extra 15% Off",
+        "button_label": "Shop Look",
+        "button_url": "",
+        "countdown_end": "",
+        "label_days": "Days",
+        "label_hours": "Hours",
+        "label_minutes": "Minutes",
+        "label_seconds": "Seconds",
+        "color_scheme": ""
+      }
+    },
+    "product_tabs_rBNiA9": {
+      "type": "product-tabs",
+      "name": "Product Tabs",
+      "settings": {
+        "padding_top_desktop": 56,
+        "padding_bottom_desktop": 56,
+        "padding_top_tablet": 40,
+        "padding_bottom_tablet": 40,
+        "padding_top_mobile": 28,
+        "padding_bottom_mobile": 28,
+        "heading": "Our Products You’ll Love",
+        "heading_size": 32,
+        "heading_alignment": "center",
+        "atc_label": "Add To Cart",
+        "products_limit": 8,
+        "image_ratio": "portrait",
+        "tab1_label": "New Arrivals",
+        "tab1_collection": "",
+        "tab2_label": "Trending Now",
+        "tab2_collection": ""
+      }
+    },
+    "image_text_section_Li4Vfp": {
+      "type": "image-text-section",
+      "name": "Image with text",
+      "settings": {
+        "image_height_desktop": 280,
+        "image_height_mobile": 220,
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "content_layout": "no-overlap",
+        "color_scheme": "",
+        "section_color_scheme": "",
+        "image_behavior": "none",
+        "heading": "Image with text",
+        "heading_size": 48,
+        "text": "Pair text with an image to focus on your chosen product, collection, or blog post.",
+        "button_label": "Shop now",
+        "button_link": "",
+        "mobile_content_alignment": "left",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "brand_story_jEbFwR": {
+      "type": "brand-story",
+      "blocks": {
+        "brand_tab_PeCPNn": {
+          "type": "brand_tab",
+          "settings": {
+            "label": "Best Sellers"
+          }
+        },
+        "brand_tab_6ABh9P": {
+          "type": "brand_tab",
+          "settings": {
+            "label": "New Season Edit"
+          }
+        },
+        "brand_tab_9VGrxM": {
+          "type": "brand_tab",
+          "settings": {
+            "label": "Vacation Looks"
+          }
+        },
+        "brand_tab_WFEmkT": {
+          "type": "brand_tab",
+          "settings": {
+            "label": "Winter Luxe"
+          }
+        }
+      },
+      "block_order": [
+        "brand_tab_PeCPNn",
+        "brand_tab_6ABh9P",
+        "brand_tab_9VGrxM",
+        "brand_tab_WFEmkT"
+      ],
+      "name": "Brand Story",
+      "settings": {
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "brand_name": "LUXVERA",
+        "brand_tagline": "Fashion",
+        "heading": "More Than Style",
+        "body_text": "This is more than a boutique, it's a space where confidence feels natural and being yourself is enough.",
+        "explore_label": "Explore",
+        "cta_label": "Explore Collections",
+        "cta_url": "",
+        "cta_new_tab": false
+      }
+    },
+    "dress_looks_hpWcBt": {
+      "type": "dress-looks",
+      "name": "Dress Looks",
+      "settings": {
+        "padding_top_desktop": 64,
+        "padding_bottom_desktop": 64,
+        "padding_top_tablet": 44,
+        "padding_bottom_tablet": 44,
+        "padding_top_mobile": 28,
+        "padding_bottom_mobile": 28,
+        "color_scheme": "",
+        "title": "Dresses Looks",
+        "heading_size": 32,
+        "heading_alignment": "center",
+        "subtitle": "Some of our new looks you will love",
+        "subtitle_size": 13,
+        "atc_label": "Add To Cart",
+        "collection": "",
+        "products_limit": 8
+      }
+    },
+    "instagram_carousel_E6wRtz": {
+      "type": "instagram-carousel",
+      "name": "Instagram Carousel",
+      "settings": {
+        "color_scheme": "",
+        "padding_top_desktop": 64,
+        "padding_bottom_desktop": 64,
+        "padding_top_tablet": 44,
+        "padding_bottom_tablet": 44,
+        "padding_top_mobile": 28,
+        "padding_bottom_mobile": 28,
+        "title": "Follow Us On Instagram",
+        "heading_size": 32,
+        "heading_alignment": "center",
+        "insta_link": "",
+        "subtitle": "Some of our new looks you will love",
+        "subtitle_size": 13,
+        "card_border_radius": 12,
+        "autoplay": true,
+        "autoplay_delay": 3
+      }
+    },
+    "testimonials_KBbzUQ": {
+      "type": "testimonials",
+      "blocks": {
+        "review_MTgBEL": {
+          "type": "review",
+          "settings": {
+            "name": "Shay Shults",
+            "stars": 5,
+            "verified": true,
+            "text": "“I absolutely love this t-shirt! The design is unique and the fabric feels so comfortable. It’s become my favorite go-to shirt.”",
+            "date": "Posted on October 22, 2025"
+          }
+        },
+        "review_XUfEyM": {
+          "type": "review",
+          "settings": {
+            "name": "Jessica Wert",
+            "stars": 5,
+            "verified": true,
+            "text": "“The fit is amazing! Great pair of jeans and an amazing price on them!”",
+            "date": "Posted on September 28, 2025"
+          }
+        },
+        "review_TpRYPQ": {
+          "type": "review",
+          "settings": {
+            "name": "Stephanie",
+            "stars": 5,
+            "verified": true,
+            "text": "“If I could give more than 5 stars I would!! Perfect cardigan!!! The best!!!”",
+            "date": "Posted on August 14, 2025"
+          }
+        },
+        "review_bkxLYr": {
+          "type": "review",
+          "settings": {
+            "name": "Amber Rose",
+            "stars": 5,
+            "verified": true,
+            "text": "“Absolutely obsessed with my new jacket! The fringe detail is stunning and I get compliments every single time I wear it.”",
+            "date": "Posted on July 30, 2025"
+          }
+        },
+        "review_xiRcb9": {
+          "type": "review",
+          "settings": {
+            "name": "Miranda Cole",
+            "stars": 5,
+            "verified": true,
+            "text": "“The fabric quality is incredible for the price point. I’ve washed it three times and it still looks brand new.”",
+            "date": "Posted on July 5, 2025"
+          }
+        }
+      },
+      "block_order": [
+        "review_MTgBEL",
+        "review_XUfEyM",
+        "review_TpRYPQ",
+        "review_bkxLYr",
+        "review_xiRcb9"
+      ],
+      "name": "Testimonials",
+      "settings": {
+        "padding_top_desktop": 64,
+        "padding_bottom_desktop": 64,
+        "padding_top_tablet": 44,
+        "padding_bottom_tablet": 44,
+        "padding_top_mobile": 28,
+        "padding_bottom_mobile": 28,
+        "color_scheme": "",
+        "heading": "What They're Saying",
+        "heading_size": 28,
+        "subheading": "Loved by 17k+ Customers",
+        "subheading_size": 13,
+        "write_review_label": "Write a Review"
+      }
+    },
+    "trust_badges_Xyi6PV": {
+      "type": "trust-badges",
+      "blocks": {
+        "badge_Jzeahd": {
+          "type": "badge",
+          "settings": {
+            "title": "100% Authentic",
+            "text": "Shop with confidence, genuine and always original."
+          }
+        },
+        "badge_6mdrE7": {
+          "type": "badge",
+          "settings": {
+            "title": "Free Delivery",
+            "text": "Save more with free shipping on every eligible order."
+          }
+        },
+        "badge_bPT93C": {
+          "type": "badge",
+          "settings": {
+            "title": "Support 24/7",
+            "text": "Always here when you need us. Hassle free contact."
+          }
+        }
+      },
+      "block_order": [
+        "badge_Jzeahd",
+        "badge_6mdrE7",
+        "badge_bPT93C"
+      ],
+      "name": "Trust Badges",
+      "settings": {
+        "color_scheme": "",
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "mobile_layout": "stack"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "hero_banner_bHfJMf",
+    "announcement_ticker_qd9XG3",
+    "category_grid_JzzWFE",
+    "sale_countdown_7RBL9T",
+    "product_tabs_rBNiA9",
+    "image_text_section_Li4Vfp",
+    "brand_story_jEbFwR",
+    "dress_looks_hpWcBt",
+    "instagram_carousel_E6wRtz",
+    "testimonials_KBbzUQ",
+    "trust_badges_Xyi6PV"
   ]
 }
