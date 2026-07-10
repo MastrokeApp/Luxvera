@@ -1,83 +1,369 @@
 {% comment %}
-  This section is used in the list-collections template to render a list of
-  collections.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
+  Shows all collections in the store as cards, same style as the "Category
+  Grid" on the homepage. Pulls the list automatically so new collections
+  just show up, no manual updates needed. Paginated so it scales. If the
+  store has zero collections yet, falls back to placeholder cards.
 {% endcomment %}
 
-<h1>{{ 'collections.title' | t }}</h1>
-
 <div
-  class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
+  class="lv-collections-list color-{{ section.settings.color_scheme }}"
+  id="lv-collections-list-{{ section.id }}"
+  data-lv-cl-id="{{ section.id }}"
+  data-ratio="{{ section.settings.image_ratio }}"
+  style="
+    --lv-cl-pt: {{ section.settings.padding_top }}px;
+    --lv-cl-pb: {{ section.settings.padding_bottom }}px;
+    --lv-cl-heading-size: {{ section.settings.heading_size }}px;
+    --lv-cl-heading-size-mobile: {{ section.settings.heading_size | times: 0.78 | round }}px;
+    --lv-cl-subtitle-size: {{ section.settings.subtitle_size }}px;
+    --lv-cl-gap: {{ section.settings.grid_gap }}px;
+    --lv-cl-radius: {{ section.settings.card_radius }}px;
+    --lv-cl-cols-d: {{ section.settings.columns_desktop }};
+    --lv-cl-cols-t: {{ section.settings.columns_tablet }};
+    --lv-cl-cols-m: {{ section.settings.columns_mobile }};
+  "
 >
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
-      {% endif %}
-
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
-
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
+  <div class="lv-container">
+    {%- if section.settings.heading != blank or section.settings.subtitle != blank -%}
+      <div class="lv-cl-head">
+        {%- if section.settings.heading != blank -%}
+          <h1 class="lv-cl-title">{{ section.settings.heading | escape }}</h1>
+        {%- endif -%}
+        {%- if section.settings.subtitle != blank -%}
+          <p class="lv-cl-sub">{{ section.settings.subtitle | escape }}</p>
+        {%- endif -%}
       </div>
-    </a>
-  {% endfor %}
+    {%- endif -%}
+
+    {%- paginate collections by section.settings.per_page -%}
+      {%- assign shown = 0 -%}
+
+      {%- comment -%} Build the real collection cards and count how many render {%- endcomment -%}
+      {%- capture real_cards -%}
+        {%- for collection in collections -%}
+          {%- if collection.handle == 'frontpage' -%}{%- continue -%}{%- endif -%}
+          {%- if section.settings.hide_empty and collection.all_products_count == 0 -%}{%- continue -%}{%- endif -%}
+          {%- assign shown = shown | plus: 1 -%}
+
+          <a class="lv-cl-card" href="{{ collection.url }}" aria-label="{{ collection.title | escape }}">
+            {%- if collection.image != blank -%}
+              <img
+                src="{{ collection.image | image_url: width: 600, height: 600, crop: 'center' }}"
+                alt="{{ collection.title | escape }}"
+                width="600"
+                height="600"
+                loading="lazy"
+              >
+            {%- elsif collection.products.first.featured_image != blank -%}
+              <img
+                src="{{ collection.products.first.featured_image | image_url: width: 600, height: 600, crop: 'center' }}"
+                alt="{{ collection.title | escape }}"
+                width="600"
+                height="600"
+                loading="lazy"
+              >
+            {%- else -%}
+              {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+
+            <div class="lv-cl-label">{{ collection.title | escape }}</div>
+
+            {%- if section.settings.show_count -%}
+              <div class="lv-cl-count">{{ collection.all_products_count }} items</div>
+            {%- endif -%}
+          </a>
+        {%- endfor -%}
+      {%- endcapture -%}
+
+      <div class="lv-cl-grid">
+        {%- if shown > 0 -%}
+          {{ real_cards }}
+        {%- elsif section.settings.show_placeholders -%}
+          {%- comment -%} No real collections — show demo placeholder cards {%- endcomment -%}
+          {%- assign ph_titles = 'Western,Boho,Occasion,Designer,Vacation Looks,Best Sellers,New Arrivals,Winter Luxe' | split: ',' -%}
+          {%- assign ph_svgs = 'collection-1,collection-2,collection-3,collection-4,collection-5,collection-6,collection-1,collection-2' | split: ',' -%}
+          {%- for i in (0..7) -%}
+            <div class="lv-cl-card lv-cl-card--placeholder" aria-hidden="true">
+              {{ ph_svgs[i] | placeholder_svg_tag: 'placeholder-svg' }}
+              <div class="lv-cl-label">{{ ph_titles[i] }}</div>
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          <p class="lv-cl-empty">No collections found.</p>
+        {%- endif -%}
+      </div>
+
+      {%- if shown > 0 and paginate.pages > 1 -%}
+        <div class="lv-cl-pagination">
+          {{ paginate | default_pagination }}
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
 </div>
 
 {% stylesheet %}
-  .collections {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
-    gap: var(--grid-gap);
+.lv-collections-list {
+  padding-top: var(--lv-cl-pt, 56px);
+  padding-bottom: var(--lv-cl-pb, 64px);
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.lv-collections-list .lv-container {
+  max-width: var(--lv-container-max, 1280px);
+  margin: 0 auto;
+  padding: 0 56px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.lv-collections-list .lv-cl-head {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.lv-collections-list .lv-cl-title {
+  font-family: var(--lv-font-heading, serif);
+  font-size: var(--lv-cl-heading-size, 32px);
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+  margin: 0 0 10px;
+  line-height: 1.2;
+}
+
+.lv-collections-list .lv-cl-sub {
+  font-size: var(--lv-cl-subtitle-size, 15px);
+  color: rgb(var(--color-foreground));
+  opacity: 0.6;
+  margin: 0;
+}
+
+.lv-collections-list .lv-cl-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--lv-cl-cols-d, 4), 1fr);
+  gap: var(--lv-cl-gap, 12px);
+  margin-top: 36px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.lv-collections-list .lv-cl-card {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  border-radius: var(--lv-cl-radius, 8px);
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: var(--lv-cl-aspect, 1 / 1);
+  background: rgba(var(--color-foreground), 0.06);
+}
+
+/* Fallback for browsers without aspect-ratio support */
+@supports not (aspect-ratio: 1) {
+  .lv-collections-list .lv-cl-card::before {
+    content: '';
+    display: block;
+    padding-top: 100%;
   }
-  .collections--compact {
-    --collection-card-size: 160px;
+
+  .lv-collections-list .lv-cl-card img,
+  .lv-collections-list .lv-cl-card svg {
+    position: absolute;
+    inset: 0;
   }
-  .collections--full {
-    --collection-card-size: 280px;
+}
+
+.lv-collections-list .lv-cl-card img,
+.lv-collections-list .lv-cl-card .placeholder-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.lv-collections-list .lv-cl-card:hover img,
+.lv-collections-list .lv-cl-card:hover .placeholder-svg {
+  transform: scale(1.06);
+}
+
+.lv-collections-list .lv-cl-card--placeholder {
+  cursor: default;
+  pointer-events: none;
+}
+
+.lv-collections-list .lv-cl-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.62));
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 40px 12px 16px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.lv-collections-list .lv-cl-count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1a1a1a;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.lv-collections-list .lv-cl-empty {
+  text-align: center;
+  padding: 60px 0;
+  font-size: 15px;
+  color: rgb(var(--color-foreground));
+  opacity: 0.6;
+}
+
+/* Pagination */
+.lv-collections-list .lv-cl-pagination {
+  text-align: center;
+  margin-top: 48px;
+}
+
+.lv-collections-list .lv-cl-pagination a,
+.lv-collections-list .lv-cl-pagination span {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 0 3px;
+  border: 1px solid rgba(var(--color-foreground), 0.18);
+  color: rgb(var(--color-foreground));
+  font-size: 14px;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.lv-collections-list .lv-cl-pagination a:hover {
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+  border-color: rgb(var(--color-foreground));
+}
+
+.lv-collections-list .lv-cl-pagination .current {
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+  border-color: rgb(var(--color-foreground));
+}
+
+.lv-collections-list[data-ratio="portrait"] .lv-cl-card { --lv-cl-aspect: 3 / 4; }
+.lv-collections-list[data-ratio="landscape"] .lv-cl-card { --lv-cl-aspect: 4 / 3; }
+.lv-collections-list[data-ratio="square"] .lv-cl-card { --lv-cl-aspect: 1 / 1; }
+
+@media (max-width: 1024px) {
+  .lv-collections-list .lv-container {
+    padding: 0 32px;
   }
-  .collection-card {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+
+  .lv-collections-list .lv-cl-grid {
+    grid-template-columns: repeat(var(--lv-cl-cols-t, 3), 1fr);
   }
+}
+
+@media (max-width: 768px) {
+  .lv-collections-list .lv-container {
+    padding: 0 20px;
+  }
+
+  .lv-collections-list .lv-cl-grid {
+    grid-template-columns: repeat(var(--lv-cl-cols-m, 2), 1fr);
+    gap: 10px;
+  }
+
+  .lv-collections-list .lv-cl-title {
+    font-size: var(--lv-cl-heading-size-mobile, 25px);
+  }
+}
+
+@media (max-width: 480px) {
+  .lv-collections-list .lv-container {
+    padding: 0 16px;
+  }
+
+  .lv-collections-list .lv-cl-grid {
+    gap: 8px;
+  }
+
+  .lv-collections-list .lv-cl-label {
+    font-size: 11px;
+    padding: 28px 8px 12px;
+  }
+}
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.collections_grid",
+  "name": "Collections List",
+  "tag": "section",
+  "class": "luxvera-collections-list",
   "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Collections For You To Explore" },
+    { "type": "range", "id": "heading_size", "label": "Heading Font Size", "min": 18, "max": 60, "step": 2, "unit": "px", "default": 32 },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Everything you need to make your look fantastic" },
+    { "type": "range", "id": "subtitle_size", "label": "Subtitle Font Size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 15 },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "columns_desktop", "label": "Columns — Desktop", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns_tablet", "label": "Columns — Tablet", "min": 2, "max": 4, "step": 1, "default": 3 },
     {
       "type": "select",
-      "id": "grid_item_width",
-      "label": "t:labels.grid_item_width",
+      "id": "columns_mobile",
+      "label": "Columns — Mobile",
       "options": [
-        { "value": "collections--compact", "label": "t:options.size.small" },
-        { "value": "collections--full", "label": "t:options.size.large" }
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
       ],
-      "default": "collections--full"
+      "default": "2"
     },
+    { "type": "range", "id": "grid_gap", "label": "Grid Gap", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 12 },
     {
-      "type": "range",
-      "id": "grid_gap",
-      "label": "t:labels.grid_gap",
-      "min": 0,
-      "max": 50,
-      "step": 5,
-      "unit": "px",
-      "default": 10
-    }
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "options": [
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "landscape", "label": "Landscape (4:3)" }
+      ],
+      "default": "square"
+    },
+    { "type": "range", "id": "card_radius", "label": "Card Radius", "min": 0, "max": 24, "step": 1, "unit": "px", "default": 8 },
+
+    { "type": "header", "content": "Options" },
+    { "type": "range", "id": "per_page", "label": "Collections per page", "min": 4, "max": 48, "step": 2, "default": 12 },
+    { "type": "checkbox", "id": "show_count", "label": "Show product count badge", "default": false },
+    { "type": "checkbox", "id": "hide_empty", "label": "Hide empty collections", "default": true },
+    { "type": "checkbox", "id": "show_placeholders", "label": "Show demo placeholders when no collections exist", "default": true },
+
+    { "type": "header", "content": "Section Padding" },
+    { "type": "range", "id": "padding_top", "label": "Padding Top", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 64 }
+
+    
   ],
-  "presets": [{ "name": "t:general.collections_grid" }]
+  "presets": [
+    { "name": "Collections List" }
+  ]
 }
 {% endschema %}
