@@ -1,37 +1,644 @@
 {% comment %}
-  This section is used in the cart template to render /cart page with an
-  overview of the items in customer's cart.
+  Section: Cart
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
+  The cart page: line items with quantity steppers, live line/subtotal/total
+  updates, optional order note, and the checkout button. Quantity and price
+  changes update in place via the Cart AJAX API; the page falls back to a full
+  form submit if JavaScript is unavailable.
+
+  Labels come from the global Cart settings (Settings > Cart).
 {% endcomment %}
 
-<h1>{{ 'cart.title' | t }}</h1>
+<div
+  class="lv-cart"
+  id="lv-cart-{{ section.id }}"
+  data-lv-cart-id="{{ section.id }}"
+  data-currency="{{ cart.currency.iso_code }}"
+>
+  {%- if cart.item_count > 0 -%}
+    <h1 class="lv-cart-title">
+      Your Cart (<span class="lv-cart-count" data-cart-count>{{ cart.item_count }}</span>)
+    </h1>
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+    <form action="{{ routes.cart_url }}" method="post" class="lv-cart-form" data-cart-form>
+      <div class="lv-cart-layout">
+        <div class="lv-cart-items" data-cart-items>
+          {%- for item in cart.items -%}
+            <div class="lv-cart-item" data-key="{{ item.key }}" data-index="{{ forloop.index }}" data-unit-price="{{ item.variant.price }}">
+              <a href="{{ item.url }}">
+                {%- if item.image -%}
+                  <img class="lv-cart-item-img" src="{{ item.image | image_url: width: 200 }}" alt="{{ item.title | escape }}" width="90" height="110" loading="lazy">
+                {%- else -%}
+                  <div class="lv-cart-item-img"></div>
+                {%- endif -%}
+              </a>
+              <div>
+                <a class="lv-cart-item-title" href="{{ item.url }}">{{ item.product.title | escape }}</a>
+                {%- unless item.variant.title == 'Default Title' -%}
+                  <p class="lv-cart-item-variant">{{ item.variant.title }}</p>
+                {%- endunless -%}
+                {%- if item.selling_plan_allocation -%}
+                  <p class="lv-cart-item-subscription">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+                {%- endif -%}
+                <div class="lv-cart-item-row">
+                  <div class="lv-cart-qty">
+                    <button class="lv-cart-qty-btn" type="button" data-action="decrease" aria-label="Decrease quantity" {% if item.quantity <= 1 %}disabled{% endif %}>&minus;</button>
+                    <input
+                      type="number"
+                      class="lv-cart-qty-input"
+                      name="updates[{{ item.key }}]"
+                      value="{{ item.quantity }}"
+                      min="0"
+                      aria-label="Quantity for {{ item.title | escape }}"
+                      data-qty-input
+                    >
+                    <button class="lv-cart-qty-btn" type="button" data-action="increase" aria-label="Increase quantity">+</button>
+                  </div>
+                  <span class="lv-cart-item-price" data-line-price>{{ item.line_price | money }}</span>
+                </div>
+                <button class="lv-cart-remove" type="button" data-action="remove">Remove</button>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
+        <aside class="lv-cart-summary">
+          <h2 class="lv-cart-summary-title">{{ settings.cart_summary_title }}</h2>
+
+          <div class="lv-cart-summary-row">
+            <span>{{ settings.subtotal_label }}</span>
+            <span data-subtotal>{{ cart.total_price | money }}</span>
+          </div>
+
+          <div class="lv-cart-summary-row" data-savings-row {% if cart.total_discount == 0 %}hidden{% endif %}>
+            <span>{{ settings.savings_label | default: 'Savings' }}</span>
+            <span data-savings>-{{ cart.total_discount | money }}</span>
+          </div>
+
+          <div class="lv-cart-summary-row">
+            <span>
+              {%- if settings.enable_shipping_link and settings.shipping_url != blank -%}
+                <a href="{{ settings.shipping_url }}">{{ settings.shipping_label }}</a>
+              {%- else -%}
+                {{ settings.shipping_label }}
+              {%- endif -%}
+            </span>
+            <span>{{ settings.shipping_text }}</span>
+          </div>
+
+          <div class="lv-cart-summary-row total">
+            <span>{{ settings.totalprice_label }}</span>
+            <span data-total>{{ cart.total_price | money }}</span>
+          </div>
+
+          {%- if settings.enable_order_note -%}
+            <div class="lv-cart-note">
+              <label for="lv-cart-note-{{ section.id }}">{{ settings.order_note_label }}</label>
+              <textarea
+                id="lv-cart-note-{{ section.id }}"
+                name="note"
+                placeholder="{{ settings.order_note_placeholder }}"
+                data-cart-note
+              >{{ cart.note }}</textarea>
+            </div>
+          {%- endif -%}
+
+          <button type="submit" name="checkout" class="lv-cart-checkout">
+            {{ settings.checkout_button_text | default: 'Proceed to Checkout' }}
+          </button>
+          <a href="{{ routes.all_products_collection_url }}" class="lv-cart-continue">
+            {{ settings.continue_shopping_text | default: 'Continue Shopping' }}
+          </a>
+        </aside>
+      </div>
+    </form>
+
+  {%- else -%}
+    <div class="lv-cart-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <circle cx="9" cy="21" r="1"/>
+        <circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.68L23 6H6"/>
+      </svg>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added anything yet.</p>
+      <a class="lv-cart-empty-btn" href="{{ routes.all_products_collection_url }}">Start Shopping</a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+.lv-cart {
+  max-width: var(--lv-container-max, 1100px);
+  margin: 0 auto;
+  padding: 56px 40px 80px;
+  box-sizing: border-box;
+}
+
+.lv-cart .lv-cart-title {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 700;
+  font-family: var(--lv-font-heading, serif);
+  margin: 0 0 36px;
+}
+
+.lv-cart .lv-cart-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 48px;
+  align-items: start;
+}
+
+.lv-cart .lv-cart-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.lv-cart .lv-cart-item {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--lv-color-border, #e5e0d8);
+  align-items: start;
+  transition: opacity .2s;
+}
+
+.lv-cart .lv-cart-item:first-child {
+  border-top: 1px solid var(--lv-color-border, #e5e0d8);
+}
+
+.lv-cart .lv-cart-item.lv-loading {
+  opacity: .4;
+  pointer-events: none;
+}
+
+.lv-cart .lv-cart-item-img {
+  width: 90px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+  background: var(--lv-color-bg-alt, #f7f4f0);
+}
+
+.lv-cart .lv-cart-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--lv-color-text, #1a1a1a);
+  margin: 0 0 4px;
+  text-decoration: none;
+  display: block;
+}
+
+.lv-cart .lv-cart-item-variant {
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 12px;
+}
+
+.lv-cart .lv-cart-item-subscription {
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 12px;
+}
+
+.lv-cart .lv-cart-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lv-cart .lv-cart-qty {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--lv-color-border, #e5e0d8);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.lv-cart .lv-cart-qty-btn {
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s;
+  user-select: none;
+}
+
+.lv-cart .lv-cart-qty-btn:hover:not([disabled]) {
+  background: var(--lv-color-bg-alt, #f7f4f0);
+}
+
+.lv-cart .lv-cart-qty-btn[disabled] {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.lv-cart .lv-cart-qty-input {
+  width: 44px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-left: 1.5px solid var(--lv-color-border, #e5e0d8);
+  border-right: 1.5px solid var(--lv-color-border, #e5e0d8);
+  line-height: 32px;
+  height: 32px;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+
+.lv-cart .lv-cart-qty-input::-webkit-outer-spin-button,
+.lv-cart .lv-cart-qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.lv-cart .lv-cart-item-price {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.lv-cart .lv-cart-remove {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #aaa;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 10px;
+  display: block;
+  transition: color .2s;
+}
+
+.lv-cart .lv-cart-remove:hover {
+  color: #e63946;
+}
+
+.lv-cart .lv-cart-summary {
+  background: var(--lv-color-bg-alt, #f7f4f0);
+  border-radius: 8px;
+  padding: 28px 24px;
+  position: sticky;
+  top: 90px;
+}
+
+.lv-cart .lv-cart-summary-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 20px;
+  font-family: var(--lv-font-heading, serif);
+}
+
+.lv-cart .lv-cart-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.lv-cart .lv-cart-summary-row.total {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--lv-color-text, #1a1a1a);
+  padding-top: 14px;
+  border-top: 1px solid var(--lv-color-border, #e5e0d8);
+  margin-top: 6px;
+}
+
+.lv-cart .lv-cart-note {
+  margin: 16px 0 0;
+}
+
+.lv-cart .lv-cart-note label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #888;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.lv-cart .lv-cart-note textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--lv-color-border, #e5e0d8);
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: var(--lv-font-body, sans-serif);
+  resize: vertical;
+  min-height: 80px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.lv-cart .lv-cart-note textarea:focus {
+  border-color: var(--lv-color-primary, #2a1f16);
+}
+
+.lv-cart .lv-cart-checkout {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 15px;
+  background: var(--lv-color-primary, #2a1f16);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--lv-btn-radius, 0px);
+  border: none;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.lv-cart .lv-cart-checkout:hover {
+  opacity: .82;
+}
+
+.lv-cart .lv-cart-continue {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #888;
+  text-decoration: none;
+}
+
+.lv-cart .lv-cart-continue:hover {
+  color: var(--lv-color-text, #1a1a1a);
+}
+
+.lv-cart .lv-cart-empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.lv-cart .lv-cart-empty svg {
+  width: 56px;
+  height: 56px;
+  color: #ddd;
+  margin-bottom: 16px;
+}
+
+.lv-cart .lv-cart-empty h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 10px;
+  font-family: var(--lv-font-heading, serif);
+}
+
+.lv-cart .lv-cart-empty p {
+  font-size: 14px;
+  color: #888;
+  margin: 0 0 28px;
+}
+
+.lv-cart .lv-cart-empty-btn {
+  display: inline-block;
+  padding: 13px 32px;
+  background: var(--lv-color-primary, #2a1f16);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: var(--lv-btn-radius, 0px);
+  transition: opacity .2s;
+}
+
+.lv-cart .lv-cart-empty-btn:hover {
+  opacity: .82;
+}
+
+@media (max-width: 860px) {
+  .lv-cart .lv-cart-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lv-cart .lv-cart-summary {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .lv-cart {
+    padding: 40px 24px 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lv-cart {
+    padding: 28px 16px 48px;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function initCart(root) {
+    if (root.dataset.lvCartInit) return;
+    root.dataset.lvCartInit = '1';
+
+    var SID = root.dataset.lvCartId;
+    var currency = root.dataset.currency || 'USD';
+    var container = root.querySelector('[data-cart-items]');
+    var form = root.querySelector('[data-cart-form]');
+    if (!container || !form) return;
+
+    var inFlight = {};
+
+    function formatMoney(cents) {
+      return (cents / 100).toLocaleString(undefined, {
+        style: 'currency',
+        currency: currency
+      });
+    }
+
+    function updateLinePrice(itemEl, quantity) {
+      var unitPrice = parseInt(itemEl.dataset.unitPrice, 10);
+      if (isNaN(unitPrice)) return;
+      var priceEl = itemEl.querySelector('[data-line-price]');
+      if (priceEl) priceEl.textContent = formatMoney(unitPrice * quantity);
+    }
+
+    function updateUI(cart, removedKey) {
+      if (cart.item_count === 0) {
+        location.reload();
+        return;
+      }
+
+      if (removedKey) {
+        var removedEl = container.querySelector('[data-key="' + removedKey + '"]');
+        if (removedEl) removedEl.remove();
+      }
+
+      cart.items.forEach(function (item) {
+        var itemEl = container.querySelector('[data-key="' + item.key + '"]');
+        if (!itemEl) return;
+
+        var qtyInput = itemEl.querySelector('[data-qty-input]');
+        if (qtyInput) qtyInput.value = item.quantity;
+
+        var priceEl = itemEl.querySelector('[data-line-price]');
+        if (priceEl) priceEl.textContent = formatMoney(item.line_price);
+
+        var decreaseBtn = itemEl.querySelector('[data-action="decrease"]');
+        if (decreaseBtn) decreaseBtn.disabled = item.quantity <= 1;
+      });
+
+      var countEl = root.querySelector('[data-cart-count]');
+      if (countEl) countEl.textContent = cart.item_count;
+
+      var subtotalEl = root.querySelector('[data-subtotal]');
+      if (subtotalEl) subtotalEl.textContent = formatMoney(cart.total_price);
+
+      var totalEl = root.querySelector('[data-total]');
+      if (totalEl) totalEl.textContent = formatMoney(cart.total_price);
+
+      var savingsEl = root.querySelector('[data-savings]');
+      var savingsRow = root.querySelector('[data-savings-row]');
+      if (savingsEl) savingsEl.textContent = cart.total_discount > 0 ? '-' + formatMoney(cart.total_discount) : '';
+      if (savingsRow) savingsRow.hidden = cart.total_discount === 0;
+    }
+
+    function updateCart(key, newQty, itemEl, actionType) {
+      if (inFlight[key]) return;
+      inFlight[key] = true;
+      itemEl.classList.add('lv-loading');
+
+      var isRemove = newQty === 0;
+
+      fetch('/cart/change.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ id: key, quantity: newQty })
+      })
+      .then(function (response) {
+        if (!response.ok) throw new Error('Cart update failed');
+        return response.json();
+      })
+      .then(function (cart) {
+        updateUI(cart, isRemove ? key : null);
+        document.dispatchEvent(new CustomEvent('cart:updated', {
+          bubbles: true,
+          detail: { action: actionType, cart: cart }
+        }));
+      })
+      .catch(function () {
+        location.reload();
+      })
+      .finally(function () {
+        delete inFlight[key];
+        if (itemEl && itemEl.parentNode) itemEl.classList.remove('lv-loading');
+      });
+    }
+
+    container.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-action]');
+      if (!btn || btn.disabled) return;
+
+      var action = btn.dataset.action;
+      var itemEl = btn.closest('.lv-cart-item');
+      if (!itemEl) return;
+
+      var key = itemEl.dataset.key;
+      if (!key) return;
+
+      var qtyInput = itemEl.querySelector('[data-qty-input]');
+      var currentQty = qtyInput ? parseInt(qtyInput.value, 10) : 1;
+      if (isNaN(currentQty) || currentQty < 0) currentQty = 1;
+
+      if (action === 'increase') {
+        var incQty = currentQty + 1;
+        qtyInput.value = incQty;
+        updateLinePrice(itemEl, incQty);
+        updateCart(key, incQty, itemEl, 'update');
+      } else if (action === 'decrease') {
+        if (currentQty <= 1) return;
+        var decQty = currentQty - 1;
+        qtyInput.value = decQty;
+        updateLinePrice(itemEl, decQty);
+        updateCart(key, decQty, itemEl, 'update');
+      } else if (action === 'remove') {
+        updateCart(key, 0, itemEl, 'remove');
+      }
+    });
+
+    container.addEventListener('change', function (e) {
+      var input = e.target.closest('[data-qty-input]');
+      if (!input) return;
+
+      var itemEl = input.closest('.lv-cart-item');
+      if (!itemEl) return;
+
+      var key = itemEl.dataset.key;
+      if (!key) return;
+
+      var newQty = parseInt(input.value, 10);
+      if (isNaN(newQty) || newQty < 0) newQty = 1;
+
+      input.value = newQty;
+      updateLinePrice(itemEl, newQty);
+      updateCart(key, newQty, itemEl, newQty === 0 ? 'remove' : 'update');
+    });
+
+    var noteEl = root.querySelector('[data-cart-note]');
+    if (noteEl) {
+      var noteTimeout;
+      noteEl.addEventListener('input', function () {
+        clearTimeout(noteTimeout);
+        noteTimeout = setTimeout(function () {
+          fetch('/cart/update.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ note: noteEl.value })
+          }).catch(function () {});
+        }, 600);
+      });
+    }
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.lv-cart').forEach(initCart);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+})();
+{% endjavascript %}
 
 {% schema %}
 {
-  "name": "t:general.cart",
-  "settings": []
+  "name": "Cart",
+  "tag": "section"
 }
 {% endschema %}
