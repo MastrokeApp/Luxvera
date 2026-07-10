@@ -9,12 +9,55 @@
  */
 {
   "sections": {
+    "collection_banner": {
+      "type": "collection-banner",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "overlay_color": "#100a04",
+        "overlay_opacity": 70,
+        "height_desktop": 420,
+        "height_tablet": 320,
+        "height_mobile": 260,
+        "content_alignment": "flex-start",
+        "show_breadcrumbs": true,
+        "breadcrumb_home_label": "Home",
+        "heading": "",
+        "heading_size": 42,
+        "subtext": ""
+      }
+    },
     "main": {
       "type": "collection",
-      "settings": {}
+      "settings": {
+        "color_scheme": "scheme-1",
+        "products_per_page": 12,
+        "default_view": "grid",
+        "columns_desktop": 3,
+        "columns_desktop_no_sidebar": 4,
+        "columns_tablet": 2,
+        "columns_tablet_no_sidebar": 3,
+        "columns_mobile": "2",
+        "grid_gap": 20,
+        "grid_gap_row": 32,
+        "padding_top": 0,
+        "padding_bottom": 64,
+        "padding_top_mobile": 0,
+        "padding_bottom_mobile": 40,
+        "show_sort": true,
+        "show_view_toggle": true,
+        "show_filters": true,
+        "enable_mobile_filter_button": true,
+        "filter_heading": "FILTER BY",
+        "image_ratio": "portrait",
+        "card_radius": 6,
+        "button_radius": 0,
+        "atc_label": "Add To Cart",
+        "empty_text": "No products found in this collection."
+      }
     }
   },
   "order": [
+    "collection_banner",
     "main"
   ]
 }

@@ -1,47 +1,1279 @@
 {% comment %}
-  This section is used in the collection template to render collection page
-  listing all products within a collection.
+  Collection page - grid/list view, sort, filters (sidebar on desktop,
+  drawer on mobile), size picker popup for variants, pagination.
+  Uses product-card.liquid for each item. Everything (products, filters,
+  sort) comes straight from the collection object, nothing hardcoded.
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
+  Needs: product-card.liquid, lv-variant-modal.css, and the cart
+  notification drawer (it listens for "cart:open").
 {% endcomment %}
 
-<h1>{{ collection.title }}</h1>
+{{ 'lv-variant-modal.css' | asset_url | stylesheet_tag }}
 
-<div class="collection-products">
-  {% paginate collection.products by 20 %}
-    {% for product in collection.products %}
-      <div class="collection-product">
-        {% if product.featured_image %}
-          {% render 'image',
-            class: 'collection-product__image',
-            image: product.featured_image,
-            url: product.url,
-            width: 400,
-            height: 400,
-            crop: 'center'
-          %}
-        {% endif %}
-        <div class="collection-product__content">
-          <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
+{%- liquid
+  assign current_sort = collection.sort_by | default: collection.default_sort_by
+-%}
+
+{% paginate collection.products by section.settings.products_per_page %}
+  <div
+    class="lv-col-page color-{{ section.settings.color_scheme }}"
+    id="lv-col-page-{{ section.id }}"
+    data-lv-col-id="{{ section.id }}"
+    data-default-view="{{ section.settings.default_view }}"
+    data-current-sort="{{ current_sort }}"
+    style="
+      --lv-col-pt: {{ section.settings.padding_top }}px;
+      --lv-col-pb: {{ section.settings.padding_bottom }}px;
+      --lv-col-pt-m: {{ section.settings.padding_top_mobile }}px;
+      --lv-col-pb-m: {{ section.settings.padding_bottom_mobile }}px;
+      --lv-col-gap: {{ section.settings.grid_gap }}px;
+      --lv-col-gap-row: {{ section.settings.grid_gap_row }}px;
+      --lv-card-radius: {{ section.settings.card_radius }}px;
+      --lv-btn-radius: {{ section.settings.button_radius }}px;
+      --lv-cols-d: {{ section.settings.columns_desktop }};
+      --lv-cols-d-ns: {{ section.settings.columns_desktop_no_sidebar }};
+      --lv-cols-t: {{ section.settings.columns_tablet }};
+      --lv-cols-t-ns: {{ section.settings.columns_tablet_no_sidebar }};
+      --lv-cols-m: {{ section.settings.columns_mobile }};
+    "
+  >
+    <div class="lv-col-toolbar">
+      <div class="lv-col-toolbar__inner">
+        <p class="lv-col-count">
+          Showing {{ collection.products_count }} product{% if collection.products_count != 1 %}s{% endif %}
+        </p>
+
+        <div class="lv-col-toolbar__right">
+          {%- if section.settings.show_sort -%}
+            <div class="lv-sort">
+              <label class="lv-sort__label" for="lv-sort-select-{{ section.id }}">
+                SORT:
+              </label>
+              <select id="lv-sort-select-{{ section.id }}" class="lv-sort__select" onchange="window.location.href=this.value">
+                {%- for option in collection.sort_options -%}
+                  <option
+                    value="{{ collection.url }}?sort_by={{ option.value }}"
+                    {% if option.value == current_sort %}selected{% endif %}
+                  >{{ option.name }}</option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_view_toggle -%}
+            <div class="lv-view-toggle" role="group" aria-label="Collection view">
+              <button type="button" class="lv-view-btn lv-view-btn--grid active" data-view="grid" aria-label="Grid view">
+                {{ 'icon-view-grid.svg' | inline_asset_content }}
+              </button>
+              <button type="button" class="lv-view-btn lv-view-btn--list" data-view="list" aria-label="List view">
+                {{ 'icon-view-list.svg' | inline_asset_content }}
+              </button>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_filters and section.settings.enable_mobile_filter_button -%}
+            <button type="button" class="lv-mobile-filter-btn" id="lv-mobile-filter-open-{{ section.id }}">
+              Filters
+            </button>
+          {%- endif -%}
         </div>
       </div>
-    {% endfor %}
+    </div>
 
-    {{ paginate | default_pagination }}
-  {% endpaginate %}
-</div>
+    <div class="lv-col-body{% unless section.settings.show_filters %} lv-col-body--no-sidebar{% endunless %}">
+      {%- if section.settings.show_filters -%}
+        <aside class="lv-col-sidebar" id="lv-col-sidebar-{{ section.id }}">
+          <div class="lv-sidebar-inner">
+            <p class="lv-sidebar__heading">{{ section.settings.filter_heading | default: 'FILTER BY' }}</p>
+
+            {%- if collection.filters != empty -%}
+              <form class="lv-filters-form" id="lv-filters-form-{{ section.id }}">
+                {%- for filter in collection.filters -%}
+                  <div class="lv-filter-group" data-filter-type="{{ filter.type }}">
+                    <button type="button" class="lv-filter-group__toggle">
+                      {{ filter.label | upcase }}
+                      <span class="lv-fg-arrow" aria-hidden="true">&#8722;</span>
+                    </button>
+
+                    <div class="lv-filter-group__body">
+                      {%- case filter.type -%}
+                        {%- when 'boolean' or 'list' -%}
+                          {%- for filter_value in filter.values -%}
+                            <label class="lv-filter-check">
+                              <input
+                                type="checkbox"
+                                name="{{ filter_value.param_name }}"
+                                value="{{ filter_value.value }}"
+                                {% if filter_value.active %}checked{% endif %}
+                                {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+                              >
+                              <span>{{ filter_value.label }}</span>
+                              <span class="lv-filter-count">({{ filter_value.count }})</span>
+                            </label>
+                          {%- endfor -%}
+
+                        {%- when 'price_range' -%}
+                          <div class="lv-price-range">
+                            <input
+                              class="lv-price-input"
+                              type="number"
+                              name="{{ filter.min_value.param_name }}"
+                              value="{% if filter.min_value.value %}{{ filter.min_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
+                              placeholder="Min"
+                              min="0"
+                            >
+                            <input
+                              class="lv-price-input"
+                              type="number"
+                              name="{{ filter.max_value.param_name }}"
+                              value="{% if filter.max_value.value %}{{ filter.max_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
+                              placeholder="Max"
+                              min="0"
+                            >
+                          </div>
+                          <button type="submit" class="lv-apply-btn">APPLY</button>
+                      {%- endcase -%}
+                    </div>
+                  </div>
+                {%- endfor -%}
+
+                <div class="lv-filter-actions">
+                  <a class="lv-clear-filters" href="{{ collection.url }}">Clear all</a>
+                </div>
+              </form>
+            {%- else -%}
+              <p class="lv-no-filters-msg">Filters are not available for this collection.</p>
+            {%- endif -%}
+          </div>
+        </aside>
+
+        {%- if section.settings.enable_mobile_filter_button -%}
+          <div class="lv-mobile-filter-drawer" id="lv-mobile-filter-drawer-{{ section.id }}" aria-hidden="true">
+            <div class="lv-mobile-filter-overlay" data-close-mobile-filter></div>
+            <div class="lv-mobile-filter-panel">
+              <div class="lv-mobile-filter-head">
+                <p>{{ section.settings.filter_heading | default: 'FILTER BY' }}</p>
+                <button type="button" class="lv-mobile-filter-close" data-close-mobile-filter aria-label="Close filter">&times;</button>
+              </div>
+
+              {%- if collection.filters != empty -%}
+                <form class="lv-filters-form lv-filters-form--mobile" id="lv-filters-form-mobile-{{ section.id }}">
+                  {%- for filter in collection.filters -%}
+                    <div class="lv-filter-group" data-filter-type="{{ filter.type }}">
+                      <button type="button" class="lv-filter-group__toggle">
+                        {{ filter.label | upcase }}
+                        <span class="lv-fg-arrow" aria-hidden="true">&#8722;</span>
+                      </button>
+
+                      <div class="lv-filter-group__body">
+                        {%- case filter.type -%}
+                          {%- when 'boolean' or 'list' -%}
+                            {%- for filter_value in filter.values -%}
+                              <label class="lv-filter-check">
+                                <input
+                                  type="checkbox"
+                                  name="{{ filter_value.param_name }}"
+                                  value="{{ filter_value.value }}"
+                                  {% if filter_value.active %}checked{% endif %}
+                                  {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+                                >
+                                <span>{{ filter_value.label }}</span>
+                                <span class="lv-filter-count">({{ filter_value.count }})</span>
+                              </label>
+                            {%- endfor -%}
+
+                          {%- when 'price_range' -%}
+                            <div class="lv-price-range">
+                              <input
+                                class="lv-price-input"
+                                type="number"
+                                name="{{ filter.min_value.param_name }}"
+                                value="{% if filter.min_value.value %}{{ filter.min_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
+                                placeholder="Min"
+                                min="0"
+                              >
+                              <input
+                                class="lv-price-input"
+                                type="number"
+                                name="{{ filter.max_value.param_name }}"
+                                value="{% if filter.max_value.value %}{{ filter.max_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
+                                placeholder="Max"
+                                min="0"
+                              >
+                            </div>
+                            <button type="submit" class="lv-apply-btn">APPLY</button>
+                        {%- endcase -%}
+                      </div>
+                    </div>
+                  {%- endfor -%}
+
+                  <div class="lv-filter-actions">
+                    <a class="lv-clear-filters" href="{{ collection.url }}">Clear all</a>
+                  </div>
+                </form>
+              {%- else -%}
+                <p class="lv-no-filters-msg">Filters are not available for this collection.</p>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+
+      <div class="lv-col-grid-wrap">
+        {%- if collection.products_count == 0 -%}
+          <p class="lv-col-empty">{{ section.settings.empty_text }}</p>
+        {%- else -%}
+          <div class="lv-product-grid" id="lv-product-grid-{{ section.id }}">
+            {%- for product in collection.products -%}
+              {% render 'product-card',
+                product: product,
+                card_context: 'collection',
+                section_id: section.id,
+                atc_label: section.settings.atc_label,
+                image_ratio: section.settings.image_ratio
+              %}
+            {%- endfor -%}
+          </div>
+
+          {%- if paginate.pages > 1 -%}
+            <div class="lv-pagination">
+              {{ paginate | default_pagination }}
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} Size picker for multi-variant products {%- endcomment -%}
+    <div class="lv-variant-modal" id="lv-vm-col-{{ section.id }}" role="dialog" aria-modal="true" aria-label="Select Size">
+      <div class="lv-variant-modal__box">
+        <div class="lv-variant-modal__head">
+          <span class="lv-variant-modal__title" id="lv-vm-col-title-{{ section.id }}"></span>
+          <button class="lv-variant-modal__close" id="lv-vm-col-close-{{ section.id }}" aria-label="Close">&times;</button>
+        </div>
+        <p class="lv-variant-modal__label">Select Size</p>
+        <div class="lv-variant-modal__options" id="lv-vm-col-opts-{{ section.id }}"></div>
+        <button
+          class="lv-variant-modal__atc"
+          id="lv-vm-col-atc-{{ section.id }}"
+          data-label-choose="Choose a size"
+          data-label-add-prefix="Add To Cart — "
+          data-label-adding="Adding…"
+          disabled
+        >Choose a size</button>
+      </div>
+    </div>
+  </div>
+{% endpaginate %}
 
 {% stylesheet %}
-  .collection-products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+.lv-col-page {
+  padding-top: var(--lv-col-pt, 0px);
+  padding-bottom: var(--lv-col-pb, 64px);
+  --lv-px: var(--container-padding, 56px);
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+@media (max-width: 1024px) {
+  .lv-col-page {
+    --lv-px: var(--container-padding-md, 32px);
   }
+}
+
+@media (max-width: 768px) {
+  .lv-col-page {
+    --lv-px: var(--container-padding-sm, 20px);
+    padding-top: var(--lv-col-pt-m, 0px);
+    padding-bottom: var(--lv-col-pb-m, 40px);
+  }
+}
+
+@media (max-width: 480px) {
+  .lv-col-page {
+    --lv-px: var(--container-padding-xs, 16px);
+  }
+}
+
+/* Toolbar */
+.lv-col-page .lv-col-toolbar {
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.14);
+  padding: 20px 0 20px;
+}
+
+.lv-col-page .lv-col-toolbar__inner {
+  max-width: var(--lv-container-max, 1280px);
+  margin: 0 auto;
+  padding: 0 var(--lv-px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.lv-col-page .lv-col-count {
+  margin: 0;
+  font-size: 13px;
+  color: rgb(var(--color-foreground));
+  opacity: .7;
+}
+
+.lv-col-page .lv-col-toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.lv-col-page .lv-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lv-col-page .lv-sort__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: rgb(var(--color-foreground));
+  opacity: .65;
+}
+
+.lv-col-page .lv-sort__select {
+  min-width: 180px;
+  font-size: 13px;
+  border: 1px solid rgba(var(--color-foreground), 0.18);
+  padding: 10px 36px 10px 12px;
+  background:
+    rgb(var(--color-background))
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E")
+    no-repeat right 12px center;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  color: rgb(var(--color-foreground));
+}
+
+.lv-col-page .lv-view-toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.lv-col-page .lv-view-btn {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(var(--color-foreground), 0.18);
+  color: rgb(var(--color-foreground));
+  background: rgb(var(--color-background));
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.lv-col-page .lv-view-btn.active,
+.lv-col-page .lv-view-btn:hover {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border-color: rgb(var(--color-button));
+}
+
+.lv-col-page .lv-mobile-filter-btn {
+  display: none;
+  padding: 10px 18px;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+
+/* Layout */
+.lv-col-page .lv-col-body {
+  max-width: var(--lv-container-max, 1280px);
+  margin: 0 auto;
+  padding: 32px var(--lv-px) 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.lv-col-page .lv-col-body--no-sidebar .lv-col-grid-wrap {
+  width: 100%;
+}
+
+/* Sidebar */
+.lv-col-page .lv-col-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 80px;
+}
+
+.lv-col-page .lv-sidebar-inner {
+  border: 1px solid rgba(var(--color-foreground), 0.14);
+  padding: 20px;
+  background: rgb(var(--color-background));
+}
+
+.lv-col-page .lv-sidebar__heading {
+  margin: 0 0 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: rgb(var(--color-foreground));
+  opacity: .75;
+}
+
+.lv-col-page .lv-filter-group {
+  border-top: 1px solid rgba(var(--color-foreground), 0.14);
+  padding: 14px 0;
+}
+
+.lv-col-page .lv-filter-group:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.lv-col-page .lv-filter-group__toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  color: rgb(var(--color-foreground));
+  text-align: left;
+}
+
+.lv-col-page .lv-fg-arrow {
+  font-size: 16px;
+  line-height: 1;
+  color: rgb(var(--color-foreground));
+  opacity: .55;
+}
+
+.lv-col-page .lv-filter-group__body {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lv-col-page .lv-filter-group__body.collapsed {
+  display: none;
+}
+
+.lv-col-page .lv-filter-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  flex-wrap: wrap;
+  color: rgb(var(--color-foreground));
+}
+
+.lv-col-page .lv-filter-check input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.lv-col-page .lv-filter-count {
+  opacity: .55;
+}
+
+.lv-col-page .lv-price-range {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.lv-col-page .lv-price-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 13px;
+  border: 1px solid rgba(var(--color-foreground), 0.18);
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+.lv-col-page .lv-apply-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 12px;
+  border: none;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.lv-col-page .lv-apply-btn:hover {
+  opacity: .8;
+}
+
+.lv-col-page .lv-filter-actions {
+  margin-top: 16px;
+}
+
+.lv-col-page .lv-clear-filters {
+  display: inline-block;
+  font-size: 12px;
+  text-decoration: underline;
+  color: rgb(var(--color-foreground));
+}
+
+.lv-col-page .lv-no-filters-msg {
+  margin: 0;
+  font-size: 13px;
+  opacity: .65;
+}
+
+/* Product grid */
+.lv-col-page .lv-col-grid-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.lv-col-page .lv-product-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--lv-cols-d, 3), minmax(0, 1fr));
+  gap: var(--lv-col-gap-row, 32px) var(--lv-col-gap, 20px);
+  width: 100%;
+}
+
+.lv-col-page .lv-col-body--no-sidebar .lv-product-grid {
+  grid-template-columns: repeat(var(--lv-cols-d-ns, 4), minmax(0, 1fr));
+}
+
+/* Card shared styling */
+.lv-col-page .product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.lv-col-page .product-img-wrap {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  text-decoration: none;
+  background: rgb(var(--color-background));
+  border-radius: var(--lv-card-radius, 6px) var(--lv-card-radius, 6px) 0 0;
+}
+
+.lv-col-page .product-img-wrap--portrait { aspect-ratio: 3/4; }
+.lv-col-page .product-img-wrap--square { aspect-ratio: 1/1; }
+.lv-col-page .product-img-wrap--landscape { aspect-ratio: 4/3; }
+
+.lv-col-page .product-img-wrap img,
+.lv-col-page .product-img-wrap .placeholder-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform .35s ease;
+}
+
+.lv-col-page .product-card:hover .product-img-wrap img {
+  transform: scale(1.04);
+}
+
+.lv-col-page .product-info {
+  background: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), 0.14);
+  border-top: none;
+  border-radius: 0 0 var(--lv-card-radius, 6px) var(--lv-card-radius, 6px);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.lv-col-page .product-name {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: rgb(var(--color-foreground));
+  text-decoration: none;
+  margin-bottom: 6px;
+}
+
+.lv-col-page .product-name:hover {
+  opacity: .75;
+}
+
+.lv-col-page .price-color-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.lv-col-page .price-new {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(var(--color-foreground));
+}
+
+.lv-col-page .price-old {
+  font-size: 13px;
+  color: rgb(var(--color-foreground));
+  opacity: .5;
+  text-decoration: line-through;
+}
+
+.lv-col-page .add-to-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding: 13px 16px;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border: none;
+  border-radius: var(--lv-btn-radius, 0px);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.lv-col-page .add-to-cart svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.lv-col-page .add-to-cart:hover {
+  opacity: .82;
+}
+
+.lv-col-page .add-to-cart[disabled] {
+  opacity: .45;
+  cursor: not-allowed;
+  background: #aaa;
+}
+
+.lv-col-page .add-to-cart.adding {
+  opacity: .65;
+  cursor: wait;
+}
+
+.lv-col-page .add-to-cart.added {
+  background: var(--color-success, #2a7a2a) !important;
+  color: #fff;
+  opacity: 1;
+  cursor: default;
+}
+
+/* List view */
+.lv-col-page .lv-product-grid.list-view {
+  grid-template-columns: 1fr !important;
+  gap: 18px;
+}
+
+.lv-col-page .lv-product-grid.list-view .product-card {
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  border: 1px solid rgba(var(--color-foreground), 0.14);
+  background: rgb(var(--color-background));
+}
+
+.lv-col-page .lv-product-grid.list-view .product-img-wrap {
+  width: 240px;
+  min-width: 240px;
+  border-radius: 0;
+}
+
+.lv-col-page .lv-product-grid.list-view .product-info {
+  border: none;
+  border-left: 1px solid rgba(var(--color-foreground), 0.14);
+  border-radius: 0;
+  padding: 20px;
+}
+
+.lv-col-page .lv-product-grid.list-view .product-name {
+  font-size: 16px;
+}
+
+.lv-col-page .lv-product-grid.list-view .add-to-cart {
+  width: auto;
+  min-width: 180px;
+}
+
+/* Pagination + empty */
+.lv-col-page .lv-col-empty {
+  text-align: center;
+  padding: 60px 0;
+  font-size: 15px;
+  color: rgb(var(--color-foreground));
+  opacity: .65;
+}
+
+.lv-col-page .lv-pagination {
+  text-align: center;
+  margin-top: 48px;
+}
+
+.lv-col-page .lv-pagination a,
+.lv-col-page .lv-pagination span {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 0 3px;
+  border: 1px solid rgba(var(--color-foreground), 0.18);
+  color: rgb(var(--color-foreground));
+  font-size: 14px;
+  transition: background .2s, color .2s;
+}
+
+.lv-col-page .lv-pagination a:hover {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border-color: rgb(var(--color-button));
+}
+
+.lv-col-page .lv-pagination .current {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border-color: rgb(var(--color-button));
+}
+
+/* Mobile filter drawer */
+.lv-col-page .lv-mobile-filter-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  pointer-events: none;
+}
+
+.lv-col-page .lv-mobile-filter-drawer.is-open {
+  pointer-events: auto;
+}
+
+.lv-col-page .lv-mobile-filter-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
+.lv-col-page .lv-mobile-filter-drawer.is-open .lv-mobile-filter-overlay {
+  opacity: 1;
+}
+
+.lv-col-page .lv-mobile-filter-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(90vw, 380px);
+  height: 100%;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  transform: translateX(100%);
+  transition: transform .25s ease;
+  padding: 20px;
+  overflow: auto;
+}
+
+.lv-col-page .lv-mobile-filter-drawer.is-open .lv-mobile-filter-panel {
+  transform: translateX(0);
+}
+
+.lv-col-page .lv-mobile-filter-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.lv-col-page .lv-mobile-filter-head p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.lv-col-page .lv-mobile-filter-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: rgb(var(--color-foreground));
+}
+
+@media (max-width: 1199px) {
+  .lv-col-page .lv-col-sidebar {
+    width: 220px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .lv-col-page .lv-col-body {
+    gap: 28px;
+  }
+
+  .lv-col-page .lv-product-grid {
+    grid-template-columns: repeat(var(--lv-cols-t, 2), minmax(0, 1fr));
+  }
+
+  .lv-col-page .lv-col-body--no-sidebar .lv-product-grid {
+    grid-template-columns: repeat(var(--lv-cols-t-ns, 3), minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .lv-col-page .lv-col-toolbar {
+    padding-bottom: 16px;
+  }
+
+  .lv-col-page .lv-col-toolbar__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lv-col-page .lv-col-toolbar__right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .lv-col-page .lv-col-sidebar {
+    display: none;
+  }
+
+  .lv-col-page .lv-mobile-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lv-col-page .lv-col-body {
+    display: block;
+    padding-top: 24px;
+  }
+
+  .lv-col-page .lv-product-grid,
+  .lv-col-page .lv-col-body--no-sidebar .lv-product-grid {
+    grid-template-columns: repeat(var(--lv-cols-m, 2), minmax(0, 1fr));
+    gap: 20px 12px;
+  }
+
+  .lv-col-page .lv-product-grid.list-view .product-card {
+    flex-direction: column;
+  }
+
+  .lv-col-page .lv-product-grid.list-view .product-img-wrap {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lv-col-page .lv-product-grid.list-view .product-info {
+    border-left: none;
+    border-top: 1px solid rgba(var(--color-foreground), 0.14);
+  }
+
+  .lv-col-page .lv-product-grid.list-view .add-to-cart {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .lv-col-page .lv-sort__select {
+    min-width: 150px;
+    width: 100%;
+  }
+
+  .lv-col-page .lv-col-toolbar__right {
+    gap: 10px;
+  }
+
+  .lv-col-page .lv-product-grid,
+  .lv-col-page .lv-col-body--no-sidebar .lv-product-grid {
+    gap: 16px 10px;
+  }
+
+  .lv-col-page .product-info {
+    padding: 12px;
+  }
+
+  .lv-col-page .product-name {
+    font-size: 13px;
+  }
+}
 {% endstylesheet %}
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function initCollection(root) {
+    if (root.dataset.lvColInit) return;
+    root.dataset.lvColInit = '1';
+
+    var SID = root.dataset.lvColId;
+    var grid = document.getElementById('lv-product-grid-' + SID);
+    var defaultView = root.dataset.defaultView || 'grid';
+    var currentSort = root.dataset.currentSort || '';
+    var storageKey = 'lv-collection-view-' + SID;
+
+    var modal = document.getElementById('lv-vm-col-' + SID);
+    var modalTitle = document.getElementById('lv-vm-col-title-' + SID);
+    var modalOpts = document.getElementById('lv-vm-col-opts-' + SID);
+    var modalAtc = document.getElementById('lv-vm-col-atc-' + SID);
+    var modalClose = document.getElementById('lv-vm-col-close-' + SID);
+    var selectedVid = null;
+
+    var L = {
+      choose: (modalAtc && modalAtc.dataset.labelChoose) || 'Choose a size',
+      addPrefix: (modalAtc && modalAtc.dataset.labelAddPrefix) || 'Add To Cart — ',
+      adding: (modalAtc && modalAtc.dataset.labelAdding) || 'Adding…'
+    };
+
+    function setActiveView(view) {
+      if (!grid) return;
+      root.querySelectorAll('.lv-view-btn').forEach(function (btn) {
+        btn.classList.toggle('active', btn.dataset.view === view);
+      });
+      if (view === 'list') grid.classList.add('list-view');
+      else grid.classList.remove('list-view');
+      try { localStorage.setItem(storageKey, view); } catch (e) {}
+    }
+
+    function initView() {
+      if (!grid) return;
+      var saved = null;
+      try { saved = localStorage.getItem(storageKey); } catch (e) {}
+      setActiveView(saved || defaultView || 'grid');
+    }
+
+    function toggleFilterGroup(btn) {
+      var body = btn.parentElement.querySelector('.lv-filter-group__body');
+      var arrow = btn.querySelector('.lv-fg-arrow');
+      if (!body) return;
+      body.classList.toggle('collapsed');
+      if (arrow) arrow.innerHTML = body.classList.contains('collapsed') ? '+' : '&#8722;';
+    }
+
+    function serializeFilterForm(form) {
+      var url = new URL(window.location.href);
+      url.search = '';
+      if (currentSort) url.searchParams.set('sort_by', currentSort);
+
+      var fd = new FormData(form);
+      fd.forEach(function (value, key) {
+        if (value !== '' && value !== null) {
+          url.searchParams.append(key, value);
+        }
+      });
+
+      window.location.href = url.toString();
+    }
+
+    function openModal(btn) {
+      if (!modal) return;
+      modalTitle.textContent = btn.dataset.productTitle || '';
+      modalOpts.innerHTML = '';
+      selectedVid = null;
+      modalAtc.disabled = true;
+      modalAtc.textContent = L.choose;
+
+      (btn.dataset.variants || '').split('::').forEach(function (v) {
+        if (!v) return;
+        var p = v.split('||');
+        var vid = p[0];
+        var vtitle = p[1];
+        var avail = p[2];
+
+        var opt = document.createElement('button');
+        opt.type = 'button';
+        opt.className = 'lv-variant-modal__opt';
+        opt.textContent = vtitle;
+
+        if (avail === 'false') {
+          opt.disabled = true;
+        }
+
+        opt.addEventListener('click', function () {
+          if (opt.disabled) return;
+          modalOpts.querySelectorAll('.lv-variant-modal__opt').forEach(function (o) {
+            o.classList.remove('selected');
+          });
+          opt.classList.add('selected');
+          selectedVid = vid;
+          modalAtc.disabled = false;
+          modalAtc.textContent = L.addPrefix + vtitle;
+        });
+
+        modalOpts.appendChild(opt);
+      });
+
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      selectedVid = null;
+    }
+
+    function doATC(vid, btn, origHTML) {
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ id: parseInt(vid, 10), quantity: 1 })
+      })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function () {
+        if (btn) {
+          btn.classList.remove('adding');
+          btn.classList.add('added');
+          btn.innerHTML = 'Added &#10003;<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
+          setTimeout(function () {
+            if (btn) {
+              btn.innerHTML = origHTML;
+              btn.classList.remove('added');
+            }
+          }, 2000);
+        }
+
+        document.dispatchEvent(new CustomEvent('cart:updated', {
+          bubbles: true,
+          detail: { variantId: vid }
+        }));
+        document.dispatchEvent(new CustomEvent('cart:open'));
+
+        closeModal();
+      })
+      .catch(function (err) {
+        console.warn('[Collection ATC]', err);
+        if (btn) {
+          btn.classList.remove('adding');
+          btn.innerHTML = origHTML;
+        }
+        closeModal();
+      });
+    }
+
+    root.addEventListener('click', function (e) {
+      var viewBtn = e.target.closest('.lv-view-btn');
+      if (viewBtn) {
+        e.preventDefault();
+        setActiveView(viewBtn.dataset.view || 'grid');
+        return;
+      }
+
+      var filterToggle = e.target.closest('.lv-filter-group__toggle');
+      if (filterToggle) {
+        e.preventDefault();
+        toggleFilterGroup(filterToggle);
+        return;
+      }
+
+      var atcBtn = e.target.closest('.add-to-cart');
+      if (atcBtn && !atcBtn.disabled && atcBtn.getAttribute('aria-disabled') !== 'true') {
+        e.preventDefault();
+        if (atcBtn.classList.contains('adding') || atcBtn.classList.contains('added')) return;
+
+        var vid = atcBtn.dataset.variantId;
+        var isMulti = atcBtn.dataset.multi === 'true';
+
+        if (isMulti) {
+          openModal(atcBtn);
+          return;
+        }
+
+        if (!vid || vid === '' || vid === 'undefined') {
+          window.location.href = atcBtn.dataset.productUrl || '/';
+          return;
+        }
+
+        var origHTML = atcBtn.innerHTML;
+        atcBtn.classList.add('adding');
+        atcBtn.innerHTML = 'Adding…<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
+        doATC(vid, atcBtn, origHTML);
+      }
+    });
+
+    root.querySelectorAll('.lv-filters-form').forEach(function (form) {
+      form.addEventListener('change', function (e) {
+        if (e.target.matches('input[type="checkbox"]')) {
+          serializeFilterForm(form);
+        }
+      });
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        serializeFilterForm(form);
+      });
+    });
+
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modal) {
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+      });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal && modal.classList.contains('open')) {
+        closeModal();
+      }
+    });
+
+    if (modalAtc) {
+      modalAtc.addEventListener('click', function () {
+        if (!selectedVid) return;
+        var original = modalAtc.textContent;
+        modalAtc.disabled = true;
+        modalAtc.textContent = L.adding;
+        doATC(selectedVid, null, original);
+      });
+    }
+
+    var mobileOpen = document.getElementById('lv-mobile-filter-open-' + SID);
+    var mobileDrawer = document.getElementById('lv-mobile-filter-drawer-' + SID);
+
+    function openMobileFilters() {
+      if (!mobileDrawer) return;
+      mobileDrawer.classList.add('is-open');
+      mobileDrawer.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileFilters() {
+      if (!mobileDrawer) return;
+      mobileDrawer.classList.remove('is-open');
+      mobileDrawer.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    if (mobileOpen) mobileOpen.addEventListener('click', openMobileFilters);
+    if (mobileDrawer) {
+      mobileDrawer.querySelectorAll('[data-close-mobile-filter]').forEach(function (el) {
+        el.addEventListener('click', closeMobileFilters);
+      });
+    }
+
+    initView();
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.lv-col-page').forEach(initCollection);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+})();
+{% endjavascript %}
 
 {% schema %}
 {
-  "name": "t:general.collection",
-  "settings": []
+  "name": "Collection Products",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "products_per_page", "min": 8, "max": 48, "step": 4, "default": 24, "label": "Products per page" },
+    {
+      "type": "select",
+      "id": "default_view",
+      "label": "Default View",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "list", "label": "List" }
+      ],
+      "default": "grid"
+    },
+    { "type": "range", "id": "columns_desktop", "label": "Columns — Desktop (with sidebar)", "min": 2, "max": 5, "step": 1, "default": 3 },
+    { "type": "range", "id": "columns_desktop_no_sidebar", "label": "Columns — Desktop (no sidebar)", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns_tablet", "label": "Columns — Tablet (with sidebar)", "min": 2, "max": 4, "step": 1, "default": 2 },
+    { "type": "range", "id": "columns_tablet_no_sidebar", "label": "Columns — Tablet (no sidebar)", "min": 2, "max": 4, "step": 1, "default": 3 },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns — Mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2"
+    },
+    { "type": "range", "id": "grid_gap", "label": "Grid Column Gap", "min": 0, "max": 40, "step": 2, "default": 20 },
+    { "type": "range", "id": "grid_gap_row", "label": "Grid Row Gap", "min": 0, "max": 50, "step": 2, "default": 32 },
+
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Padding Top — Desktop", "min": 0, "max": 120, "step": 4, "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom — Desktop", "min": 0, "max": 120, "step": 4, "default": 64 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Padding Top — Mobile", "min": 0, "max": 80, "step": 4, "default": 0 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Padding Bottom — Mobile", "min": 0, "max": 80, "step": 4, "default": 40 },
+
+    { "type": "header", "content": "Toolbar" },
+    { "type": "checkbox", "id": "show_sort", "label": "Show Sort", "default": true },
+    { "type": "checkbox", "id": "show_view_toggle", "label": "Show View Toggle", "default": true },
+
+    { "type": "header", "content": "Filters" },
+    { "type": "checkbox", "id": "show_filters", "label": "Show Filter Sidebar", "default": true },
+    { "type": "checkbox", "id": "enable_mobile_filter_button", "label": "Enable Mobile Filter Drawer Button", "default": true },
+    { "type": "text", "id": "filter_heading", "label": "Filter Heading", "default": "FILTER BY" },
+
+    { "type": "header", "content": "Product Card" },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "options": [
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "landscape", "label": "Landscape (4:3)" }
+      ],
+      "default": "portrait"
+    },
+    { "type": "range", "id": "card_radius", "label": "Card Radius", "min": 0, "max": 24, "step": 1, "default": 6 },
+    { "type": "range", "id": "button_radius", "label": "Button Radius", "min": 0, "max": 24, "step": 1, "default": 0 },
+    { "type": "text", "id": "atc_label", "label": "Add To Cart Label", "default": "Add To Cart" },
+
+    { "type": "header", "content": "Empty State" },
+    { "type": "text", "id": "empty_text", "label": "Empty Collection Text", "default": "No products found in this collection." },
+
+    { "type": "header", "content": "Colors" }    
+  ]
 }
 {% endschema %}
