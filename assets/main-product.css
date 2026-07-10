@@ -1,20 +1,16 @@
-/* ============================================================
-   Product Detail Page (block-based)
-
-   Styles the main-product section: breadcrumb, media gallery,
-   variant options, quantity, buy buttons, trust, collapsible
-   rows, description, and share.
-
-   Loaded by: sections/product.liquid (via asset_url)
-   ============================================================ */
+/* Styles for the product page - breadcrumb, gallery, variant picker,
+   quantity, buy buttons, trust badges, collapsible rows, description,
+   share links. Colors come from .color-{scheme} on the section root.
+   Loaded by product.liquid. */
 
 .lv-pdp {
-  --lv-pdp-bg: var(--lv-color-bg, #ffffff);
-  --lv-pdp-fg: var(--lv-color-text, #1a1a1a);
-  --lv-pdp-primary: var(--lv-color-primary, #2a1f16);
-  --lv-pdp-muted: #8a8a8a;
-  --lv-pdp-border: var(--lv-color-border, #e5e0d8);
-  --lv-pdp-surface: var(--lv-color-bg-alt, #f7f5f2);
+  --lv-pdp-bg: rgb(var(--color-background));
+  --lv-pdp-fg: rgb(var(--color-foreground));
+  --lv-pdp-primary: rgb(var(--color-button));
+  --lv-pdp-on-primary: rgb(var(--color-button-text));
+  --lv-pdp-muted: rgba(var(--color-foreground), 0.55);
+  --lv-pdp-border: rgba(var(--color-foreground), 0.14);
+  --lv-pdp-surface: rgba(var(--color-foreground), 0.05);
   --lv-pdp-sale: #e63946;
   --lv-pdp-radius: 12px;
   --lv-pdp-radius-sm: 8px;
@@ -22,6 +18,7 @@
   max-width: var(--lv-container-max, 1280px);
   margin: 0 auto;
   padding: 16px 56px 72px;
+  background: var(--lv-pdp-bg);
   color: var(--lv-pdp-fg);
   font-family: var(--lv-font-body, sans-serif);
 }
@@ -460,7 +457,7 @@
   justify-content: center;
   gap: 8px;
   background: var(--lv-pdp-primary);
-  color: #fff;
+  color: var(--lv-pdp-on-primary);
   transition: opacity .2s, transform .1s;
 }
 

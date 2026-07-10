@@ -1,14 +1,11 @@
 {% comment %}
-  Section: Main Product
+  Product page - block-based so blocks can be added/removed/reordered.
+  Handles variants (native swatches), image gallery, quantity, dynamic
+  checkout, availability, description, collapsible rows, trust badges,
+  share links, plus custom liquid and app blocks. Also spits out variant
+  JSON and Product JSON-LD for SEO. Colors follow the selected scheme.
 
-  Block-based, fully dynamic product page (PDP). Supports variants with native
-  option swatches, a multi-image media gallery, quantity selector, dynamic
-  checkout, availability, description, collapsible rows, trust badges, share
-  links, custom Liquid, and app blocks. Includes variant JSON and Product
-  JSON-LD for SEO.
-
-  Depends on:
-    - assets/main-product.css
+  Needs: main-product.css
 {% endcomment %}
 
 {{ 'main-product.css' | asset_url | stylesheet_tag }}
@@ -19,7 +16,7 @@
 -%}
 
 <div
-  class="lv-pdp"
+  class="lv-pdp color-{{ section.settings.color_scheme }}"
   id="lv-pdp-{{ section.id }}"
   data-section-id="{{ section.id }}"
   data-section-type="product"
@@ -455,7 +452,12 @@
       });
     }
 
-    updateUI(findVariant(getSelectedOptions()));
+    // Only resolve a variant from options when option inputs exist.
+    // Single-variant products keep the server-rendered id already in the
+    // hidden input, so we must not run the "no variant" (disable) path.
+    if (root.querySelector('.lv-pdp-opt-input')) {
+      updateUI(findVariant(getSelectedOptions()));
+    }
   }
 
   function initAll(scope) {
@@ -519,6 +521,16 @@
       "step": 4,
       "unit": "px",
       "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     }
   ],
   "blocks": [
