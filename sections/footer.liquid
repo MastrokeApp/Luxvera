@@ -21,22 +21,21 @@
             <div class="lv-footer-brand" {{ block.shopify_attributes }}>
               <div>
                 {% if block.settings.logo != blank %}
-                   <a href="{{ root.url }}" class="lv-footer-brand-link">
-                  <img
-                    src="{{ block.settings.logo | image_url: width: 160 }}"
-                    alt="{{ shop.name }}"
-                    class="lv-footer-logo"
-                    width="160"
-                    loading="lazy"
-                  >
+                  <a href="{{ routes.root_url }}" class="lv-footer-brand-link">
+                    <img
+                      src="{{ block.settings.logo | image_url: width: 160 }}"
+                      alt="{{ shop.name }}"
+                      class="lv-footer-logo"
+                      width="160"
+                      loading="lazy"
+                    >
                   </a>
-                 
                 {% else %}
                   <div class="lv-footer-brand-name">
-                     <a href="{{ root.url }}" class="lv-footer-brand-link">
-                    {{ block.settings.brand_name | default: shop.name | upcase }}
-                    <div class="lv-logo__sub-row"><span class="lv-logo__line"></span><span class="lv-logo__sub">{{ section.settings.brand_sub | default: 'Fashion' }}</span><span class="lv-logo__line"></span></div>
-                     </a>
+                    <a href="{{ routes.root_url }}" class="lv-footer-brand-link">
+                      {{ block.settings.brand_name | default: shop.name | upcase }}
+                      <div class="lv-logo__sub-row"><span class="lv-logo__line"></span><span class="lv-logo__sub">{{ section.settings.brand_sub | default: 'Fashion' }}</span><span class="lv-logo__line"></span></div>
+                    </a>
                   </div>
                 {% endif %}
               </div>
@@ -45,50 +44,16 @@
                 <p>{{ block.settings.brand_description }}</p>
               {% endif %}
 
-             {% if section.settings.show_social_icons %}
-              <div class="lv-footer-social-row">
-                {% render 'social-media-link' %}
-              </div>
-            {% endif %}
+              {% if section.settings.show_social_icons %}
+                <div class="lv-footer-social-row">
+                  {% render 'social-media-link' %}
+                </div>
+              {% endif %}
             </div>
 
           {% when 'menu' %}
             {%- assign lv_col_id = 'lv-footer-col-' | append: block.id -%}
-           <div class="lv-footer-col{% if block.settings.enable_accordion %} lv-accordion-item{% endif %}">
-              {% if block.settings.heading != blank %}
-                {% if block.settings.enable_accordion %}
-                  <h5>
-                   <button
-                  type="button"
-                  class="lv-accordion-trigger"
-                  aria-expanded="false"
-                  aria-controls="{{ lv_col_id }}"
-                >
-                  <span>{{ block.settings.heading }}</span>
-                  <span class="lv-accordion-icon" aria-hidden="true"></span>
-                </button>
-                  </h5>
-                {% else %}
-                  <h5>{{ block.settings.heading }}</h5>
-                {% endif %}
-              {% endif %}
-
-              {% if block.settings.menu != blank %}
-                <ul
-                  id="{{ lv_col_id }}"
-                  class="lv-accordion-panel"
-                  {% if section.settings.enable_accordion %}hidden{% endif %}
-                >
-                  {% for link in block.settings.menu.links %}
-                    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-                  {% endfor %}
-                </ul>
-              {% endif %}
-            </div>
-
-          {% when 'newsletter' %}
-            {%- assign lv_nl_id = 'lv-footer-col-' | append: block.id -%}
-           <div class="lv-footer-col{% if block.settings.enable_accordion %} lv-accordion-item{% endif %}">
+            <div class="lv-footer-col{% if block.settings.enable_accordion %} lv-accordion-item{% endif %}">
               {% if block.settings.heading != blank %}
                 {% if block.settings.enable_accordion %}
                   <h5>
@@ -101,7 +66,40 @@
                       <span>{{ block.settings.heading }}</span>
                       <span class="lv-accordion-icon" aria-hidden="true"></span>
                     </button>
-                   
+                  </h5>
+                {% else %}
+                  <h5>{{ block.settings.heading }}</h5>
+                {% endif %}
+              {% endif %}
+
+              {% if block.settings.menu != blank %}
+                <ul
+                  id="{{ lv_col_id }}"
+                  class="lv-accordion-panel"
+                  {% if block.settings.enable_accordion %}hidden{% endif %}
+                >
+                  {% for link in block.settings.menu.links %}
+                    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+
+          {% when 'newsletter' %}
+            {%- assign lv_nl_id = 'lv-footer-col-' | append: block.id -%}
+            <div class="lv-footer-col{% if block.settings.enable_accordion %} lv-accordion-item{% endif %}">
+              {% if block.settings.heading != blank %}
+                {% if block.settings.enable_accordion %}
+                  <h5>
+                    <button
+                      type="button"
+                      class="lv-accordion-trigger"
+                      aria-expanded="false"
+                      aria-controls="{{ lv_nl_id }}"
+                    >
+                      <span>{{ block.settings.heading }}</span>
+                      <span class="lv-accordion-icon" aria-hidden="true"></span>
+                    </button>
                   </h5>
                 {% else %}
                   <h5>{{ block.settings.heading }}</h5>
@@ -178,16 +176,11 @@
           {%- for type in pay_types -%}
             <li class="lv-pay-icon">{{ type | payment_type_svg_tag: class: 'lv-pay-svg' }}</li>
           {%- endfor -%}
-
-          
         </ul>
       {%- endif -%}
     </div>
   </div>
 </div>
-
-
-
 
 {% schema %}
 {
@@ -207,7 +200,8 @@
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "Color scheme"
+      "label": "Color scheme",
+      "default": "scheme-3"
     },
     {
       "type": "text",
@@ -290,6 +284,7 @@
     {
       "type": "newsletter",
       "name": "Newsletter",
+      "limit": 1,
       "settings": [
         { "type": "checkbox", "id": "enable_block", "label": "Enable", "default": true },
         { "type": "checkbox", "id": "enable_accordion", "label": "Enable accordion", "default": true },
@@ -312,4 +307,4 @@
     }
   ]
 }
-{% endschema %}
+{% endschema %} 
