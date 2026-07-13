@@ -1,0 +1,429 @@
+{% comment %}
+  Section: Main Contact
+
+  Contact page with a two-column body (contact info on the left, contact form
+  on the right) and an optional map embed. All text, contact details, and the
+  map come from section settings. The form uses Shopify's native contact form.
+  Colors follow the selected color scheme.
+{% endcomment %}
+
+<div
+  class="lv-contact color-{{ section.settings.color_scheme }}"
+  id="lv-contact-{{ section.id }}"
+>
+  {%- comment -%} Body: two columns {%- endcomment -%}
+  <div class="lv-contact-body">
+
+    {%- comment -%} Left: contact info {%- endcomment -%}
+    <div class="lv-contact-info">
+      {%- if section.settings.support_heading != blank -%}
+        <div class="lv-contact-info__block">
+          <p class="lv-contact-info__label">{{ section.settings.support_heading | escape }}</p>
+          <p class="lv-contact-info__value">{{ section.settings.support_text | escape }}</p>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.email_value != blank -%}
+        <div class="lv-contact-info__block">
+          <div class="lv-contact-info__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <p class="lv-contact-info__label" style="margin:0">{{ section.settings.email_label | default: 'Email Us' | escape }}</p>
+          </div>
+          <p class="lv-contact-info__value"><a href="mailto:{{ section.settings.email_value }}">{{ section.settings.email_value | escape }}</a></p>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.phone_value != blank -%}
+        <div class="lv-contact-info__block">
+          <div class="lv-contact-info__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.9 10.82a19.79 19.79 0 01-3.07-8.67A2 2 0 012.81 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.78a16 16 0 006.07 6.07l1.14-1.14a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            <p class="lv-contact-info__label" style="margin:0">{{ section.settings.phone_label | default: 'Call Us' | escape }}</p>
+          </div>
+          <p class="lv-contact-info__value"><a href="tel:{{ section.settings.phone_value | remove: ' ' }}">{{ section.settings.phone_value | escape }}</a></p>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.location_line1 != blank -%}
+        <div class="lv-contact-info__block">
+          <div class="lv-contact-info__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <p class="lv-contact-info__label" style="margin:0">{{ section.settings.location_label | default: 'Our Location' | escape }}</p>
+          </div>
+          <p class="lv-contact-info__value">{{ section.settings.location_line1 | escape }}<br>{{ section.settings.location_line2 | escape }}</p>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.response_text != blank -%}
+        <div class="lv-contact-info__block">
+          <p class="lv-contact-info__label">{{ section.settings.response_label | default: 'Response Time' | escape }}</p>
+          <p class="lv-contact-info__value">{{ section.settings.response_text | escape }}</p>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.cta_heading != blank -%}
+        <div class="lv-contact-cta">
+          <h3>{{ section.settings.cta_heading | escape }}</h3>
+          <p>{{ section.settings.cta_text | escape }}</p>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Right: form + map {%- endcomment -%}
+    <div class="lv-contact-right">
+      {%- if section.settings.form_heading != blank -%}
+        <h2 class="lv-contact-form__heading">{{ section.settings.form_heading | escape }}</h2>
+      {%- endif -%}
+
+      {%- form 'contact', class: 'lv-contact-form' -%}
+        {%- if form.posted_successfully? -%}
+          <div class="lv-contact-success show">
+            &#10003; Thanks for reaching out! We'll get back to you within 24-48 hours.
+          </div>
+        {%- endif -%}
+
+        <div class="lv-contact-form-row">
+          <div class="lv-contact-form-field">
+            <label for="contact-name-{{ section.id }}">Name</label>
+            <input type="text" id="contact-name-{{ section.id }}" name="contact[name]" placeholder="Your full name" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" required>
+          </div>
+          <div class="lv-contact-form-field">
+            <label for="contact-email-{{ section.id }}">Email</label>
+            <input type="email" id="contact-email-{{ section.id }}" name="contact[email]" placeholder="your@email.com" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" required>
+          </div>
+        </div>
+
+        <div class="lv-contact-form-field">
+          <label for="contact-subject-{{ section.id }}">Subject</label>
+          <input type="text" id="contact-subject-{{ section.id }}" name="contact[subject]" placeholder="How can we help?">
+        </div>
+
+        <div class="lv-contact-form-field">
+          <label for="contact-message-{{ section.id }}">Message</label>
+          <textarea id="contact-message-{{ section.id }}" name="contact[body]" placeholder="Write your message here…" required></textarea>
+        </div>
+
+        <button type="submit" class="lv-contact-form-submit">
+          {{ section.settings.btn_label | default: 'Send Message' | escape }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      {%- endform -%}
+
+      {%- comment -%} Map {%- endcomment -%}
+      {%- if section.settings.show_map -%}
+        <div class="lv-contact-map">
+          {%- if section.settings.map_embed != blank -%}
+            {{ section.settings.map_embed }}
+          {%- else -%}
+            <div class="lv-contact-map__placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Add your Google Maps embed URL in Theme Editor</span>
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+  </div>
+</div>
+
+{% stylesheet %}
+.lv-contact {
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+/* Body */
+.lv-contact .lv-contact-body {
+  max-width: var(--lv-container-max, 1180px);
+  margin: 0 auto;
+  padding: 64px 40px 80px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 72px;
+  align-items: start;
+}
+
+/* Left: info */
+.lv-contact .lv-contact-info__block {
+  margin-bottom: 32px;
+}
+
+.lv-contact .lv-contact-info__block:last-child {
+  margin-bottom: 0;
+}
+
+.lv-contact .lv-contact-info__label {
+  font-size: 16px;
+  font-weight: 700;
+  color: rgb(var(--color-foreground));
+  margin: 0 0 8px;
+  font-family: var(--lv-font-heading, serif);
+}
+
+.lv-contact .lv-contact-info__value {
+  font-size: 14px;
+  line-height: 1.75;
+  color: rgb(var(--color-foreground));
+  opacity: 0.75;
+  margin: 0;
+}
+
+.lv-contact .lv-contact-info__value a {
+  color: rgb(var(--color-foreground));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: opacity .2s;
+}
+
+.lv-contact .lv-contact-info__value a:hover {
+  opacity: 0.5;
+}
+
+.lv-contact .lv-contact-info__icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.lv-contact .lv-contact-info__icon svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: rgb(var(--color-foreground));
+  opacity: 0.6;
+}
+
+/* CTA */
+.lv-contact .lv-contact-cta {
+  margin-top: 36px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(var(--color-foreground), 0.14);
+}
+
+.lv-contact .lv-contact-cta h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 10px;
+  color: rgb(var(--color-foreground));
+  font-family: var(--lv-font-heading, serif);
+}
+
+.lv-contact .lv-contact-cta p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: rgb(var(--color-foreground));
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* Right: form */
+.lv-contact .lv-contact-form__heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: rgb(var(--color-foreground));
+  margin: 0 0 28px;
+  font-family: var(--lv-font-heading, serif);
+}
+
+.lv-contact .lv-contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lv-contact .lv-contact-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.lv-contact .lv-contact-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lv-contact .lv-contact-form-field label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgb(var(--color-foreground));
+  opacity: 0.7;
+}
+
+.lv-contact .lv-contact-form-field input,
+.lv-contact .lv-contact-form-field select,
+.lv-contact .lv-contact-form-field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: var(--lv-font-body, sans-serif);
+  color: rgb(var(--color-foreground));
+  background: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), 0.18);
+  border-radius: var(--lv-btn-radius, 0px);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color .2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.lv-contact .lv-contact-form-field input:focus,
+.lv-contact .lv-contact-form-field select:focus,
+.lv-contact .lv-contact-form-field textarea:focus {
+  border-color: rgb(var(--color-foreground));
+}
+
+.lv-contact .lv-contact-form-field input::placeholder,
+.lv-contact .lv-contact-form-field textarea::placeholder {
+  color: rgba(var(--color-foreground), 0.4);
+}
+
+.lv-contact .lv-contact-form-field textarea {
+  resize: vertical;
+  min-height: 130px;
+}
+
+.lv-contact .lv-contact-form-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px 24px;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--lv-btn-radius, 0px);
+  cursor: pointer;
+  transition: opacity .2s;
+  font-family: var(--lv-font-body, sans-serif);
+  margin-top: 4px;
+}
+
+.lv-contact .lv-contact-form-submit:hover {
+  opacity: 0.82;
+}
+
+.lv-contact .lv-contact-form-submit svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Success message */
+.lv-contact .lv-contact-success {
+  display: none;
+  background: rgba(42, 122, 42, 0.08);
+  border: 1px solid rgba(42, 122, 42, 0.4);
+  border-radius: 4px;
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--color-success, #2a7a2a);
+  margin-top: 16px;
+  text-align: center;
+}
+
+.lv-contact .lv-contact-success.show {
+  display: block;
+}
+
+/* Map */
+.lv-contact .lv-contact-map {
+  margin-top: 32px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(var(--color-foreground), 0.14);
+  background: rgba(var(--color-foreground), 0.05);
+}
+
+.lv-contact .lv-contact-map iframe {
+  width: 100%;
+  height: 260px;
+  display: block;
+  border: none;
+}
+
+.lv-contact .lv-contact-map__placeholder {
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  color: rgb(var(--color-foreground));
+  opacity: 0.4;
+  font-size: 13px;
+}
+
+.lv-contact .lv-contact-map__placeholder svg {
+  width: 32px;
+  height: 32px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .lv-contact .lv-contact-body {
+    padding: 48px 32px 64px;
+    gap: 48px;
+  }
+}
+
+@media (max-width: 768px) {
+  .lv-contact .lv-contact-body {
+    grid-template-columns: 1fr;
+    padding: 40px 24px 60px;
+    gap: 40px;
+  }
+
+  .lv-contact .lv-contact-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .lv-contact .lv-contact-body {
+    padding: 28px 16px 48px;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Contact Page",
+  "tag": "section",
+  "class": "luxvera-contact",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "header", "content": "Contact Info" },
+    { "type": "text",     "id": "support_heading", "label": "Support Heading",   "default": "Customer Support" },
+    { "type": "textarea","id": "support_text",    "label": "Support Text",      "default": "About our products or just want to say hello? We're here to help! Our dedicated support team is ready to assist you." },
+    { "type": "text",    "id": "email_label",    "label": "Email Label",       "default": "Email Us" },
+    { "type": "text",    "id": "email_value",    "label": "Email Address",     "default": "support@luxvera.com" },
+    { "type": "text",    "id": "phone_label",    "label": "Phone Label",       "default": "Call Us" },
+    { "type": "text",    "id": "phone_value",    "label": "Phone Number",      "default": "+1 (415) 555-0172" },
+    { "type": "text",    "id": "location_label", "label": "Location Label",    "default": "Our Location" },
+    { "type": "text",    "id": "location_line1", "label": "Address Line 1",    "default": "123 Fashion Boulevard, Suite 200" },
+    { "type": "text",    "id": "location_line2", "label": "Address Line 2",    "default": "Los Angeles, California 90210" },
+    { "type": "text",    "id": "response_label", "label": "Response Time Label","default": "Response Time" },
+    { "type": "textarea","id": "response_text",  "label": "Response Time Text", "default": "We aim to respond to all inquiries within 24-48 business hours. For urgent matters, please contact us by phone during business hours." },
+    { "type": "text",    "id": "cta_heading",    "label": "CTA Heading",        "default": "We\u2019re Here for You" },
+    { "type": "textarea","id": "cta_text",       "label": "CTA Text",           "default": "Your experience at Luxvera is extremely important to us and we are committed to providing excellent service. Really, truly, we are!" },
+    { "type": "header", "content": "Contact Form" },
+    { "type": "text",     "id": "form_heading", "label": "Form Heading", "default": "Get in Touch" },
+    { "type": "text",     "id": "btn_label",    "label": "Button Label", "default": "Send Message" },
+    { "type": "header", "content": "Map" },
+    { "type": "checkbox", "id": "show_map",   "label": "Show Map",              "default": true },
+    { "type": "html",     "id": "map_embed",  "label": "Google Maps Embed Code", "info": "Paste your Google Maps <iframe> embed code here. Get it from maps.google.com \u2192 Share \u2192 Embed a map." }
+  ],
+  "presets": [{ "name": "Contact Page", "category": "Page" }]
+}
+{% endschema %}
