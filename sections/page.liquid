@@ -1,17 +1,239 @@
 {% comment %}
-  This section is used in the page template to render store pages like About us
-  or Contact us.
+  Section: Page
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/page
+  Renders the content from a Shopify page (Online Store > Pages) as rich text,
+  with configurable content width and spacing. When the page has no content, a
+  merchant-defined default message is shown instead (falls back to an editor-only
+  setup hint if no default is set). Colors follow the selected color scheme.
 {% endcomment %}
 
-<h1>{{ page.title }}</h1>
+<div
+  class="lv-main-page-content color-{{ section.settings.color_scheme }}"
+  id="lv-main-page-content-{{ section.id }}"
+  style="
+    --lv-page-pt: {{ section.settings.padding_top }}px;
+    --lv-page-pb: {{ section.settings.padding_bottom }}px;
+    --lv-page-pt-m: {{ section.settings.padding_top_mobile }}px;
+    --lv-page-pb-m: {{ section.settings.padding_bottom_mobile }}px;
+    --lv-page-width: {{ section.settings.content_width }}px;
+  "
+>
+  <div class="lv-main-page-content__inner page-width">
+    <div class="lv-main-page-content__wrapper rte">
+      {%- if page.content != blank -%}
+        {{ page.content }}
+      {%- elsif section.settings.default_content != blank -%}
+        {%- comment -%} Page is empty: show the merchant-defined fallback content (live + editor). {%- endcomment -%}
+        {{ section.settings.default_content }}
+      {%- elsif request.design_mode -%}
+        {%- comment -%} Page is empty and no fallback set: show a setup hint (editor only). {%- endcomment -%}
+        <div class="lv-main-page-content__placeholder">
+          <h2>{{ page.title | default: 'Page title' }}</h2>
+          <p>This is a preview of the page content area.</p>
+          <p>
+            Add content to the selected Shopify page from
+            <strong>Online Store &rarr; Pages</strong>, or set a default message in this
+            section's settings, and it will appear here.
+          </p>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
 
-{{ page.content }}
+{% stylesheet %}
+.lv-main-page-content {
+  padding-top: var(--lv-page-pt, 60px);
+  padding-bottom: var(--lv-page-pb, 60px);
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+.lv-main-page-content .lv-main-page-content__inner {
+  max-width: var(--lv-page-width, 900px);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.lv-main-page-content .lv-main-page-content__wrapper {
+  font-size: 16px;
+  line-height: 1.8;
+  word-wrap: break-word;
+  color: rgb(var(--color-foreground));
+}
+
+.lv-main-page-content .lv-main-page-content__wrapper > *:first-child {
+  margin-top: 0;
+}
+
+.lv-main-page-content .lv-main-page-content__wrapper > *:last-child {
+  margin-bottom: 0;
+}
+
+.lv-main-page-content .lv-main-page-content__wrapper h1,
+.lv-main-page-content .lv-main-page-content__wrapper h2,
+.lv-main-page-content .lv-main-page-content__wrapper h3,
+.lv-main-page-content .lv-main-page-content__wrapper h4,
+.lv-main-page-content .lv-main-page-content__wrapper h5,
+.lv-main-page-content .lv-main-page-content__wrapper h6 {
+  margin: 0 0 16px;
+  line-height: 1.25;
+}
+
+.lv-main-page-content .lv-main-page-content__wrapper p {
+  margin: 0 0 16px;
+}
+
+.lv-main-page-content .lv-main-page-content__wrapper ul,
+.lv-main-page-content .lv-main-page-content__wrapper ol {
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+
+.lv-main-page-content .lv-main-page-content__wrapper li {
+  margin-bottom: 6px;
+}
+
+.lv-main-page-content .lv-main-page-content__wrapper img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.lv-main-page-content .lv-main-page-content__wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.lv-main-page-content .lv-main-page-content__wrapper th,
+.lv-main-page-content .lv-main-page-content__wrapper td {
+  padding: 10px 14px;
+  border: 1px solid rgba(var(--color-foreground), 0.1);
+  text-align: left;
+}
+
+.lv-main-page-content .lv-main-page-content__wrapper blockquote {
+  margin: 20px 0;
+  padding-left: 20px;
+  border-left: 3px solid rgba(var(--color-foreground), 0.15);
+}
+
+/* Theme editor placeholder */
+.lv-main-page-content .lv-main-page-content__placeholder {
+  padding: 32px;
+  border: 1px dashed rgba(var(--color-foreground), 0.18);
+  background: rgba(var(--color-foreground), 0.03);
+  border-radius: 8px;
+}
+
+.lv-main-page-content .lv-main-page-content__placeholder h2 {
+  margin: 0 0 12px;
+}
+
+.lv-main-page-content .lv-main-page-content__placeholder p:last-child {
+  margin-bottom: 0;
+}
+
+@media screen and (max-width: 749px) {
+  .lv-main-page-content {
+    padding-top: var(--lv-page-pt-m, 40px);
+    padding-bottom: var(--lv-page-pb-m, 40px);
+  }
+
+  .lv-main-page-content .lv-main-page-content__wrapper {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .lv-main-page-content .lv-main-page-content__placeholder {
+    padding: 24px 20px;
+  }
+}
+{% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.page",
-  "settings": []
+  "name": "Main Page Content",
+  "tag": "section",
+  "class": "luxvera-main-page-content",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "richtext",
+      "id": "default_content",
+      "label": "Default content",
+      "info": "Shown on the storefront when the selected page has no content of its own.",
+      "default": "<p>Content for this page is coming soon.</p>"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content width",
+      "min": 600,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 900
+    },
+    {
+      "type": "header",
+      "content": "Desktop spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Mobile spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main Page Content"
+    }
+  ]
 }
 {% endschema %}
