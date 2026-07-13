@@ -1,0 +1,299 @@
+{% comment %}
+  Section: FAQ Accordion
+
+  Expandable/collapsible list of questions and answers, built from FAQ Item
+  blocks. Optionally opens the first item by default. Colors follow the
+  selected color scheme.
+
+  Depends on:
+    - assets/faq-accordion.css
+{% endcomment %}
+
+{{ 'faq-accordion.css' | asset_url | stylesheet_tag }}
+
+<div
+  class="faq-accordion-section color-{{ section.settings.color_scheme }}"
+  id="faq-{{ section.id }}"
+  data-lv-faq-id="{{ section.id }}"
+  data-allow-multiple="{{ section.settings.allow_multiple }}"
+  style="
+    --lv-faq-pt: {{ section.settings.section_padding_top }}px;
+    --lv-faq-pb: {{ section.settings.section_padding_bottom }}px;
+    --lv-faq-width: {{ section.settings.container_width }}px;
+  "
+>
+  <div class="faq-container">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'faq_item' -%}
+        <div
+          class="faq-item{% if forloop.first and section.settings.open_first %} faq-item--open{% endif %}"
+          {{ block.shopify_attributes }}
+        >
+          <button
+            class="faq-item__trigger"
+            aria-expanded="{% if forloop.first and section.settings.open_first %}true{% else %}false{% endif %}"
+            aria-controls="faq-answer-{{ block.id }}"
+            id="faq-question-{{ block.id }}"
+          >
+            <span class="faq-item__question">{{ block.settings.question }}</span>
+            <span class="faq-item__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 6L8 11L13 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+
+          <div
+            class="faq-item__body"
+            id="faq-answer-{{ block.id }}"
+            role="region"
+            aria-labelledby="faq-question-{{ block.id }}"
+            {% unless forloop.first and section.settings.open_first %}hidden{% endunless %}
+          >
+            <div class="faq-item__answer">
+              {{ block.settings.answer }}
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function initFaq(root) {
+    if (root.dataset.lvFaqInit) return;
+    root.dataset.lvFaqInit = '1';
+
+    var allowMultiple = root.dataset.allowMultiple === 'true';
+    var items = root.querySelectorAll('.faq-item');
+
+    function expandItem(item) {
+      var trigger = item.querySelector('.faq-item__trigger');
+      var body = item.querySelector('.faq-item__body');
+      if (!trigger || !body) return;
+
+      body.style.height = '';
+      body.removeAttribute('hidden');
+
+      var height = body.scrollHeight;
+      body.style.height = '0px';
+      item.classList.add('faq-item--open');
+      trigger.setAttribute('aria-expanded', 'true');
+
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          body.style.height = height + 'px';
+        });
+      });
+
+      body.addEventListener('transitionend', function () {
+        body.style.height = 'auto';
+      }, { once: true });
+    }
+
+    function collapseItem(item) {
+      var trigger = item.querySelector('.faq-item__trigger');
+      var body = item.querySelector('.faq-item__body');
+      if (!trigger || !body) return;
+
+      body.style.height = body.scrollHeight + 'px';
+      item.classList.remove('faq-item--open');
+      trigger.setAttribute('aria-expanded', 'false');
+
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          body.style.height = '0px';
+        });
+      });
+
+      body.addEventListener('transitionend', function () {
+        body.setAttribute('hidden', '');
+        body.style.height = '';
+      }, { once: true });
+    }
+
+    items.forEach(function (item) {
+      var trigger = item.querySelector('.faq-item__trigger');
+      var body = item.querySelector('.faq-item__body');
+      if (!trigger || !body) return;
+
+      trigger.addEventListener('click', function () {
+        var isOpen = item.classList.contains('faq-item--open');
+
+        if (!allowMultiple) {
+          items.forEach(function (otherItem) {
+            if (otherItem !== item && otherItem.classList.contains('faq-item--open')) {
+              collapseItem(otherItem);
+            }
+          });
+        }
+
+        if (isOpen) {
+          collapseItem(item);
+        } else {
+          expandItem(item);
+        }
+      });
+    });
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.faq-accordion-section').forEach(initFaq);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "FAQ Accordion",
+  "tag": "section",
+  "class": "section-faq",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container max width",
+      "min": 600,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Open first item by default",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_multiple",
+      "label": "Allow multiple items open at once",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How long does shipping take?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Orders are processed within 1 to 3 business days. Delivery times vary based on location, and international orders to Canada typically take 5 to 10 business days.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Accordion",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "<p>Orders are processed within 1 to 3 business days. Delivery times vary based on location, and international orders to Canada typically take 5 to 10 business days.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Do you offer free shipping?",
+            "answer": "<p>Yes, we offer free standard shipping on all domestic orders over a certain threshold. Please check our shipping policy page for the latest details.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How can I track my order?",
+            "answer": "<p>Once your order ships, you'll receive a confirmation email with a tracking number. You can use this to track your package directly on our website or the carrier's site.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>We accept returns within 30 days of delivery for most items in their original, unused condition. Please visit our returns page to start a return request.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Do you offer exchanges?",
+            "answer": "<p>Yes, exchanges are available for a different size or color of the same item, subject to stock availability. Contact our support team to initiate an exchange.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Are there items that cannot be returned?",
+            "answer": "<p>Certain items such as final sale products, gift cards, and personalized items are not eligible for return. These will be marked clearly on the product page.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Will the item look exactly like the photos?",
+            "answer": "<p>We strive for accurate product photography. However, slight color variations may occur due to monitor settings and lighting. Handmade items may also have minor natural variations.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Do you restock sold-out items?",
+            "answer": "<p>Restocks depend on the product. You can sign up for restock notifications on the product page by clicking \"Notify Me\" when an item is out of stock.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
