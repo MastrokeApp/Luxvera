@@ -53,9 +53,13 @@
 
           {% when 'menu' %}
             {%- assign lv_col_id = 'lv-footer-col-' | append: block.id -%}
-            <div class="lv-footer-col{% if block.settings.enable_accordion %} lv-accordion-item{% endif %}">
+            {%- assign lv_col_accordion = false -%}
+            {%- if section.settings.enable_accordion and block.settings.enable_accordion -%}
+              {%- assign lv_col_accordion = true -%}
+            {%- endif -%}
+            <div class="lv-footer-col{% if lv_col_accordion %} lv-accordion-item{% endif %}">
               {% if block.settings.heading != blank %}
-                {% if block.settings.enable_accordion %}
+                {% if lv_col_accordion %}
                   <h5>
                     <button
                       type="button"
@@ -76,7 +80,7 @@
                 <ul
                   id="{{ lv_col_id }}"
                   class="lv-accordion-panel"
-                  {% if block.settings.enable_accordion %}hidden{% endif %}
+                  {% if lv_col_accordion %}hidden{% endif %}
                 >
                   {% for link in block.settings.menu.links %}
                     <li><a href="{{ link.url }}">{{ link.title }}</a></li>
@@ -87,9 +91,13 @@
 
           {% when 'newsletter' %}
             {%- assign lv_nl_id = 'lv-footer-col-' | append: block.id -%}
-            <div class="lv-footer-col{% if block.settings.enable_accordion %} lv-accordion-item{% endif %}">
+            {%- assign lv_nl_accordion = false -%}
+            {%- if section.settings.enable_accordion and block.settings.enable_accordion -%}
+              {%- assign lv_nl_accordion = true -%}
+            {%- endif -%}
+            <div class="lv-footer-col{% if lv_nl_accordion %} lv-accordion-item{% endif %}">
               {% if block.settings.heading != blank %}
-                {% if block.settings.enable_accordion %}
+                {% if lv_nl_accordion %}
                   <h5>
                     <button
                       type="button"
@@ -109,7 +117,7 @@
               <div
                 id="{{ lv_nl_id }}"
                 class="lv-accordion-panel"
-                {% if block.settings.enable_accordion %}hidden{% endif %}
+                {% if lv_nl_accordion %}hidden{% endif %}
               >
                 {% form 'customer', id: nl_form_id %}
                   {% if form.posted_successfully? %}
@@ -194,7 +202,7 @@
       "type": "checkbox",
       "id": "enable_accordion",
       "label": "Enable accordion for footer columns",
-      "info": "Collapses menu and newsletter columns into expandable accordions (recommended for mobile).",
+      "info": "Collapses menu and newsletter columns into expandable accordions (recommended for mobile). When off, all links are shown expanded.",
       "default": false
     },
     {
@@ -307,4 +315,4 @@
     }
   ]
 }
-{% endschema %} 
+{% endschema %}
