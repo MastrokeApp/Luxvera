@@ -74,7 +74,7 @@
               {%- endif -%}
 
               {%- if col != nil -%}
-                <div class="cat-count">{{ col.products_count }} items</div>
+                <div class="cat-count">{{ 'products.count' | t: count: col.products_count }}</div>
               {%- endif -%}
             </a>
           {%- endif -%}

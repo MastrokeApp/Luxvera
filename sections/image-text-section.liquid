@@ -105,7 +105,7 @@
 
             {%- if section.settings.text != blank -%}
               <div class="image-text-text">
-                <p>{{ section.settings.text }}</p>
+                <p>{{ section.settings.text | escape }}</p>
               </div>
             {%- endif -%}
 

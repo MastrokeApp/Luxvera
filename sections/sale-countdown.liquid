@@ -9,7 +9,7 @@
 <div
   class="sale-section color-{{ section.settings.color_scheme }} gradient"
   id="sale-countdown-{{ section.id }}"
-  data-end="{{ section.settings.countdown_end | strip }}"
+  data-end="{{ section.settings.countdown_end | strip | escape }}"
   style="
     --sc-pt: {{ section.settings.padding_top | default: 40 }}px;
     --sc-pb: {{ section.settings.padding_bottom | default: 40 }}px;
@@ -38,19 +38,19 @@
     <div class="sale-right">
       <div class="count-box">
         <span class="count-num lv-days">00</span>
-        <span class="count-label">{{ section.settings.label_days | default: 'Days' }}</span>
+        <span class="count-label">{{ section.settings.label_days | default: 'Days' | escape }}</span>
       </div>
       <div class="count-box">
         <span class="count-num lv-hours">00</span>
-        <span class="count-label">{{ section.settings.label_hours | default: 'Hours' }}</span>
+        <span class="count-label">{{ section.settings.label_hours | default: 'Hours' | escape }}</span>
       </div>
       <div class="count-box">
         <span class="count-num lv-minutes">00</span>
-        <span class="count-label">{{ section.settings.label_minutes | default: 'Minutes' }}</span>
+        <span class="count-label">{{ section.settings.label_minutes | default: 'Minutes' | escape }}</span>
       </div>
       <div class="count-box">
         <span class="count-num lv-seconds">00</span>
-        <span class="count-label">{{ section.settings.label_seconds | default: 'Seconds' }}</span>
+        <span class="count-label">{{ section.settings.label_seconds | default: 'Seconds' | escape }}</span>
       </div>
     </div>
   </div>

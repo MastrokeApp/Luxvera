@@ -126,7 +126,11 @@
     "sold_out": "Sold Out",
     "in_stock": "In stock",
     "home": "Home",
-    "tax_included": "Tax included."
+    "tax_included": "Tax included.",
+    "count": {
+      "one": "{{ count }} item",
+      "other": "{{ count }} items"
+    }
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
