@@ -51,8 +51,8 @@
       var barEl = document.getElementById('cart-notif-shipping-progress');
       if (msgEl) {
         msgEl.textContent = remaining > 0
-          ? "You're " + formatMoney(remaining) + ' away from free shipping!'
-          : '🎉 You qualify for free shipping!';
+          ? (drawer.dataset.shippingRemainingTemplate || "You're {{amount}} away from free shipping!").replace('{{amount}}', formatMoney(remaining))
+          : (drawer.dataset.shippingQualifiedMessage || '🎉 You qualify for free shipping!');
       }
       if (barEl) barEl.style.width = pct + '%';
     }

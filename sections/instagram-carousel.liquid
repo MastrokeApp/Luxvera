@@ -306,12 +306,12 @@
     </div>
 
     <div class="swiper-nav">
-      <button class="sw-prev" id="lv-insta-prev-{{ section.id }}" aria-label="Previous">
+      <button class="sw-prev" id="lv-insta-prev-{{ section.id }}" aria-label="{{ 'accessibility.previous' | t }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
       </button>
-      <button class="sw-next" id="lv-insta-next-{{ section.id }}" aria-label="Next">
+      <button class="sw-next" id="lv-insta-next-{{ section.id }}" aria-label="{{ 'accessibility.next' | t }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <polyline points="9 18 15 12 9 6"/>
         </svg>
@@ -398,68 +398,208 @@
 
 {% schema %}
 {
-  "name": "Instagram Carousel",
+  "name": "t:general.instagram_carousel",
   "tag": "section",
   "class": "luxvera-instagram",
   "settings": [
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-
-    { "type": "header", "content": "Section Padding" },
-    { "type": "range", "id": "padding_top_desktop", "label": "Padding Top — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
-    { "type": "range", "id": "padding_bottom_desktop", "label": "Padding Bottom — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
-    { "type": "range", "id": "padding_top_tablet", "label": "Padding Top — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
-    { "type": "range", "id": "padding_bottom_tablet", "label": "Padding Bottom — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
-    { "type": "range", "id": "padding_top_mobile", "label": "Padding Top — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
-    { "type": "range", "id": "padding_bottom_mobile", "label": "Padding Bottom — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
-
-    { "type": "header", "content": "Heading" },
-    { "type": "text", "id": "title", "label": "Title", "default": "Follow Us On Instagram" },
-    { "type": "range", "id": "heading_size", "label": "Heading Font Size", "min": 16, "max": 72, "step": 2, "unit": "px", "default": 32 },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "t:labels.padding_top_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "t:labels.padding_bottom_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_top_tablet",
+      "label": "t:labels.padding_top_tablet",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_tablet",
+      "label": "t:labels.padding_bottom_tablet",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:labels.padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:labels.padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "t:labels.heading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:labels.title",
+      "default": "Follow Us On Instagram"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "t:labels.heading_font_size_2",
+      "min": 16,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
     {
       "type": "select",
       "id": "heading_alignment",
-      "label": "Heading Alignment",
+      "label": "t:labels.heading_alignment",
       "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
+        {
+          "value": "left",
+          "label": "t:options.heading_alignment.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.heading_alignment.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.heading_alignment.right"
+        }
       ],
       "default": "center"
     },
     {
-  "type": "url",
-  "id": "insta_link",
-  "label": "Instagram Link"
-},
-
-    { "type": "header", "content": "Subtitle" },
-    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Some of our new looks you will love" },
-    { "type": "range", "id": "subtitle_size", "label": "Subtitle Font Size", "min": 10, "max": 24, "step": 1, "unit": "px", "default": 13 },
-
-    { "type": "header", "content": "Cards" },
-    { "type": "range", "id": "card_border_radius", "label": "Card Border Radius", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 12 },
-
-    { "type": "header", "content": "Autoplay" },
-    { "type": "checkbox", "id": "autoplay", "label": "Enable Autoplay", "default": true },
-    { "type": "range", "id": "autoplay_delay", "label": "Autoplay Delay (seconds)", "min": 1, "max": 10, "step": 1, "default": 3 }
+      "type": "url",
+      "id": "insta_link",
+      "label": "t:labels.instagram_link"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.subtitle"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "t:labels.subtitle",
+      "default": "Some of our new looks you will love"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "t:labels.subtitle_font_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "t:labels.cards"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "t:labels.card_border_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "t:labels.autoplay"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "t:labels.enable_autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_delay",
+      "label": "t:labels.autoplay_delay_seconds",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3
+    }
   ],
   "blocks": [
     {
       "type": "post",
-      "name": "Instagram Post",
+      "name": "t:general.instagram_post",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "text", "id": "alt", "label": "Alt Text", "default": "Instagram post" },
         {
-  "type": "video",
-  "id": "video",
-  "label": "Video"
-}
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:labels.image"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "t:labels.alt_text",
+          "default": "Instagram post"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "t:labels.video"
+        }
       ]
     }
   ],
   "presets": [
-    { "name": "Instagram Carousel", "category": "Social" }
+    {
+      "name": "t:general.instagram_carousel",
+      "category": "t:general.social"
+    }
   ]
 }
 {% endschema %}

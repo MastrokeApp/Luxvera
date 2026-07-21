@@ -89,7 +89,7 @@
             </div>
           {%- endfor -%}
         {%- else -%}
-          <p class="lv-cl-empty">No collections found.</p>
+          <p class="lv-cl-empty">{{ 'collections.no_results' | t }}</p>
         {%- endif -%}
       </div>
 
@@ -312,58 +312,190 @@
 
 {% schema %}
 {
-  "name": "Collections List",
+  "name": "t:general.collections_list",
   "tag": "section",
   "class": "luxvera-collections-list",
   "settings": [
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-    { "type": "header", "content": "Heading" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Collections For You To Explore" },
-    { "type": "range", "id": "heading_size", "label": "Heading Font Size", "min": 18, "max": 60, "step": 2, "unit": "px", "default": 32 },
-    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Everything you need to make your look fantastic" },
-    { "type": "range", "id": "subtitle_size", "label": "Subtitle Font Size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 15 },
-
-    { "type": "header", "content": "Layout" },
-    { "type": "range", "id": "columns_desktop", "label": "Columns — Desktop", "min": 2, "max": 6, "step": 1, "default": 4 },
-    { "type": "range", "id": "columns_tablet", "label": "Columns — Tablet", "min": 2, "max": 4, "step": 1, "default": 3 },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Collections For You To Explore"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "t:labels.heading_font_size_2",
+      "min": 18,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "t:labels.subtitle",
+      "default": "Everything you need to make your look fantastic"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "t:labels.subtitle_font_size",
+      "min": 11,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "t:labels.layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "t:labels.columns_desktop_2",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "t:labels.columns_tablet",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
     {
       "type": "select",
       "id": "columns_mobile",
-      "label": "Columns — Mobile",
+      "label": "t:labels.columns_mobile",
       "options": [
-        { "value": "1", "label": "1 column" },
-        { "value": "2", "label": "2 columns" }
+        {
+          "value": "1",
+          "label": "t:options.columns_mobile.1"
+        },
+        {
+          "value": "2",
+          "label": "t:options.columns_mobile.2"
+        }
       ],
       "default": "2"
     },
-    { "type": "range", "id": "grid_gap", "label": "Grid Gap", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 12 },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "t:labels.grid_gap_2",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
     {
       "type": "select",
       "id": "image_ratio",
-      "label": "Image Ratio",
+      "label": "t:labels.image_ratio",
       "options": [
-        { "value": "square", "label": "Square (1:1)" },
-        { "value": "portrait", "label": "Portrait (3:4)" },
-        { "value": "landscape", "label": "Landscape (4:3)" }
+        {
+          "value": "square",
+          "label": "t:options.image_ratio.square"
+        },
+        {
+          "value": "portrait",
+          "label": "t:options.image_ratio.portrait"
+        },
+        {
+          "value": "landscape",
+          "label": "t:options.image_ratio.landscape"
+        }
       ],
       "default": "square"
     },
-    { "type": "range", "id": "card_radius", "label": "Card Radius", "min": 0, "max": 24, "step": 1, "unit": "px", "default": 8 },
-
-    { "type": "header", "content": "Options" },
-    { "type": "range", "id": "per_page", "label": "Collections per page", "min": 4, "max": 48, "step": 2, "default": 12 },
-    { "type": "checkbox", "id": "show_count", "label": "Show product count badge", "default": false },
-    { "type": "checkbox", "id": "hide_empty", "label": "Hide empty collections", "default": true },
-    { "type": "checkbox", "id": "show_placeholders", "label": "Show demo placeholders when no collections exist", "default": true },
-
-    { "type": "header", "content": "Section Padding" },
-    { "type": "range", "id": "padding_top", "label": "Padding Top", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
-    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 64 }
-
-    
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "t:labels.card_radius",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "t:labels.options"
+    },
+    {
+      "type": "range",
+      "id": "per_page",
+      "label": "t:labels.collections_per_page",
+      "min": 4,
+      "max": 48,
+      "step": 2,
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "t:labels.show_product_count_badge",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_empty",
+      "label": "t:labels.hide_empty_collections",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_placeholders",
+      "label": "t:labels.show_demo_placeholders_when_no_collections",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
   ],
   "presets": [
-    { "name": "Collections List" }
+    {
+      "name": "t:general.collections_list"
+    }
   ]
 }
 {% endschema %}

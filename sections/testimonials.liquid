@@ -46,7 +46,7 @@
               <div class="review-author-row">
                 <span class="review-name">{{ block.settings.name | default: 'Customer' | escape }}</span>
                 {%- if block.settings.verified -%}
-                  <span class="review-verified" title="Verified purchase">
+                  <span class="review-verified" title="{{ 'accessibility.verified_purchase' | t }}">
                     <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
                       <polyline points="2 5 4 7.5 8 3"/>
                     </svg>
@@ -63,12 +63,12 @@
     </div>
 
     <div class="swiper-nav">
-      <button class="sw-prev" id="lv-test-prev-{{ section.id }}" aria-label="Previous">
+      <button class="sw-prev" id="lv-test-prev-{{ section.id }}" aria-label="{{ 'accessibility.previous' | t }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
       </button>
-      <button class="sw-next" id="lv-test-next-{{ section.id }}" aria-label="Next">
+      <button class="sw-next" id="lv-test-next-{{ section.id }}" aria-label="{{ 'accessibility.next' | t }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <polyline points="9 18 15 12 9 6"/>
         </svg>
@@ -411,48 +411,175 @@
 
 {% schema %}
 {
-  "name": "Testimonials",
+  "name": "t:general.testimonials",
   "tag": "section",
   "class": "luxvera-testimonials",
   "settings": [
-    { "type": "header", "content": "Section Padding" },
-    { "type": "range", "id": "padding_top_desktop", "label": "Padding Top — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
-    { "type": "range", "id": "padding_bottom_desktop", "label": "Padding Bottom — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
-    { "type": "range", "id": "padding_top_tablet", "label": "Padding Top — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
-    { "type": "range", "id": "padding_bottom_tablet", "label": "Padding Bottom — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
-    { "type": "range", "id": "padding_top_mobile", "label": "Padding Top — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
-    { "type": "range", "id": "padding_bottom_mobile", "label": "Padding Bottom — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
-
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-
-    { "type": "header", "content": "Heading" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "What They're Saying" },
-    { "type": "range", "id": "heading_size", "label": "Heading Font Size", "min": 16, "max": 48, "step": 2, "unit": "px", "default": 28 },
-
-    { "type": "header", "content": "Subheading" },
-    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Loved by 17k+ Customers" },
-    { "type": "range", "id": "subheading_size", "label": "Subheading Font Size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 13 },
-
-    { "type": "header", "content": "Buttons" },
-    { "type": "text", "id": "write_review_label", "label": "Write a Review Label", "default": "Write a Review" }
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "t:labels.padding_top_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "t:labels.padding_bottom_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_top_tablet",
+      "label": "t:labels.padding_top_tablet",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_tablet",
+      "label": "t:labels.padding_bottom_tablet",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:labels.padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:labels.padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "What They're Saying"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "t:labels.heading_font_size_2",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "t:labels.subheading"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "t:labels.subheading",
+      "default": "Loved by 17k+ Customers"
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "t:labels.subheading_font_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "t:labels.buttons"
+    },
+    {
+      "type": "text",
+      "id": "write_review_label",
+      "label": "t:labels.write_a_review_label",
+      "default": "Write a Review"
+    }
   ],
   "blocks": [
     {
       "type": "review",
-      "name": "Review",
+      "name": "t:general.review",
       "settings": [
-        { "type": "text", "id": "name", "label": "Reviewer Name", "default": "Customer" },
-        { "type": "range", "id": "stars", "label": "Stars", "min": 1, "max": 5, "step": 1, "default": 5 },
-        { "type": "checkbox", "id": "verified", "label": "Verified Purchase", "default": true },
-        { "type": "textarea", "id": "text", "label": "Review Text" },
-        { "type": "text", "id": "date", "label": "Date", "default": "Posted on January 1, 2025" }
+        {
+          "type": "text",
+          "id": "name",
+          "label": "t:labels.reviewer_name",
+          "default": "Customer"
+        },
+        {
+          "type": "range",
+          "id": "stars",
+          "label": "t:labels.stars",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "t:labels.verified_purchase",
+          "default": true
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "t:labels.review_text"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "t:labels.date",
+          "default": "Posted on January 1, 2025"
+        }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Testimonials",
-      "category": "Social proof",
+      "name": "t:general.testimonials",
+      "category": "t:general.social_proof",
       "blocks": [
         {
           "type": "review",

@@ -1,10 +1,13 @@
-{% comment %}
+{% doc %}
   Cart notification drawer
 
   Slide-out confirmation shown after an item is added to the cart. Populated by
   assets/cart-notification.js, which listens for the "cart:open" event. Rendered
-  once in theme.liquid before the closing body tag via render 'cart-notification'.
-{% endcomment %}
+  once in theme.liquid before the closing body tag.
+
+  @example
+  {% render 'cart-notification' %}
+{% enddoc %}
 
 {{ 'cart-notification.css' | asset_url | stylesheet_tag }}
 
@@ -13,10 +16,12 @@
   class="cart-notif"
   role="dialog"
   aria-modal="false"
-  aria-label="Cart updated"
+  aria-label="{{ 'accessibility.cart_updated' | t }}"
   aria-live="polite"
   data-currency="{{ shop.currency }}"
   data-free-shipping-threshold="{{ settings.free_shipping_threshold | default: 15000 }}"
+  data-shipping-remaining-template="{{ 'cart.free_shipping_remaining_template' | t }}"
+  data-shipping-qualified-message="{{ 'cart.free_shipping_qualified' | t }}"
   hidden
 >
   <div class="cart-notif__inner">
@@ -27,13 +32,13 @@
           <circle cx="10" cy="10" r="9"/>
           <path d="M6 10l3 3 5-5"/>
         </svg>
-        Added to cart
+        {{ 'cart.added_to_cart' | t }}
       </span>
       <button
         type="button"
         class="cart-notif__close"
         id="cart-notif-close"
-        aria-label="Close notification"
+        aria-label="{{ 'accessibility.close_notification' | t }}"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M18 6L6 18M6 6l12 12"/>
@@ -55,7 +60,7 @@
 
     {%- comment -%} Cart summary {%- endcomment -%}
     <div class="cart-notif__summary">
-      <span class="cart-notif__summary-label">Subtotal</span>
+      <span class="cart-notif__summary-label">{{ 'cart.subtotal' | t }}</span>
       <span class="cart-notif__summary-value" id="cart-notif-subtotal"></span>
     </div>
 
@@ -70,10 +75,10 @@
     {%- comment -%} Actions {%- endcomment -%}
     <div class="cart-notif__actions">
       <button type="button" class="cart-notif__btn cart-notif__btn--continue" id="cart-notif-close-btn">
-        Continue Shopping
+        {{ 'cart.continue_shopping' | t }}
       </button>
       <a href="{{ routes.cart_url }}" class="cart-notif__btn cart-notif__btn--cart">
-        View Cart
+        {{ 'cart.view_cart' | t }}
       </a>
     </div>
 
@@ -83,4 +88,4 @@
 {%- comment -%} Backdrop {%- endcomment -%}
 <div class="cart-notif__backdrop" id="cart-notif-backdrop" hidden></div>
 
-{{ 'cart-notification.js' | asset_url | script_tag }}
+<script src="{{ 'cart-notification.js' | asset_url }}" defer></script>

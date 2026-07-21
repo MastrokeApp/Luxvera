@@ -12,7 +12,7 @@
 <div
   class="ticker"
   id="ticker-{{ section.id }}"
-  aria-label="Announcements"
+  aria-label="{{ 'accessibility.announcements' | t }}"
   style="
     --ticker-bg:        {{ section.settings.background_color }};
     --ticker-color:     {{ section.settings.text_color }};
@@ -179,44 +179,44 @@
 
 {% schema %}
 {
-  "name": "Announcement Ticker",
+  "name": "t:general.announcement_ticker",
   "tag": "div",
   "class": "luxvera-announcement-ticker",
   "limit": 1,
   "settings": [
     {
       "type": "header",
-      "content": "Appearance"
+      "content": "t:labels.appearance"
     },
     {
       "type": "color",
       "id": "background_color",
-      "label": "Background Colour",
+      "label": "t:labels.background_colour",
       "default": "#F7FCD8"
     },
     {
       "type": "color",
       "id": "text_color",
-      "label": "Text Colour",
+      "label": "t:labels.text_colour",
       "default": "#1a1a1a"
     },
     {
       "type": "color",
       "id": "separator_color",
-      "label": "Separator Colour",
+      "label": "t:labels.separator_colour",
       "default": "#999999"
     },
     {
       "type": "text",
       "id": "separator_char",
-      "label": "Separator Character",
+      "label": "t:labels.separator_character",
       "default": "|",
-      "info": "Character shown between ticker items."
+      "info": "t:labels.character_shown_between_ticker_items"
     },
     {
       "type": "range",
       "id": "font_size",
-      "label": "Font Size",
+      "label": "t:labels.font_size",
       "min": 10,
       "max": 20,
       "step": 1,
@@ -226,7 +226,7 @@
     {
       "type": "range",
       "id": "vertical_padding",
-      "label": "Vertical Padding",
+      "label": "t:labels.vertical_padding",
       "min": 4,
       "max": 32,
       "step": 2,
@@ -235,29 +235,29 @@
     },
     {
       "type": "header",
-      "content": "Animation"
+      "content": "t:labels.animation"
     },
     {
       "type": "range",
       "id": "scroll_speed",
-      "label": "Scroll Speed",
+      "label": "t:labels.scroll_speed",
       "min": 10,
       "max": 60,
       "step": 5,
       "unit": "s",
       "default": 25,
-      "info": "Lower = faster. Higher = slower."
+      "info": "t:labels.lower_faster_higher_slower"
     }
   ],
   "blocks": [
     {
       "type": "ticker_item",
-      "name": "Ticker Message",
+      "name": "t:general.ticker_message",
       "settings": [
         {
           "type": "text",
           "id": "text",
-          "label": "Message",
+          "label": "t:labels.message",
           "default": "GRAB The Deal Upto 80% Off & Extra 15% Off"
         }
       ]
@@ -265,20 +265,26 @@
   ],
   "presets": [
     {
-      "name": "Announcement Ticker",
-      "category": "Promotional",
+      "name": "t:general.announcement_ticker",
+      "category": "t:general.promotional",
       "blocks": [
         {
           "type": "ticker_item",
-          "settings": { "text": "GRAB The Deal Upto 80% Off & Extra 15% Off" }
+          "settings": {
+            "text": "GRAB The Deal Upto 80% Off & Extra 15% Off"
+          }
         },
         {
           "type": "ticker_item",
-          "settings": { "text": "Free Shipping on all orders" }
+          "settings": {
+            "text": "Free Shipping on all orders"
+          }
         },
         {
           "type": "ticker_item",
-          "settings": { "text": "New arrivals every week — shop now" }
+          "settings": {
+            "text": "New arrivals every week — shop now"
+          }
         }
       ]
     }

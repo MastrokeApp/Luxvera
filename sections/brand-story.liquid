@@ -419,33 +419,152 @@
 
 {% schema %}
 {
-  "name": "Brand Story",
+  "name": "t:general.brand_story",
   "tag": "section",
   "class": "luxvera-brand-story",
   "settings": [
-    { "type": "header", "content": "Section Padding" },
-    { "type": "range", "id": "padding_top",    "label": "Padding Top",    "min": 0, "max": 160, "step": 4, "unit": "px", "default": 72 },
-    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 72 },
-    { "type": "header", "content": "Brand Identity", "info": "Colors are controlled by Theme Settings → Colors" },
-    { "type": "text", "id": "brand_name",    "label": "Brand Name",    "default": "LUXVERA" },
-    { "type": "text", "id": "brand_tagline", "label": "Brand Tagline", "default": "Fashion" },
-    { "type": "header", "content": "Content" },
-    { "type": "text",     "id": "heading",       "label": "Heading",       "default": "More Than Style" },
-    { "type": "textarea","id": "body_text",      "label": "Body Text",     "default": "This is more than a boutique, it's a space where confidence feels natural and being yourself is enough." },
-    { "type": "text",    "id": "explore_label", "label": "Explore Label", "default": "Explore" },
-    { "type": "header", "content": "CTA Button" },
-    { "type": "text",     "id": "cta_label",   "label": "Button Label",    "default": "Explore Collections" },
-    { "type": "url",      "id": "cta_url",     "label": "Button URL" },
-    { "type": "checkbox", "id": "cta_new_tab", "label": "Open in new tab", "default": false }
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "header",
+      "content": "t:labels.brand_identity",
+      "info": "Colors are controlled by Theme Settings → Colors"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "t:labels.brand_name",
+      "default": "LUXVERA"
+    },
+    {
+      "type": "text",
+      "id": "brand_tagline",
+      "label": "t:labels.brand_tagline",
+      "default": "Fashion"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "More Than Style"
+    },
+    {
+      "type": "textarea",
+      "id": "body_text",
+      "label": "t:labels.body_text",
+      "default": "This is more than a boutique, it's a space where confidence feels natural and being yourself is enough."
+    },
+    {
+      "type": "text",
+      "id": "explore_label",
+      "label": "t:labels.explore_label",
+      "default": "Explore"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.cta_button"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "t:labels.button_label",
+      "default": "Explore Collections"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "t:labels.button_url"
+    },
+    {
+      "type": "checkbox",
+      "id": "cta_new_tab",
+      "label": "t:labels.open_in_new_tab",
+      "default": false
+    }
   ],
-  "blocks": [{
-    "type": "brand_tab", "name": "Brand Tab",
-    "settings": [
-      { "type": "text",         "id": "label",       "label": "Tab Label",        "default": "Best Sellers" },
-      { "type": "image_picker", "id": "image_back",  "label": "Background Image", "info": "500×700px recommended" },
-      { "type": "image_picker", "id": "image_front", "label": "Foreground Image", "info": "600×800px recommended" }
-    ]
-  }],
-  "presets": [{"name":"Brand Story","category":"Brand","blocks":[{"type":"brand_tab","settings":{"label":"Best Sellers"}},{"type":"brand_tab","settings":{"label":"New Season Edit"}},{"type":"brand_tab","settings":{"label":"Vacation Looks"}},{"type":"brand_tab","settings":{"label":"Winter Luxe"}}]}]
+  "blocks": [
+    {
+      "type": "brand_tab",
+      "name": "t:general.brand_tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:labels.tab_label",
+          "default": "Best Sellers"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_back",
+          "label": "t:labels.background_image",
+          "info": "t:labels.500_700px_recommended"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_front",
+          "label": "t:labels.foreground_image",
+          "info": "t:labels.600_800px_recommended"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.brand_story",
+      "category": "t:general.brand",
+      "blocks": [
+        {
+          "type": "brand_tab",
+          "settings": {
+            "label": "Best Sellers"
+          }
+        },
+        {
+          "type": "brand_tab",
+          "settings": {
+            "label": "New Season Edit"
+          }
+        },
+        {
+          "type": "brand_tab",
+          "settings": {
+            "label": "Vacation Looks"
+          }
+        },
+        {
+          "type": "brand_tab",
+          "settings": {
+            "label": "Winter Luxe"
+          }
+        }
+      ]
+    }
+  ]
 }
 {% endschema %}

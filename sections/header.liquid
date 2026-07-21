@@ -29,9 +29,9 @@
     id="lv-header-{{ section.id }}"
     style="--lv-hdr-height:{{ section.settings.header_height }}px;"
   >
-    <nav class="lv-nav" aria-label="Main navigation">
+    <nav class="lv-nav" aria-label="{{ 'accessibility.main_navigation' | t }}">
       <div class="lv-nav__left">
-        <button class="lv-hamburger" id="lvHamburger" aria-label="Open menu" aria-expanded="false" aria-controls="lvMobileMenu"><span></span><span></span><span></span></button>
+        <button class="lv-hamburger" id="lvHamburger" aria-label="{{ 'accessibility.open_menu' | t }}" aria-expanded="false" aria-controls="lvMobileMenu"><span></span><span></span><span></span></button>
         <div class="lv-nav__links">
          {%- for link in linklists[section.settings.menu].links -%}
   {%- if link.links.size > 0 -%}
@@ -74,7 +74,8 @@
 
       <a href="{{ routes.root_url }}" class="lv-logo" aria-label="{{ shop.name }} home">
         {%- if settings.logo != blank -%}
-          <img src="{{ settings.logo | image_url: width: 160 }}" alt="{{ shop.name }}" width="160" loading="eager">
+          {%- assign logo_height = 160 | divided_by: settings.logo.aspect_ratio | round -%}
+          <img src="{{ settings.logo | image_url: width: 160 }}" alt="{{ shop.name }}" width="160" height="{{ logo_height }}" loading="eager">
         {%- else -%}
           <span class="lv-logo__name">{{ section.settings.brand_name | default: shop.name | upcase }}</span>
           <div class="lv-logo__sub-row"><span class="lv-logo__line"></span><span class="lv-logo__sub">{{ section.settings.brand_tagline | default: 'Fashion' }}</span><span class="lv-logo__line"></span></div>
@@ -82,16 +83,16 @@
       </a>
 
       <div class="lv-nav__right">
-        <button class="lv-icon-btn" id="lvSearchBtn" aria-label="Search">
+        <button class="lv-icon-btn" id="lvSearchBtn" aria-label="{{ 'accessibility.search' | t }}">
            {{ 'icon-search.svg' | inline_asset_content }} </button>
-        <a href="{{ routes.account_url }}" class="lv-icon-btn" aria-label="Account">
+        <a href="{{ routes.account_url }}" class="lv-icon-btn" aria-label="{{ 'accessibility.account' | t }}">
           {{ 'icon-account.svg' | inline_asset_content }}</a>
 
 {% if settings.cart_type == 'page' %}
 
   <a href="{{ routes.cart_url }}"
      class="lv-icon-btn lv-icon-btn--cart"
-     aria-label="Cart">
+     aria-label="{{ 'accessibility.cart' | t }}">
 
       {% if cart == empty %}
           <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
@@ -110,7 +111,7 @@
   <button
     type="button"
     class="lv-icon-btn lv-icon-btn--cart js-cart-drawer-open"
-    aria-label="Cart">
+    aria-label="{{ 'accessibility.cart' | t }}">
 
       {% if cart == empty %}
            <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
@@ -135,7 +136,7 @@
   <div class="lv-mobile-drawer color-{{ section.settings.header_color_scheme }}">
     <div class="lv-drawer-head">
       <span class="lv-drawer-logo">{{ section.settings.brand_name | default: shop.name | upcase }}</span>
-      <button class="lv-drawer-close" id="lvDrawerClose" aria-label="Close menu">✕</button>
+      <button class="lv-drawer-close" id="lvDrawerClose" aria-label="{{ 'accessibility.close_menu' | t }}">✕</button>
     </div>
     <nav class="lv-drawer-nav">
       {%- for link in linklists[section.settings.menu].links -%}
@@ -151,18 +152,18 @@
     </nav>
     <div class="lv-drawer-footer">
       {% render 'currency-switcher', position: 'mobile' %}
-      <a href="{{ routes.account_url }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Account</a>
+      <a href="{{ routes.account_url }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>{{ 'header.my_account' | t }}</a>
     </div>
   </div>
 </div>
 
 <!-- SEARCH OVERLAY -->
-<div class="lv-search-overlay" id="lvSearchOverlay" role="dialog" aria-modal="true" aria-label="Search">
+<div class="lv-search-overlay" id="lvSearchOverlay" role="dialog" aria-modal="true" aria-label="{{ 'accessibility.search' | t }}">
   <div class="lv-search-box color-{{ section.settings.header_color_scheme }}">
     <form action="{{ routes.search_url }}" method="get" role="search">
-      <input type="search" name="q" placeholder="{{ section.settings.search_placeholder | default: 'Search products, styles, collections…' }}" id="lvSearchInput" autocomplete="off" aria-label="Search">
+      <input type="search" name="q" placeholder="{{ section.settings.search_placeholder | default: 'Search products, styles, collections…' }}" id="lvSearchInput" autocomplete="off" aria-label="{{ 'accessibility.search' | t }}">
     </form>
-    <button class="lv-search-close" id="lvSearchClose" aria-label="Close search">✕</button>
+    <button class="lv-search-close" id="lvSearchClose" aria-label="{{ 'accessibility.close_search' | t }}">✕</button>
   </div>
 </div>
 
@@ -170,35 +171,122 @@
 
 {% schema %}
 {
-  "name": "Header",
+  "name": "t:general.header",
   "settings": [
-    { "type": "header", "content": "Top Bar" },
-    { "type": "checkbox", "id": "show_top_bar", "label": "Show Top Bar", "default": true },
-    { "type": "color_scheme", "id": "top_bar_color_scheme", "label": "Top bar color scheme", "default": "scheme-1" },
-    { "type": "text", "id": "top_bar_center", "label": "Centre Text", "default": "Welcome to Our Store" },
-    { "type": "text", "id": "top_bar_right", "label": "Right Link Text", "default": "Sign In / Register" },
-    { "type": "url", "id": "top_bar_link_url", "label": "Right Link URL" },
-
-    { "type": "header", "content": "Header" },
-    { "type": "text", "id": "brand_name", "label": "Brand Name", "default": "LUXVERA" },
-    { "type": "text", "id": "brand_tagline", "label": "Brand Tagline", "default": "Fashion" },
-    { "type": "color_scheme", "id": "header_color_scheme", "label": "Header color scheme", "default": "scheme-1" },
-    { "type": "range", "id": "header_height", "label": "Header Height", "min": 56, "max": 120, "step": 4, "unit": "px", "default": 64 },
-    { "type": "checkbox", "id": "sticky", "label": "Sticky Header", "default": true },
-{
-  "type": "checkbox",
-  "id": "enable_mega_menu",
-  "label": "Enable Mega Menu",
-  "default": false
-},
-    { "type": "header", "content": "Navigation" },
-    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
-    { "type": "text", "id": "mega_col1_label", "label": "Mega Menu Col 1 Heading", "default": "By Style" },
-    { "type": "text", "id": "mega_col2_label", "label": "Mega Menu Col 2 Heading", "default": "By Category" },
-
-    { "type": "header", "content": "Search" },
-    { "type": "text", "id": "search_placeholder", "label": "Search Placeholder", "default": "Search products, styles, collections…" }
+    {
+      "type": "header",
+      "content": "t:labels.top_bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_bar",
+      "label": "t:labels.show_top_bar",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "top_bar_color_scheme",
+      "label": "t:labels.top_bar_color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "top_bar_center",
+      "label": "t:labels.centre_text",
+      "default": "Welcome to Our Store"
+    },
+    {
+      "type": "text",
+      "id": "top_bar_right",
+      "label": "t:labels.right_link_text",
+      "default": "Sign In / Register"
+    },
+    {
+      "type": "url",
+      "id": "top_bar_link_url",
+      "label": "t:labels.right_link_url"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.header"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "t:labels.brand_name",
+      "default": "LUXVERA"
+    },
+    {
+      "type": "text",
+      "id": "brand_tagline",
+      "label": "t:labels.brand_tagline",
+      "default": "Fashion"
+    },
+    {
+      "type": "color_scheme",
+      "id": "header_color_scheme",
+      "label": "t:labels.header_color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "header_height",
+      "label": "t:labels.header_height",
+      "min": 56,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "t:labels.sticky_header",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mega_menu",
+      "label": "t:labels.enable_mega_menu",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:labels.navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "t:labels.menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "text",
+      "id": "mega_col1_label",
+      "label": "t:labels.mega_menu_col_1_heading",
+      "default": "By Style"
+    },
+    {
+      "type": "text",
+      "id": "mega_col2_label",
+      "label": "t:labels.mega_menu_col_2_heading",
+      "default": "By Category"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.search"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "t:labels.search_placeholder",
+      "default": "Search products, styles, collections…"
+    }
   ],
-  "presets": [{ "name": "Header" }]
+  "presets": [
+    {
+      "name": "t:general.header"
+    }
+  ]
 }
 {% endschema %}

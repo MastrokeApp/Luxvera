@@ -1,16 +1,18 @@
-{% comment %}
+{% doc %}
   Product card
 
   Renders a product's image, title, price, and add-to-cart button. Products with
   more than one variant show "Select Size" and open the parent section's size
   picker (via the data-* attributes below); single-variant products add directly.
 
-  Accepts:
-    product      - product object (required)
-    card_context - 'collection' | 'product-tabs' | 'dress-looks' (adds a modifier class)
-    atc_label    - button label for single-variant products (default: 'Add To Cart')
-    image_ratio  - image aspect-ratio modifier (default: 'portrait')
-{% endcomment %}
+  @param {product} product - product object
+  @param {string} [card_context] - 'collection' | 'product-tabs' | 'dress-looks' (adds a modifier class)
+  @param {string} [atc_label] - button label for single-variant products (default: 'Add To Cart')
+  @param {string} [image_ratio] - image aspect-ratio modifier (default: 'portrait')
+
+  @example
+  {% render 'product-card', product: product, card_context: 'collection' %}
+{% enddoc %}
 
 {%- liquid
   assign card_context = card_context | default: 'default'
@@ -78,16 +80,18 @@
       data-product-title="{{ product.title | escape }}"
       data-multi="{{ multi }}"
       data-variants="{{ variants_data | escape }}"
+      data-label-adding="{{ 'products.adding' | t }}"
+      data-label-added="{{ 'products.added' | t }}"
       {%- unless product.available %} disabled aria-disabled="true"{% endunless -%}
     >
       {%- if product.available -%}
         {%- if multi -%}
-          Select Size
+          {{ 'products.select_size' | t }}
         {%- else -%}
           {{ atc_label }}
         {%- endif -%}
       {%- else -%}
-        Sold Out
+        {{ 'products.sold_out' | t }}
       {%- endif -%}
 
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">

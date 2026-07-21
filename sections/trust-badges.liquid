@@ -71,7 +71,7 @@
 
     {%- if section.settings.mobile_layout == 'slide' and section.blocks.size > 1 -%}
       <div class="trust-slider-nav">
-        <button type="button" class="trust-arrow trust-arrow--prev" aria-label="Previous">
+        <button type="button" class="trust-arrow trust-arrow--prev" aria-label="{{ 'accessibility.previous' | t }}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"/>
           </svg>
@@ -88,7 +88,7 @@
           {%- endfor -%}
         </div>
 
-        <button type="button" class="trust-arrow trust-arrow--next" aria-label="Next">
+        <button type="button" class="trust-arrow trust-arrow--next" aria-label="{{ 'accessibility.next' | t }}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
@@ -381,43 +381,114 @@
 
 {% schema %}
 {
-  "name": "Trust Badges",
+  "name": "t:general.trust_badges_2",
   "tag": "section",
   "class": "luxvera-trust",
   "settings": [
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-    { "type": "header", "content": "Section Padding" },
-    { "type": "range", "id": "padding_top",    "label": "Padding Top",    "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
-    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
-    { "type": "header", "content": "Mobile" },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "t:labels.mobile"
+    },
     {
       "type": "select",
       "id": "mobile_layout",
-      "label": "Mobile layout",
-      "info": "Slide shows a swipeable carousel with dots and arrows.",
+      "label": "t:labels.mobile_layout",
+      "info": "t:labels.slide_shows_a_swipeable_carousel_with",
       "default": "stack",
       "options": [
-        { "value": "stack", "label": "Stack (vertical)" },
-        { "value": "slide", "label": "Slide (swipe carousel)" }
+        {
+          "value": "stack",
+          "label": "t:options.mobile_layout.stack"
+        },
+        {
+          "value": "slide",
+          "label": "t:options.mobile_layout.slide"
+        }
       ]
     }
   ],
-  "blocks": [{
-    "type": "badge", "name": "Badge", "limit": 6,
-    "settings": [
-      { "type": "text", "id": "title", "label": "Title",       "default": "100% Authentic" },
-      {"type": "image_picker","id": "icon","label": "Icon"},
-      { "type": "text", "id": "text",  "label": "Description", "default": "Shop with confidence, genuine and always original." }
-    ]
-  }],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "t:general.badge",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:labels.title",
+          "default": "100% Authentic"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "t:labels.icon"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:labels.description",
+          "default": "Shop with confidence, genuine and always original."
+        }
+      ]
+    }
+  ],
   "presets": [
     {
-      "name": "Trust Badges",
-      "category": "Branding",
+      "name": "t:general.trust_badges_2",
+      "category": "t:general.branding",
       "blocks": [
-        { "type": "badge", "settings": { "title": "100% Authentic", "text": "Shop with confidence, genuine and always original." } },
-        { "type": "badge", "settings": { "title": "Free Delivery", "text": "Save more with free shipping on every eligible order." } },
-        { "type": "badge", "settings": { "title": "Support 24/7", "text": "Always here when you need us. Hassle free contact." } }
+        {
+          "type": "badge",
+          "settings": {
+            "title": "100% Authentic",
+            "text": "Shop with confidence, genuine and always original."
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "title": "Free Delivery",
+            "text": "Save more with free shipping on every eligible order."
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "title": "Support 24/7",
+            "text": "Always here when you need us. Hassle free contact."
+          }
+        }
       ]
     }
   ]

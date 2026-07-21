@@ -80,15 +80,23 @@
   {%- endif -%}
 {%- endcapture -%}
 
-<div class="lv-variant-modal" id="lv-vm-{{ section.id }}" role="dialog" aria-modal="true" aria-label="Select size">
+<div class="lv-variant-modal" id="lv-vm-{{ section.id }}" role="dialog" aria-modal="true" aria-label="{{ 'products.select_size' | t }}">
   <div class="lv-variant-modal__box">
     <div class="lv-variant-modal__head">
       <span class="lv-variant-modal__title" id="lv-vm-title-{{ section.id }}"></span>
-      <button class="lv-variant-modal__close" id="lv-vm-close-{{ section.id }}" aria-label="Close">&times;</button>
+      <button class="lv-variant-modal__close" id="lv-vm-close-{{ section.id }}" aria-label="{{ 'accessibility.close' | t }}">&times;</button>
     </div>
-    <p class="lv-variant-modal__label">Select Size</p>
+    <p class="lv-variant-modal__label">{{ 'products.select_size' | t }}</p>
     <div class="lv-variant-modal__options" id="lv-vm-opts-{{ section.id }}"></div>
-    <button class="lv-variant-modal__atc" id="lv-vm-atc-{{ section.id }}" disabled>Choose a size</button>
+    <button
+      class="lv-variant-modal__atc"
+      id="lv-vm-atc-{{ section.id }}"
+      data-label-choose="{{ 'products.choose_a_size' | t }}"
+      data-label-add-prefix="{{ 'products.add_to_cart_prefix' | t }}"
+      data-label-adding="{{ 'products.adding' | t }}"
+      data-label-sold-out="{{ 'products.sold_out' | t }}"
+      disabled
+    >{{ 'products.choose_a_size' | t }}</button>
   </div>
 </div>
 
@@ -127,8 +135,8 @@
         <div class="swiper-wrapper">{{ card_html_tab1 }}</div>
       </div>
       <div class="swiper-nav">
-        <button class="sw-prev" id="pt-prev-1-{{ section.id }}" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <button class="sw-next" id="pt-next-1-{{ section.id }}" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+        <button class="sw-prev" id="pt-prev-1-{{ section.id }}" aria-label="{{ 'accessibility.previous' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="sw-next" id="pt-next-1-{{ section.id }}" aria-label="{{ 'accessibility.next' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       </div>
     </div>
   </div>
@@ -139,8 +147,8 @@
         <div class="swiper-wrapper">{{ card_html_tab2 }}</div>
       </div>
       <div class="swiper-nav">
-        <button class="sw-prev" id="pt-prev-2-{{ section.id }}" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <button class="sw-next" id="pt-next-2-{{ section.id }}" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+        <button class="sw-prev" id="pt-prev-2-{{ section.id }}" aria-label="{{ 'accessibility.previous' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="sw-next" id="pt-next-2-{{ section.id }}" aria-label="{{ 'accessibility.next' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       </div>
     </div>
   </div>
@@ -500,7 +508,7 @@
       modalOpts.innerHTML = '';
       selectedVid = null;
       modalAtc.disabled = true;
-      modalAtc.textContent = 'Choose a size';
+      modalAtc.textContent = modalAtc.dataset.labelChoose || 'Choose a size';
 
       (btn.dataset.variants || '').split('::').forEach(function (v) {
         var p = v.split('||'), vid = p[0], vtitle = p[1], avail = p[2];
@@ -510,7 +518,7 @@
 
         if (avail === 'false') {
           opt.disabled = true;
-          opt.title = 'Sold out';
+          opt.title = modalAtc.dataset.labelSoldOut || 'Sold out';
         }
 
         opt.addEventListener('click', function () {
@@ -519,7 +527,7 @@
           opt.classList.add('selected');
           selectedVid = vid;
           modalAtc.disabled = false;
-          modalAtc.textContent = 'Add To Cart — ' + vtitle;
+          modalAtc.textContent = (modalAtc.dataset.labelAddPrefix || 'Add To Cart — ') + vtitle;
         });
 
         modalOpts.appendChild(opt);
@@ -573,7 +581,7 @@
         if (btn) {
           btn.classList.remove('adding');
           btn.classList.add('added');
-          btn.innerHTML = 'Added &#10003;<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
+          btn.innerHTML = (btn.dataset.labelAdded || 'Added') + ' &#10003;<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
           setTimeout(function () {
             if (btn) {
               btn.innerHTML = origHTML;
@@ -600,7 +608,7 @@
         if (!selectedVid) return;
         var orig = modalAtc.textContent;
         modalAtc.disabled = true;
-        modalAtc.textContent = 'Adding…';
+        modalAtc.textContent = modalAtc.dataset.labelAdding || 'Adding…';
         doATC(selectedVid, null, orig);
       });
     }
@@ -722,49 +730,189 @@
 
 {% schema %}
 {
-  "name": "Product Tabs",
+  "name": "t:general.product_tabs",
   "tag": "div",
   "class": "luxvera-product-tabs",
   "settings": [
-    { "type": "header", "content": "Section Padding" },
-    { "type": "range", "id": "padding_top_desktop",    "label": "Padding Top — Desktop",    "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
-    { "type": "range", "id": "padding_bottom_desktop", "label": "Padding Bottom — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
-    { "type": "range", "id": "padding_top_tablet",     "label": "Padding Top — Tablet",     "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
-    { "type": "range", "id": "padding_bottom_tablet",  "label": "Padding Bottom — Tablet",  "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
-    { "type": "range", "id": "padding_top_mobile",     "label": "Padding Top — Mobile",     "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
-    { "type": "range", "id": "padding_bottom_mobile",  "label": "Padding Bottom — Mobile",  "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
-
-    { "type": "header", "content": "Heading" },
-    { "type": "text",   "id": "heading",           "label": "Heading",            "default": "Our Products You’ll Love" },
-    { "type": "range",  "id": "heading_size",      "label": "Heading Font Size",  "min": 16, "max": 72, "step": 2, "unit": "px", "default": 32 },
-    { "type": "select", "id": "heading_alignment", "label": "Heading Alignment",  "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "center" },
-
-    { "type": "header", "content": "Add to Cart Button" },
-    { "type": "text",  "id": "atc_label", "label": "Button Label (single variant)", "default": "Add To Cart" },
-
-    { "type": "header", "content": "Products" },
-    { "type": "range", "id": "products_limit", "label": "Max Products Per Tab", "min": 4, "max": 16, "step": 2, "default": 8 },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "t:labels.padding_top_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "t:labels.padding_bottom_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_top_tablet",
+      "label": "t:labels.padding_top_tablet",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_tablet",
+      "label": "t:labels.padding_bottom_tablet",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:labels.padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:labels.padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "t:labels.heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Our Products You’ll Love"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "t:labels.heading_font_size_2",
+      "min": 16,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "t:labels.heading_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.heading_alignment.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.heading_alignment.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.heading_alignment.right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.add_to_cart_button"
+    },
+    {
+      "type": "text",
+      "id": "atc_label",
+      "label": "t:labels.button_label_single_variant",
+      "default": "Add To Cart"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.products"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "t:labels.max_products_per_tab",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "default": 8
+    },
     {
       "type": "select",
       "id": "image_ratio",
-      "label": "Image Ratio",
+      "label": "t:labels.image_ratio",
       "options": [
-        { "value": "portrait", "label": "Portrait" },
-        { "value": "square", "label": "Square" }
+        {
+          "value": "portrait",
+          "label": "t:options.image_ratio.portrait_2"
+        },
+        {
+          "value": "square",
+          "label": "t:options.image_ratio.square_2"
+        }
       ],
       "default": "portrait"
     },
-
-    { "type": "header", "content": "Tab 1" },
-    { "type": "text", "id": "tab1_label", "label": "Tab 1 Label", "default": "New Arrivals" },
-    { "type": "collection", "id": "tab1_collection", "label": "Tab 1 Collection" },
-
-    { "type": "header", "content": "Tab 2" },
-    { "type": "text",       "id": "tab2_label",      "label": "Tab 2 Label",      "default": "Trending Now" },
-    { "type": "collection", "id": "tab2_collection", "label": "Tab 2 Collection" }
+    {
+      "type": "header",
+      "content": "t:labels.tab_1"
+    },
+    {
+      "type": "text",
+      "id": "tab1_label",
+      "label": "t:labels.tab_1_label",
+      "default": "New Arrivals"
+    },
+    {
+      "type": "collection",
+      "id": "tab1_collection",
+      "label": "t:labels.tab_1_collection"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.tab_2"
+    },
+    {
+      "type": "text",
+      "id": "tab2_label",
+      "label": "t:labels.tab_2_label",
+      "default": "Trending Now"
+    },
+    {
+      "type": "collection",
+      "id": "tab2_collection",
+      "label": "t:labels.tab_2_collection"
+    }
   ],
   "presets": [
-    { "name":"Product Tabs","category":"Products" }
+    {
+      "name": "t:general.product_tabs",
+      "category": "t:general.products"
+    }
   ]
 }
 {% endschema %}

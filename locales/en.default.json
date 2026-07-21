@@ -13,6 +13,47 @@
     "not_found": "Page not found.",
     "back_to_shopping": "Back to shopping"
   },
+  "accessibility": {
+    "announcements": "Announcements",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "breadcrumb": "Breadcrumb",
+    "select_currency": "Select currency",
+    "main_navigation": "Main navigation",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "search": "Search",
+    "close_search": "Close search",
+    "account": "Account",
+    "cart": "Cart",
+    "quantity": "Quantity",
+    "decrease_quantity": "Decrease quantity",
+    "increase_quantity": "Increase quantity",
+    "product_media": "Product media",
+    "hero_slideshow": "Hero slideshow",
+    "slide_navigation": "Slide navigation",
+    "previous_slide": "Previous slide",
+    "next_slide": "Next slide",
+    "collection_view": "Collection view",
+    "grid_view": "Grid view",
+    "list_view": "List view",
+    "close_filter": "Close filter",
+    "select_size": "Select size",
+    "verified_purchase": "Verified purchase",
+    "share_on_facebook": "Share on Facebook",
+    "share_on_pinterest": "Share on Pinterest",
+    "share_by_email": "Share by email",
+    "accepted_payment_methods": "Accepted payment methods",
+    "subscribe": "Subscribe",
+    "cart_updated": "Cart updated",
+    "close_notification": "Close notification",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "pinterest": "Pinterest",
+    "tiktok": "TikTok",
+    "youtube": "YouTube"
+  },
   "blog": {
     "article_comments": "Comments",
     "article_metadata_html": "{{ date }} by {{ author }}",
@@ -26,7 +67,30 @@
     "checkout": "Checkout",
     "title": "Cart",
     "update": "Update",
-    "remove": "Remove"
+    "remove": "Remove",
+    "empty_title": "Your cart is empty",
+    "empty_text": "Looks like you haven't added anything yet.",
+    "start_shopping": "Start Shopping",
+    "subtotal": "Subtotal",
+    "view_cart": "View Cart",
+    "added_to_cart": "Added to cart",
+    "continue_shopping": "Continue Shopping",
+    "free_shipping_remaining_template": "You're {{amount}} away from free shipping!",
+    "free_shipping_qualified": "🎉 You qualify for free shipping!"
+  },
+  "contact": {
+    "form": {
+      "name": "Name",
+      "name_placeholder": "Your full name",
+      "email": "Email",
+      "email_placeholder": "your@email.com",
+      "subject": "Subject",
+      "subject_placeholder": "How can we help?",
+      "message": "Message",
+      "message_placeholder": "Write your message here…",
+      "success": "Thanks for reaching out! We'll get back to you within 24-48 hours.",
+      "map_placeholder": "Add your Google Maps embed URL in Theme Editor"
+    }
   },
   "customers": {
     "login": {
@@ -37,7 +101,32 @@
     }
   },
   "collections": {
-    "title": "Collections"
+    "title": "Collections",
+    "no_results": "No collections found.",
+    "filters": "Filters",
+    "filter_apply": "Apply",
+    "filter_clear_all": "Clear all",
+    "filter_min": "Min",
+    "filter_max": "Max",
+    "filters_unavailable": "Filters are not available for this collection."
+  },
+  "header": {
+    "my_account": "My Account"
+  },
+  "hero_banner": {
+    "add_first_slide": "Add Your First Slide",
+    "add_first_slide_hint": "Click \"Add block → Slide\" in the theme editor to get started."
+  },
+  "products": {
+    "select_size": "Select Size",
+    "choose_a_size": "Choose a size",
+    "add_to_cart_prefix": "Add To Cart — ",
+    "adding": "Adding…",
+    "added": "Added",
+    "sold_out": "Sold Out",
+    "in_stock": "In stock",
+    "home": "Home",
+    "tax_included": "Tax included."
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",

@@ -81,6 +81,7 @@
     {%- endif -%}
 
 
+    {% assign scheme_classes = '' %}
     {% for scheme in settings.color_schemes -%}
         {% assign scheme_classes = scheme_classes | append: ', .color-' | append: scheme.id %}
         {% if forloop.index == 1 -%}
@@ -156,8 +157,8 @@
 
   {%- comment -%} Swiper library (self-hosted) {%- endcomment -%}
   <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
-  {{ 'luxvera-global.js' | asset_url | script_tag }}
-  {{ 'luxvera.js'        | asset_url | script_tag }}
+  <script src="{{ 'luxvera-global.js' | asset_url }}" defer></script>
+  <script src="{{ 'luxvera.js' | asset_url }}" defer></script>
 
   {%- if settings.enable_animations -%}
   <script>

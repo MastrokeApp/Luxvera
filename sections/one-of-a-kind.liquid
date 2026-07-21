@@ -151,30 +151,147 @@
 
 {% schema %}
 {
-  "name": "One of a Kind",
+  "name": "t:general.one_of_a_kind",
   "tag": "section",
   "class": "luxvera-ooak",
   "settings": [
-    { "type": "header", "content": "Section Padding" },
-    { "type": "range", "id": "padding_top_desktop",    "label": "Padding Top — Desktop",    "min": 0, "max": 160, "step": 4, "unit": "px", "default": 80 },
-    { "type": "range", "id": "padding_bottom_desktop", "label": "Padding Bottom — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 80 },
-    { "type": "range", "id": "padding_top_mobile",     "label": "Padding Top — Mobile",     "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
-    { "type": "range", "id": "padding_bottom_mobile",  "label": "Padding Bottom — Mobile",  "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
-    { "type": "header", "content": "Color" },
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-    { "type": "header", "content": "Background" },
-    { "type": "image_picker", "id": "background_image", "label": "Background Image", "info": "Recommended: 1600x800px. If left empty, a placeholder image is shown." },
-    { "type": "color",  "id": "overlay_color",   "label": "Overlay Colour",           "default": "#f7f4f0" },
-    { "type": "range",  "id": "overlay_opacity", "label": "Overlay Opacity (left %)", "min": 50, "max": 100, "step": 5, "default": 95 },
-    { "type": "range",  "id": "min_height",      "label": "Min Height",               "min": 300, "max": 700, "step": 20, "unit": "px", "default": 460 },
-    { "type": "header", "content": "Content", "info": "Text colors follow the selected Color scheme" },
-    { "type": "textarea", "id": "heading",      "label": "Heading",      "default": "One of A Kind,\nJust Like You" },
-    { "type": "range",    "id": "heading_size", "label": "Heading Font Size", "min": 24, "max": 80, "step": 2, "unit": "px", "default": 48 },
-    { "type": "textarea", "id": "text",         "label": "Subtext",       "default": "We're here to empower women to feel confident and beautiful in their own skin" },
-    { "type": "header", "content": "Button" },
-    { "type": "text", "id": "button_label", "label": "Button Label", "default": "Shop the Collection" },
-    { "type": "url",  "id": "button_url",   "label": "Button URL" }
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "t:labels.padding_top_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "t:labels.padding_bottom_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:labels.padding_top_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:labels.padding_bottom_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "t:labels.color"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.background"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "t:labels.background_image",
+      "info": "t:labels.recommended_1600x800px_if_left_empty_a"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "t:labels.overlay_colour",
+      "default": "#f7f4f0"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "t:labels.overlay_opacity_left",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "default": 95
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "t:labels.min_height",
+      "min": 300,
+      "max": 700,
+      "step": 20,
+      "unit": "px",
+      "default": 460
+    },
+    {
+      "type": "header",
+      "content": "t:labels.content",
+      "info": "Text colors follow the selected Color scheme"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "One of A Kind,\nJust Like You"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "t:labels.heading_font_size_2",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "t:labels.subtext",
+      "default": "We're here to empower women to feel confident and beautiful in their own skin"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:labels.button_label",
+      "default": "Shop the Collection"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "t:labels.button_url"
+    }
   ],
-  "presets": [{"name":"One of a Kind","category":"Image"}]
+  "presets": [
+    {
+      "name": "t:general.one_of_a_kind",
+      "category": "t:general.image"
+    }
+  ]
 }
 {% endschema %}

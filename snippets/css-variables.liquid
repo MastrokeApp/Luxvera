@@ -1,3 +1,13 @@
+{% doc %}
+  Global CSS custom properties (fonts, colors, layout) derived from theme
+  settings. Rendered once per page, outside of theme.liquid's own <style>
+  block (used by layout/password.liquid and templates/gift_card.liquid,
+  which don't extend theme.liquid).
+
+  @example
+  {% render 'css-variables' %}
+{% enddoc %}
+
 {% style %}
   {% # Loads all font variantions with display: swap %}
   {{ settings.type_primary_font | font_face: font_display: 'swap' }}

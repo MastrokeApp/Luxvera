@@ -46,15 +46,23 @@
   {%- endfor -%}
 {%- endcapture -%}
 
-<div class="lv-variant-modal" id="lv-vm-dl-{{ section.id }}" role="dialog" aria-modal="true" aria-label="Select size">
+<div class="lv-variant-modal" id="lv-vm-dl-{{ section.id }}" role="dialog" aria-modal="true" aria-label="{{ 'products.select_size' | t }}">
   <div class="lv-variant-modal__box">
     <div class="lv-variant-modal__head">
       <span class="lv-variant-modal__title" id="lv-vm-dl-title-{{ section.id }}"></span>
-      <button class="lv-variant-modal__close" id="lv-vm-dl-close-{{ section.id }}" aria-label="Close">&times;</button>
+      <button class="lv-variant-modal__close" id="lv-vm-dl-close-{{ section.id }}" aria-label="{{ 'accessibility.close' | t }}">&times;</button>
     </div>
-    <p class="lv-variant-modal__label">Select Size</p>
+    <p class="lv-variant-modal__label">{{ 'products.select_size' | t }}</p>
     <div class="lv-variant-modal__options" id="lv-vm-dl-opts-{{ section.id }}"></div>
-    <button class="lv-variant-modal__atc" id="lv-vm-dl-atc-{{ section.id }}" disabled>Choose a size</button>
+    <button
+      class="lv-variant-modal__atc"
+      id="lv-vm-dl-atc-{{ section.id }}"
+      data-label-choose="{{ 'products.choose_a_size' | t }}"
+      data-label-add-prefix="{{ 'products.add_to_cart_prefix' | t }}"
+      data-label-adding="{{ 'products.adding' | t }}"
+      data-label-sold-out="{{ 'products.sold_out' | t }}"
+      disabled
+    >{{ 'products.choose_a_size' | t }}</button>
   </div>
 </div>
 
@@ -108,12 +116,12 @@
     </div>
 
     <div class="swiper-nav">
-      <button class="sw-prev" id="lv-dress-prev-{{ section.id }}" aria-label="Previous">
+      <button class="sw-prev" id="lv-dress-prev-{{ section.id }}" aria-label="{{ 'accessibility.previous' | t }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
       </button>
-      <button class="sw-next" id="lv-dress-next-{{ section.id }}" aria-label="Next">
+      <button class="sw-next" id="lv-dress-next-{{ section.id }}" aria-label="{{ 'accessibility.next' | t }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <polyline points="9 18 15 12 9 6"/>
         </svg>
@@ -155,7 +163,7 @@
       modalOpts.innerHTML = '';
       selectedVid = null;
       modalAtc.disabled = true;
-      modalAtc.textContent = 'Choose a size';
+      modalAtc.textContent = modalAtc.dataset.labelChoose || 'Choose a size';
 
       (btn.dataset.variants || '').split('::').forEach(function (v) {
         if (!v) return;
@@ -173,7 +181,7 @@
 
         if (avail === 'false') {
           opt.disabled = true;
-          opt.title = 'Sold out';
+          opt.title = modalAtc.dataset.labelSoldOut || 'Sold out';
         }
 
         opt.addEventListener('click', function () {
@@ -186,7 +194,7 @@
           opt.classList.add('selected');
           selectedVid = vid;
           modalAtc.disabled = false;
-          modalAtc.textContent = 'Add To Cart — ' + vtitle;
+          modalAtc.textContent = (modalAtc.dataset.labelAddPrefix || 'Add To Cart — ') + vtitle;
         });
 
         modalOpts.appendChild(opt);
@@ -236,7 +244,7 @@
         if (btn) {
           btn.classList.remove('adding');
           btn.classList.add('added');
-          btn.innerHTML = 'Added &#10003;<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
+          btn.innerHTML = (btn.dataset.labelAdded || 'Added') + ' &#10003;<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
 
           setTimeout(function () {
             if (btn) {
@@ -269,7 +277,7 @@
 
         var orig = modalAtc.textContent;
         modalAtc.disabled = true;
-        modalAtc.textContent = 'Adding…';
+        modalAtc.textContent = modalAtc.dataset.labelAdding || 'Adding…';
         doATC(selectedVid, null, orig);
       });
     }
@@ -320,7 +328,7 @@
 
       var origHTML = btn.innerHTML;
       btn.classList.add('adding');
-      btn.innerHTML = 'Adding…<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
+      btn.innerHTML = (btn.dataset.labelAdding || 'Adding…') + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
       doATC(vid, btn, origHTML);
     });
   }
@@ -345,44 +353,173 @@
 
 {% schema %}
 {
-  "name": "Dress Looks",
+  "name": "t:general.dress_looks",
   "tag": "section",
   "class": "luxvera-dress-looks",
   "settings": [
-    { "type": "header", "content": "Section Padding" },
-    { "type": "range", "id": "padding_top_desktop", "label": "Padding Top — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
-    { "type": "range", "id": "padding_bottom_desktop", "label": "Padding Bottom — Desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
-    { "type": "range", "id": "padding_top_tablet", "label": "Padding Top — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
-    { "type": "range", "id": "padding_bottom_tablet", "label": "Padding Bottom — Tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 44 },
-    { "type": "range", "id": "padding_top_mobile", "label": "Padding Top — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
-    { "type": "range", "id": "padding_bottom_mobile", "label": "Padding Bottom — Mobile", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
-
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-
-    { "type": "header", "content": "Heading" },
-    { "type": "text", "id": "title", "label": "Section Title", "default": "Dresses Looks" },
-    { "type": "range", "id": "heading_size", "label": "Heading Font Size", "min": 16, "max": 72, "step": 2, "unit": "px", "default": 32 },
-    { "type": "select", "id": "heading_alignment", "label": "Heading Alignment", "options": [
-      { "value": "left", "label": "Left" },
-      { "value": "center", "label": "Center" },
-      { "value": "right", "label": "Right" }
-    ], "default": "center" },
-
-    { "type": "header", "content": "Subtitle" },
-    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Some of our new looks you will love" },
-    { "type": "range", "id": "subtitle_size", "label": "Subtitle Font Size", "min": 10, "max": 24, "step": 1, "unit": "px", "default": 13 },
-
-    { "type": "header", "content": "Add to Cart Button" },
-    { "type": "text", "id": "atc_label", "label": "Button Label (single variant)", "default": "Add To Cart" },
-
-    { "type": "header", "content": "Products" },
-    { "type": "collection", "id": "collection", "label": "Collection" },
-    { "type": "range", "id": "products_limit", "label": "Max Products to Show", "min": 4, "max": 20, "step": 2, "default": 8 }
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "t:labels.padding_top_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "t:labels.padding_bottom_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_top_tablet",
+      "label": "t:labels.padding_top_tablet",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_tablet",
+      "label": "t:labels.padding_bottom_tablet",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:labels.padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:labels.padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.heading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:labels.section_title",
+      "default": "Dresses Looks"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "t:labels.heading_font_size_2",
+      "min": 16,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "t:labels.heading_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.heading_alignment.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.heading_alignment.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.heading_alignment.right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.subtitle"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "t:labels.subtitle",
+      "default": "Some of our new looks you will love"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "t:labels.subtitle_font_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "t:labels.add_to_cart_button"
+    },
+    {
+      "type": "text",
+      "id": "atc_label",
+      "label": "t:labels.button_label_single_variant",
+      "default": "Add To Cart"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:labels.collection"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "t:labels.max_products_to_show",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "default": 8
+    }
   ],
   "presets": [
     {
-      "name": "Dress Looks",
-      "category": "Products"
+      "name": "t:general.dress_looks",
+      "category": "t:general.products"
     }
   ]
 }

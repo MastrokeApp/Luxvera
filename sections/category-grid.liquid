@@ -246,60 +246,156 @@
 
 {% schema %}
 {
-  "name": "Category Grid",
+  "name": "t:general.category_grid",
   "tag": "section",
   "class": "luxvera-category-grid",
   "settings": [
-    { "type": "header", "content": "Heading" },
-    { "type": "text", "id": "title", "label": "Section Title", "default": "Collections For You To Explore" },
-    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Everything you need to make your look fantastic" },
-
-    { "type": "header", "content": "Layout" },
+    {
+      "type": "header",
+      "content": "t:labels.heading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:labels.section_title",
+      "default": "Collections For You To Explore"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "t:labels.subtitle",
+      "default": "Everything you need to make your look fantastic"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.layout"
+    },
     {
       "type": "select",
       "id": "cards_to_show",
-      "label": "Cards to Show",
+      "label": "t:labels.cards_to_show",
       "options": [
-        { "value": "4", "label": "4 Cards" },
-        { "value": "8", "label": "8 Cards" },
-        { "value": "12", "label": "12 Cards" },
-        { "value": "16", "label": "16 Cards" }
+        {
+          "value": "4",
+          "label": "t:options.cards_to_show.4"
+        },
+        {
+          "value": "8",
+          "label": "t:options.cards_to_show.8"
+        },
+        {
+          "value": "12",
+          "label": "t:options.cards_to_show.12"
+        },
+        {
+          "value": "16",
+          "label": "t:options.cards_to_show.16"
+        }
       ],
       "default": "8"
     },
-    { "type": "range", "id": "columns_desktop", "label": "Columns (Desktop)", "min": 2, "max": 6, "step": 1, "default": 4 },
-    { "type": "range", "id": "padding_top", "label": "Padding Top", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 48 },
-    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 48 },
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "t:labels.columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
   ],
   "blocks": [
     {
       "type": "category_card",
-      "name": "Category Card",
+      "name": "t:general.category_card",
       "settings": [
-        { "type": "header", "content": "Collection (Auto)" },
-        { "type": "collection", "id": "collection", "label": "Collection", "info": "Pulls image, title and URL automatically." },
-
-        { "type": "header", "content": "Overrides (Optional)" },
-        { "type": "image_picker", "id": "custom_image", "label": "Custom Image" },
-        { "type": "text", "id": "custom_label", "label": "Custom Label" },
-        { "type": "url", "id": "custom_link", "label": "Custom Link" }
+        {
+          "type": "header",
+          "content": "t:labels.collection_auto"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:labels.collection",
+          "info": "t:labels.pulls_image_title_and_url_automatically"
+        },
+        {
+          "type": "header",
+          "content": "t:labels.overrides_optional"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "t:labels.custom_image"
+        },
+        {
+          "type": "text",
+          "id": "custom_label",
+          "label": "t:labels.custom_label"
+        },
+        {
+          "type": "url",
+          "id": "custom_link",
+          "label": "t:labels.custom_link"
+        }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Category Grid",
-      "category": "Collection",
+      "name": "t:general.category_grid",
+      "category": "t:general.collection",
       "blocks": [
-        { "type": "category_card" },
-        { "type": "category_card" },
-        { "type": "category_card" },
-        { "type": "category_card" },
-        { "type": "category_card" },
-        { "type": "category_card" },
-        { "type": "category_card" },
-        { "type": "category_card" }
+        {
+          "type": "category_card"
+        },
+        {
+          "type": "category_card"
+        },
+        {
+          "type": "category_card"
+        },
+        {
+          "type": "category_card"
+        },
+        {
+          "type": "category_card"
+        },
+        {
+          "type": "category_card"
+        },
+        {
+          "type": "category_card"
+        },
+        {
+          "type": "category_card"
+        }
       ]
     }
   ]

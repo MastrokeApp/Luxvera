@@ -1,5 +1,4 @@
-{% comment %}
-  Snippet: lv-menu-mega
+{% doc %}
   3-level mega menu panel for a top-level nav link.
 
   Level 1 — `link`         : the trigger, rendered by the caller (lv-nav__link button)
@@ -9,9 +8,11 @@
   If a level-2 item has no children, it renders as a plain heading link with
   no item list under it (still occupies its own column).
 
-  Usage:
-    {% render 'lv-menu-mega', link: link %}
-{% endcomment %}
+  @param {link} link - the top-level navigation link whose mega-menu columns to render
+
+  @example
+  {% render 'lv-menu-mega', link: link %}
+{% enddoc %}
 
 <div class="lv-dropdown lv-dropdown--mega" style="--lv-mega-cols: {{ link.links.size }};">
   {%- for column in link.links -%}

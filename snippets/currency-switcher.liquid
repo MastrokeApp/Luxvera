@@ -1,10 +1,14 @@
-{% comment %}
-  Reusable Currency Switcher — Luxvera Theme
-  Uses Shopify native localization form (type: localization).
-  Only renders if store has more than 1 enabled currency/country.
-  Usage: {% render 'currency-switcher', position: 'footer' %}
-  position: 'footer' | 'topbar' | 'mobile'
-{% endcomment %}
+{% doc %}
+  Reusable currency switcher.
+
+  Uses Shopify's native localization form. Only renders if the store has
+  more than one enabled currency/country.
+
+  @param {string} [position] - 'footer' | 'topbar' | 'mobile' (default: 'footer')
+
+  @example
+  {% render 'currency-switcher', position: 'footer' %}
+{% enddoc %}
 
 {%- if localization.available_countries.size > 1 -%}
 
@@ -24,7 +28,7 @@
         <select
           name="country_code"
           class="lv-currency__select"
-          aria-label="Select currency"
+          aria-label="{{ 'accessibility.select_currency' | t }}"
           data-lv-currency-select
           onchange="this.form.submit()"
         >

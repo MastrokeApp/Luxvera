@@ -61,11 +61,11 @@
           {%- endif -%}
 
           {%- if section.settings.show_view_toggle -%}
-            <div class="lv-view-toggle" role="group" aria-label="Collection view">
-              <button type="button" class="lv-view-btn lv-view-btn--grid active" data-view="grid" aria-label="Grid view">
+            <div class="lv-view-toggle" role="group" aria-label="{{ 'accessibility.collection_view' | t }}">
+              <button type="button" class="lv-view-btn lv-view-btn--grid active" data-view="grid" aria-label="{{ 'accessibility.grid_view' | t }}">
                 {{ 'icon-view-grid.svg' | inline_asset_content }}
               </button>
-              <button type="button" class="lv-view-btn lv-view-btn--list" data-view="list" aria-label="List view">
+              <button type="button" class="lv-view-btn lv-view-btn--list" data-view="list" aria-label="{{ 'accessibility.list_view' | t }}">
                 {{ 'icon-view-list.svg' | inline_asset_content }}
               </button>
             </div>
@@ -73,7 +73,7 @@
 
           {%- if section.settings.show_filters and section.settings.enable_mobile_filter_button -%}
             <button type="button" class="lv-mobile-filter-btn" id="lv-mobile-filter-open-{{ section.id }}">
-              Filters
+              {{ 'collections.filters' | t }}
             </button>
           {%- endif -%}
         </div>
@@ -119,7 +119,7 @@
                               type="number"
                               name="{{ filter.min_value.param_name }}"
                               value="{% if filter.min_value.value %}{{ filter.min_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
-                              placeholder="Min"
+                              placeholder="{{ 'collections.filter_min' | t }}"
                               min="0"
                             >
                             <input
@@ -127,22 +127,22 @@
                               type="number"
                               name="{{ filter.max_value.param_name }}"
                               value="{% if filter.max_value.value %}{{ filter.max_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
-                              placeholder="Max"
+                              placeholder="{{ 'collections.filter_max' | t }}"
                               min="0"
                             >
                           </div>
-                          <button type="submit" class="lv-apply-btn">APPLY</button>
+                          <button type="submit" class="lv-apply-btn">{{ 'collections.filter_apply' | t }}</button>
                       {%- endcase -%}
                     </div>
                   </div>
                 {%- endfor -%}
 
                 <div class="lv-filter-actions">
-                  <a class="lv-clear-filters" href="{{ collection.url }}">Clear all</a>
+                  <a class="lv-clear-filters" href="{{ collection.url }}">{{ 'collections.filter_clear_all' | t }}</a>
                 </div>
               </form>
             {%- else -%}
-              <p class="lv-no-filters-msg">Filters are not available for this collection.</p>
+              <p class="lv-no-filters-msg">{{ 'collections.filters_unavailable' | t }}</p>
             {%- endif -%}
           </div>
         </aside>
@@ -153,7 +153,7 @@
             <div class="lv-mobile-filter-panel">
               <div class="lv-mobile-filter-head">
                 <p>{{ section.settings.filter_heading | default: 'FILTER BY' }}</p>
-                <button type="button" class="lv-mobile-filter-close" data-close-mobile-filter aria-label="Close filter">&times;</button>
+                <button type="button" class="lv-mobile-filter-close" data-close-mobile-filter aria-label="{{ 'accessibility.close_filter' | t }}">&times;</button>
               </div>
 
               {%- if collection.filters != empty -%}
@@ -189,7 +189,7 @@
                                 type="number"
                                 name="{{ filter.min_value.param_name }}"
                                 value="{% if filter.min_value.value %}{{ filter.min_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
-                                placeholder="Min"
+                                placeholder="{{ 'collections.filter_min' | t }}"
                                 min="0"
                               >
                               <input
@@ -197,22 +197,22 @@
                                 type="number"
                                 name="{{ filter.max_value.param_name }}"
                                 value="{% if filter.max_value.value %}{{ filter.max_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
-                                placeholder="Max"
+                                placeholder="{{ 'collections.filter_max' | t }}"
                                 min="0"
                               >
                             </div>
-                            <button type="submit" class="lv-apply-btn">APPLY</button>
+                            <button type="submit" class="lv-apply-btn">{{ 'collections.filter_apply' | t }}</button>
                         {%- endcase -%}
                       </div>
                     </div>
                   {%- endfor -%}
 
                   <div class="lv-filter-actions">
-                    <a class="lv-clear-filters" href="{{ collection.url }}">Clear all</a>
+                    <a class="lv-clear-filters" href="{{ collection.url }}">{{ 'collections.filter_clear_all' | t }}</a>
                   </div>
                 </form>
               {%- else -%}
-                <p class="lv-no-filters-msg">Filters are not available for this collection.</p>
+                <p class="lv-no-filters-msg">{{ 'collections.filters_unavailable' | t }}</p>
               {%- endif -%}
             </div>
           </div>
@@ -245,22 +245,22 @@
     </div>
 
     {%- comment -%} Size picker for multi-variant products {%- endcomment -%}
-    <div class="lv-variant-modal" id="lv-vm-col-{{ section.id }}" role="dialog" aria-modal="true" aria-label="Select Size">
+    <div class="lv-variant-modal" id="lv-vm-col-{{ section.id }}" role="dialog" aria-modal="true" aria-label="{{ 'products.select_size' | t }}">
       <div class="lv-variant-modal__box">
         <div class="lv-variant-modal__head">
           <span class="lv-variant-modal__title" id="lv-vm-col-title-{{ section.id }}"></span>
-          <button class="lv-variant-modal__close" id="lv-vm-col-close-{{ section.id }}" aria-label="Close">&times;</button>
+          <button class="lv-variant-modal__close" id="lv-vm-col-close-{{ section.id }}" aria-label="{{ 'accessibility.close' | t }}">&times;</button>
         </div>
-        <p class="lv-variant-modal__label">Select Size</p>
+        <p class="lv-variant-modal__label">{{ 'products.select_size' | t }}</p>
         <div class="lv-variant-modal__options" id="lv-vm-col-opts-{{ section.id }}"></div>
         <button
           class="lv-variant-modal__atc"
           id="lv-vm-col-atc-{{ section.id }}"
-          data-label-choose="Choose a size"
-          data-label-add-prefix="Add To Cart — "
-          data-label-adding="Adding…"
+          data-label-choose="{{ 'products.choose_a_size' | t }}"
+          data-label-add-prefix="{{ 'products.add_to_cart_prefix' | t }}"
+          data-label-adding="{{ 'products.adding' | t }}"
           disabled
-        >Choose a size</button>
+        >{{ 'products.choose_a_size' | t }}</button>
       </div>
     </div>
   </div>
@@ -518,6 +518,7 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: .1em;
+  text-transform: uppercase;
   padding: 12px;
   border: none;
   cursor: pointer;
@@ -1207,73 +1208,253 @@
 
 {% schema %}
 {
-  "name": "Collection Products",
+  "name": "t:general.collection_products",
   "settings": [
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-    { "type": "header", "content": "Layout" },
-    { "type": "range", "id": "products_per_page", "min": 8, "max": 48, "step": 4, "default": 24, "label": "Products per page" },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.layout"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24,
+      "label": "t:labels.products_per_page"
+    },
     {
       "type": "select",
       "id": "default_view",
-      "label": "Default View",
+      "label": "t:labels.default_view",
       "options": [
-        { "value": "grid", "label": "Grid" },
-        { "value": "list", "label": "List" }
+        {
+          "value": "grid",
+          "label": "t:options.default_view.grid"
+        },
+        {
+          "value": "list",
+          "label": "t:options.default_view.list"
+        }
       ],
       "default": "grid"
     },
-    { "type": "range", "id": "columns_desktop", "label": "Columns — Desktop (with sidebar)", "min": 2, "max": 5, "step": 1, "default": 3 },
-    { "type": "range", "id": "columns_desktop_no_sidebar", "label": "Columns — Desktop (no sidebar)", "min": 2, "max": 6, "step": 1, "default": 4 },
-    { "type": "range", "id": "columns_tablet", "label": "Columns — Tablet (with sidebar)", "min": 2, "max": 4, "step": 1, "default": 2 },
-    { "type": "range", "id": "columns_tablet_no_sidebar", "label": "Columns — Tablet (no sidebar)", "min": 2, "max": 4, "step": 1, "default": 3 },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "t:labels.columns_desktop_with_sidebar",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop_no_sidebar",
+      "label": "t:labels.columns_desktop_no_sidebar",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "t:labels.columns_tablet_with_sidebar",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet_no_sidebar",
+      "label": "t:labels.columns_tablet_no_sidebar",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
     {
       "type": "select",
       "id": "columns_mobile",
-      "label": "Columns — Mobile",
+      "label": "t:labels.columns_mobile",
       "options": [
-        { "value": "1", "label": "1 column" },
-        { "value": "2", "label": "2 columns" }
+        {
+          "value": "1",
+          "label": "t:options.columns_mobile.1"
+        },
+        {
+          "value": "2",
+          "label": "t:options.columns_mobile.2"
+        }
       ],
       "default": "2"
     },
-    { "type": "range", "id": "grid_gap", "label": "Grid Column Gap", "min": 0, "max": 40, "step": 2, "default": 20 },
-    { "type": "range", "id": "grid_gap_row", "label": "Grid Row Gap", "min": 0, "max": 50, "step": 2, "default": 32 },
-
-    { "type": "header", "content": "Spacing" },
-    { "type": "range", "id": "padding_top", "label": "Padding Top — Desktop", "min": 0, "max": 120, "step": 4, "default": 0 },
-    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom — Desktop", "min": 0, "max": 120, "step": 4, "default": 64 },
-    { "type": "range", "id": "padding_top_mobile", "label": "Padding Top — Mobile", "min": 0, "max": 80, "step": 4, "default": 0 },
-    { "type": "range", "id": "padding_bottom_mobile", "label": "Padding Bottom — Mobile", "min": 0, "max": 80, "step": 4, "default": 40 },
-
-    { "type": "header", "content": "Toolbar" },
-    { "type": "checkbox", "id": "show_sort", "label": "Show Sort", "default": true },
-    { "type": "checkbox", "id": "show_view_toggle", "label": "Show View Toggle", "default": true },
-
-    { "type": "header", "content": "Filters" },
-    { "type": "checkbox", "id": "show_filters", "label": "Show Filter Sidebar", "default": true },
-    { "type": "checkbox", "id": "enable_mobile_filter_button", "label": "Enable Mobile Filter Drawer Button", "default": true },
-    { "type": "text", "id": "filter_heading", "label": "Filter Heading", "default": "FILTER BY" },
-
-    { "type": "header", "content": "Product Card" },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "t:labels.grid_column_gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_row",
+      "label": "t:labels.grid_row_gap",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "t:labels.spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:labels.padding_top_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:labels.padding_bottom_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "t:labels.toolbar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sort",
+      "label": "t:labels.show_sort",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_toggle",
+      "label": "t:labels.show_view_toggle",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:labels.filters"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "t:labels.show_filter_sidebar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mobile_filter_button",
+      "label": "t:labels.enable_mobile_filter_drawer_button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "filter_heading",
+      "label": "t:labels.filter_heading",
+      "default": "FILTER BY"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.product_card"
+    },
     {
       "type": "select",
       "id": "image_ratio",
-      "label": "Image Ratio",
+      "label": "t:labels.image_ratio",
       "options": [
-        { "value": "portrait", "label": "Portrait (3:4)" },
-        { "value": "square", "label": "Square (1:1)" },
-        { "value": "landscape", "label": "Landscape (4:3)" }
+        {
+          "value": "portrait",
+          "label": "t:options.image_ratio.portrait"
+        },
+        {
+          "value": "square",
+          "label": "t:options.image_ratio.square"
+        },
+        {
+          "value": "landscape",
+          "label": "t:options.image_ratio.landscape"
+        }
       ],
       "default": "portrait"
     },
-    { "type": "range", "id": "card_radius", "label": "Card Radius", "min": 0, "max": 24, "step": 1, "default": 6 },
-    { "type": "range", "id": "button_radius", "label": "Button Radius", "min": 0, "max": 24, "step": 1, "default": 0 },
-    { "type": "text", "id": "atc_label", "label": "Add To Cart Label", "default": "Add To Cart" },
-
-    { "type": "header", "content": "Empty State" },
-    { "type": "text", "id": "empty_text", "label": "Empty Collection Text", "default": "No products found in this collection." },
-
-    { "type": "header", "content": "Colors" }    
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "t:labels.card_radius",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "t:labels.button_radius",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "text",
+      "id": "atc_label",
+      "label": "t:labels.add_to_cart_label",
+      "default": "Add To Cart"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.empty_state"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "t:labels.empty_collection_text",
+      "default": "No products found in this collection."
+    },
+    {
+      "type": "header",
+      "content": "t:labels.colors"
+    }
   ]
 }
 {% endschema %}

@@ -77,29 +77,35 @@
       {%- form 'contact', class: 'lv-contact-form' -%}
         {%- if form.posted_successfully? -%}
           <div class="lv-contact-success show">
-            &#10003; Thanks for reaching out! We'll get back to you within 24-48 hours.
+            &#10003; {{ 'contact.form.success' | t }}
+          </div>
+        {%- endif -%}
+
+        {%- if form.errors -%}
+          <div class="lv-contact-error">
+            {{ form.errors | default_errors }}
           </div>
         {%- endif -%}
 
         <div class="lv-contact-form-row">
           <div class="lv-contact-form-field">
-            <label for="contact-name-{{ section.id }}">Name</label>
-            <input type="text" id="contact-name-{{ section.id }}" name="contact[name]" placeholder="Your full name" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" required>
+            <label for="contact-name-{{ section.id }}">{{ 'contact.form.name' | t }}</label>
+            <input type="text" id="contact-name-{{ section.id }}" name="contact[name]" placeholder="{{ 'contact.form.name_placeholder' | t }}" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" required>
           </div>
           <div class="lv-contact-form-field">
-            <label for="contact-email-{{ section.id }}">Email</label>
-            <input type="email" id="contact-email-{{ section.id }}" name="contact[email]" placeholder="your@email.com" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" required>
+            <label for="contact-email-{{ section.id }}">{{ 'contact.form.email' | t }}</label>
+            <input type="email" id="contact-email-{{ section.id }}" name="contact[email]" placeholder="{{ 'contact.form.email_placeholder' | t }}" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" required>
           </div>
         </div>
 
         <div class="lv-contact-form-field">
-          <label for="contact-subject-{{ section.id }}">Subject</label>
-          <input type="text" id="contact-subject-{{ section.id }}" name="contact[subject]" placeholder="How can we help?">
+          <label for="contact-subject-{{ section.id }}">{{ 'contact.form.subject' | t }}</label>
+          <input type="text" id="contact-subject-{{ section.id }}" name="contact[subject]" placeholder="{{ 'contact.form.subject_placeholder' | t }}">
         </div>
 
         <div class="lv-contact-form-field">
-          <label for="contact-message-{{ section.id }}">Message</label>
-          <textarea id="contact-message-{{ section.id }}" name="contact[body]" placeholder="Write your message here…" required></textarea>
+          <label for="contact-message-{{ section.id }}">{{ 'contact.form.message' | t }}</label>
+          <textarea id="contact-message-{{ section.id }}" name="contact[body]" placeholder="{{ 'contact.form.message_placeholder' | t }}" required></textarea>
         </div>
 
         <button type="submit" class="lv-contact-form-submit">
@@ -116,7 +122,7 @@
           {%- else -%}
             <div class="lv-contact-map__placeholder">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              <span>Add your Google Maps embed URL in Theme Editor</span>
+              <span>{{ 'contact.form.map_placeholder' | t }}</span>
             </div>
           {%- endif -%}
         </div>
@@ -336,6 +342,22 @@
   display: block;
 }
 
+/* Error message */
+.lv-contact .lv-contact-error {
+  background: rgba(179, 38, 30, 0.08);
+  border: 1px solid rgba(179, 38, 30, 0.4);
+  border-radius: 4px;
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--color-error, #b3261e);
+  margin-top: 16px;
+}
+
+.lv-contact .lv-contact-error ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
 /* Map */
 .lv-contact .lv-contact-map {
   margin-top: 32px;
@@ -398,32 +420,136 @@
 
 {% schema %}
 {
-  "name": "Contact Page",
+  "name": "t:general.contact_page",
   "tag": "section",
   "class": "luxvera-contact",
   "settings": [
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-    { "type": "header", "content": "Contact Info" },
-    { "type": "text",     "id": "support_heading", "label": "Support Heading",   "default": "Customer Support" },
-    { "type": "textarea","id": "support_text",    "label": "Support Text",      "default": "About our products or just want to say hello? We're here to help! Our dedicated support team is ready to assist you." },
-    { "type": "text",    "id": "email_label",    "label": "Email Label",       "default": "Email Us" },
-    { "type": "text",    "id": "email_value",    "label": "Email Address",     "default": "support@luxvera.com" },
-    { "type": "text",    "id": "phone_label",    "label": "Phone Label",       "default": "Call Us" },
-    { "type": "text",    "id": "phone_value",    "label": "Phone Number",      "default": "+1 (415) 555-0172" },
-    { "type": "text",    "id": "location_label", "label": "Location Label",    "default": "Our Location" },
-    { "type": "text",    "id": "location_line1", "label": "Address Line 1",    "default": "123 Fashion Boulevard, Suite 200" },
-    { "type": "text",    "id": "location_line2", "label": "Address Line 2",    "default": "Los Angeles, California 90210" },
-    { "type": "text",    "id": "response_label", "label": "Response Time Label","default": "Response Time" },
-    { "type": "textarea","id": "response_text",  "label": "Response Time Text", "default": "We aim to respond to all inquiries within 24-48 business hours. For urgent matters, please contact us by phone during business hours." },
-    { "type": "text",    "id": "cta_heading",    "label": "CTA Heading",        "default": "We\u2019re Here for You" },
-    { "type": "textarea","id": "cta_text",       "label": "CTA Text",           "default": "Your experience at Luxvera is extremely important to us and we are committed to providing excellent service. Really, truly, we are!" },
-    { "type": "header", "content": "Contact Form" },
-    { "type": "text",     "id": "form_heading", "label": "Form Heading", "default": "Get in Touch" },
-    { "type": "text",     "id": "btn_label",    "label": "Button Label", "default": "Send Message" },
-    { "type": "header", "content": "Map" },
-    { "type": "checkbox", "id": "show_map",   "label": "Show Map",              "default": true },
-    { "type": "html",     "id": "map_embed",  "label": "Google Maps Embed Code", "info": "Paste your Google Maps <iframe> embed code here. Get it from maps.google.com \u2192 Share \u2192 Embed a map." }
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.contact_info"
+    },
+    {
+      "type": "text",
+      "id": "support_heading",
+      "label": "t:labels.support_heading",
+      "default": "Customer Support"
+    },
+    {
+      "type": "textarea",
+      "id": "support_text",
+      "label": "t:labels.support_text",
+      "default": "About our products or just want to say hello? We're here to help! Our dedicated support team is ready to assist you."
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "t:labels.email_label",
+      "default": "Email Us"
+    },
+    {
+      "type": "text",
+      "id": "email_value",
+      "label": "t:labels.email_address",
+      "default": "support@luxvera.com"
+    },
+    {
+      "type": "text",
+      "id": "phone_label",
+      "label": "t:labels.phone_label",
+      "default": "Call Us"
+    },
+    {
+      "type": "text",
+      "id": "phone_value",
+      "label": "t:labels.phone_number",
+      "default": "+1 (415) 555-0172"
+    },
+    {
+      "type": "text",
+      "id": "location_label",
+      "label": "t:labels.location_label",
+      "default": "Our Location"
+    },
+    {
+      "type": "text",
+      "id": "location_line1",
+      "label": "t:labels.address_line_1",
+      "default": "123 Fashion Boulevard, Suite 200"
+    },
+    {
+      "type": "text",
+      "id": "location_line2",
+      "label": "t:labels.address_line_2",
+      "default": "Los Angeles, California 90210"
+    },
+    {
+      "type": "text",
+      "id": "response_label",
+      "label": "t:labels.response_time_label",
+      "default": "Response Time"
+    },
+    {
+      "type": "textarea",
+      "id": "response_text",
+      "label": "t:labels.response_time_text",
+      "default": "We aim to respond to all inquiries within 24-48 business hours. For urgent matters, please contact us by phone during business hours."
+    },
+    {
+      "type": "text",
+      "id": "cta_heading",
+      "label": "t:labels.cta_heading",
+      "default": "We’re Here for You"
+    },
+    {
+      "type": "textarea",
+      "id": "cta_text",
+      "label": "t:labels.cta_text",
+      "default": "Your experience at Luxvera is extremely important to us and we are committed to providing excellent service. Really, truly, we are!"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.contact_form"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "t:labels.form_heading",
+      "default": "Get in Touch"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "t:labels.button_label",
+      "default": "Send Message"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.map"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_map",
+      "label": "t:labels.show_map",
+      "default": true
+    },
+    {
+      "type": "html",
+      "id": "map_embed",
+      "label": "t:labels.google_maps_embed_code",
+      "info": "t:labels.paste_your_google_maps_iframe_embed"
+    }
   ],
-  "presets": [{ "name": "Contact Page", "category": "Page" }]
+  "presets": [
+    {
+      "name": "t:general.contact_page",
+      "category": "t:general.page"
+    }
+  ]
 }
 {% endschema %}

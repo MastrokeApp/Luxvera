@@ -1,5 +1,4 @@
-{% comment %}
-  Snippet: lv-menu-dropdown
+{% doc %}
   3-level standard (non-mega) dropdown panel for a top-level nav link.
 
   Level 1 — `link`      : the trigger, rendered by the caller (lv-nav__link button)
@@ -7,9 +6,11 @@
   Level 3 — child.links : rendered as a nested flyout submenu that opens to the
                            right of its parent item when that item is toggled
 
-  Usage:
-    {% render 'lv-menu-dropdown', link: link %}
-{% endcomment %}
+  @param {link} link - the top-level navigation link whose sub-menu to render
+
+  @example
+  {% render 'lv-menu-dropdown', link: link %}
+{% enddoc %}
 
 <div class="lv-dropdown">
   {%- for child in link.links -%}

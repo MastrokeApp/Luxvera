@@ -159,20 +159,20 @@
 
 {% schema %}
 {
-  "name": "FAQ Accordion",
+  "name": "t:general.faq_accordion",
   "tag": "section",
   "class": "section-faq",
   "settings": [
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "Color scheme",
+      "label": "t:labels.color_scheme",
       "default": "scheme-1"
     },
     {
       "type": "range",
       "id": "section_padding_top",
-      "label": "Padding top",
+      "label": "t:labels.padding_top_2",
       "min": 0,
       "max": 100,
       "step": 4,
@@ -182,7 +182,7 @@
     {
       "type": "range",
       "id": "section_padding_bottom",
-      "label": "Padding bottom",
+      "label": "t:labels.padding_bottom_2",
       "min": 0,
       "max": 100,
       "step": 4,
@@ -192,7 +192,7 @@
     {
       "type": "range",
       "id": "container_width",
-      "label": "Container max width",
+      "label": "t:labels.container_max_width",
       "min": 600,
       "max": 1400,
       "step": 20,
@@ -202,31 +202,31 @@
     {
       "type": "checkbox",
       "id": "open_first",
-      "label": "Open first item by default",
+      "label": "t:labels.open_first_item_by_default",
       "default": true
     },
     {
       "type": "checkbox",
       "id": "allow_multiple",
-      "label": "Allow multiple items open at once",
+      "label": "t:labels.allow_multiple_items_open_at_once",
       "default": false
     }
   ],
   "blocks": [
     {
       "type": "faq_item",
-      "name": "FAQ Item",
+      "name": "t:general.faq_item",
       "settings": [
         {
           "type": "text",
           "id": "question",
-          "label": "Question",
+          "label": "t:labels.question",
           "default": "How long does shipping take?"
         },
         {
           "type": "richtext",
           "id": "answer",
-          "label": "Answer",
+          "label": "t:labels.answer",
           "default": "<p>Orders are processed within 1 to 3 business days. Delivery times vary based on location, and international orders to Canada typically take 5 to 10 business days.</p>"
         }
       ]
@@ -234,7 +234,7 @@
   ],
   "presets": [
     {
-      "name": "FAQ Accordion",
+      "name": "t:general.faq_accordion",
       "blocks": [
         {
           "type": "faq_item",
