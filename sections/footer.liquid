@@ -192,6 +192,48 @@
   </div>
 </div>
 
+{% javascript %}
+(function () {
+  'use strict';
+
+  function initFooterAccordion(root) {
+    if (root.dataset.lvFooterAccordionInit) return;
+    root.dataset.lvFooterAccordionInit = '1';
+
+    root.addEventListener('click', function (e) {
+      var trigger = e.target.closest('.lv-accordion-trigger');
+      if (!trigger || !root.contains(trigger)) return;
+
+      var panelId = trigger.getAttribute('aria-controls');
+      var panel = panelId && document.getElementById(panelId);
+      if (!panel) return;
+
+      var isOpen = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      if (isOpen) {
+        panel.setAttribute('hidden', '');
+      } else {
+        panel.removeAttribute('hidden');
+      }
+    });
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.lv-footer').forEach(initFooterAccordion);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+})();
+{% endjavascript %}
+
 {% schema %}
 {
   "name": "t:general.footer",

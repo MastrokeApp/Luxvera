@@ -411,8 +411,9 @@
 
     if (total <= 1) return;
 
+    var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var current  = 0;
-    var autoplay = root.dataset.autoplay === 'true';
+    var autoplay = root.dataset.autoplay === 'true' && !prefersReducedMotion;
     var speed    = parseInt(root.dataset.speed, 10) || 5000;
     var timer    = null;
 

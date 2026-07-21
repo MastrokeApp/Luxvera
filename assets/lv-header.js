@@ -32,9 +32,13 @@
       els.hamburger.setAttribute('aria-expanded', 'true');
     }
     document.body.style.overflow = 'hidden';
+    setTimeout(function () {
+      if (els.drawerClose) els.drawerClose.focus();
+    }, 50);
   }
 
   function closeDrawer() {
+    var wasOpen = els.mobileMenu && els.mobileMenu.classList.contains('open');
     if (els.mobileMenu) {
       els.mobileMenu.classList.remove('open');
       els.mobileMenu.setAttribute('aria-hidden', 'true');
@@ -44,6 +48,7 @@
       els.hamburger.setAttribute('aria-expanded', 'false');
     }
     document.body.style.overflow = '';
+    if (wasOpen && els.hamburger) els.hamburger.focus();
   }
 
   function openSearch() {
@@ -55,8 +60,10 @@
   }
 
   function closeSearch() {
+    var wasOpen = els.searchOverlay && els.searchOverlay.classList.contains('open');
     if (els.searchOverlay) els.searchOverlay.classList.remove('open');
     document.body.style.overflow = '';
+    if (wasOpen && els.searchBtn) els.searchBtn.focus();
   }
 
   function closeAllDropdowns() {

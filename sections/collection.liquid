@@ -949,6 +949,7 @@
     var modalAtc = document.getElementById('lv-vm-col-atc-' + SID);
     var modalClose = document.getElementById('lv-vm-col-close-' + SID);
     var selectedVid = null;
+    var lastTrigger = null;
 
     var L = {
       choose: (modalAtc && modalAtc.dataset.labelChoose) || 'Choose a size',
@@ -998,6 +999,7 @@
 
     function openModal(btn) {
       if (!modal) return;
+      lastTrigger = btn;
       modalTitle.textContent = btn.dataset.productTitle || '';
       modalOpts.innerHTML = '';
       selectedVid = null;
@@ -1036,6 +1038,9 @@
 
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
+      setTimeout(function () {
+        if (modalClose) modalClose.focus();
+      }, 50);
     }
 
     function closeModal() {
@@ -1043,6 +1048,10 @@
       modal.classList.remove('open');
       document.body.style.overflow = '';
       selectedVid = null;
+      if (lastTrigger) {
+        lastTrigger.focus();
+        lastTrigger = null;
+      }
     }
 
     function doATC(vid, btn, origHTML) {

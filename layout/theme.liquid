@@ -75,9 +75,24 @@
     h1,h2,h3,h4,h5,h6 { font-family: var(--lv-font-heading); }
     a { color: inherit; }
     .btn,.button,[class*="lv-btn"],[class*="hero-btn"] { border-radius: var(--lv-btn-radius); }
+    .skip-to-content-link {
+      position: absolute;
+      top: -100%;
+      left: 0;
+      z-index: 9999;
+      padding: 12px 20px;
+      background: rgb(var(--color-background));
+      color: rgb(var(--color-foreground));
+      border: 1px solid rgba(var(--color-foreground), 0.2);
+    }
+    .skip-to-content-link:focus {
+      top: 0;
+    }
     {%- if settings.enable_animations -%}
-    .lv-reveal { opacity:0; transform:translateY(20px); transition:opacity .55s ease,transform .55s ease; }
-    .lv-reveal.lv-revealed { opacity:1; transform:translateY(0); }
+    @media (prefers-reduced-motion: no-preference) {
+      .lv-reveal { opacity:0; transform:translateY(20px); transition:opacity .55s ease,transform .55s ease; }
+      .lv-reveal.lv-revealed { opacity:1; transform:translateY(0); }
+    }
     {%- endif -%}
 
 
@@ -143,6 +158,8 @@
 </head>
 
 <body class="template-{{ template.name }}">
+
+  <a class="skip-to-content-link" href="#main-content">{{ 'accessibility.skip_to_content' | t }}</a>
 
   {%- sections 'header-group' -%}
 

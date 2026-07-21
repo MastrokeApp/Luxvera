@@ -155,10 +155,12 @@
     var modalAtc   = document.getElementById('lv-vm-dl-atc-' + SID);
     var modalClose = document.getElementById('lv-vm-dl-close-' + SID);
     var selectedVid = null;
+    var lastTrigger = null;
 
     function openModal(btn) {
       if (!modal || !modalTitle || !modalOpts || !modalAtc) return;
 
+      lastTrigger = btn;
       modalTitle.textContent = btn.dataset.productTitle || '';
       modalOpts.innerHTML = '';
       selectedVid = null;
@@ -202,6 +204,9 @@
 
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
+      setTimeout(function () {
+        if (modalClose) modalClose.focus();
+      }, 50);
     }
 
     function closeModal() {
@@ -209,6 +214,10 @@
       modal.classList.remove('open');
       document.body.style.overflow = '';
       selectedVid = null;
+      if (lastTrigger) {
+        lastTrigger.focus();
+        lastTrigger = null;
+      }
     }
 
     if (modalClose) modalClose.addEventListener('click', closeModal);

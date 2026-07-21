@@ -502,8 +502,10 @@
     var modalAtc   = document.getElementById('lv-vm-atc-' + SID);
     var modalClose = document.getElementById('lv-vm-close-' + SID);
     var selectedVid = null;
+    var lastTrigger = null;
 
     function openModal(btn) {
+      lastTrigger = btn;
       modalTitle.textContent = btn.dataset.productTitle || '';
       modalOpts.innerHTML = '';
       selectedVid = null;
@@ -535,12 +537,19 @@
 
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
+      setTimeout(function () {
+        if (modalClose) modalClose.focus();
+      }, 50);
     }
 
     function closeModal() {
       if (modal) modal.classList.remove('open');
       document.body.style.overflow = '';
       selectedVid = null;
+      if (lastTrigger) {
+        lastTrigger.focus();
+        lastTrigger = null;
+      }
     }
 
     if (modalClose) modalClose.addEventListener('click', closeModal);
