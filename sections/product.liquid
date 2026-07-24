@@ -6,6 +6,16 @@
   JSON and Product JSON-LD for SEO. Colors follow the selected scheme.
 
   Needs: main-product.css
+
+  UPDATE (theme fix): if this section instance has no blocks configured
+  (section.blocks.size == 0) -- e.g. a duplicated/legacy product template
+  that never had blocks saved -- the page used to render a blank info
+  column. We now fall back to a sensible default set of blocks so the
+  PDP is never blank.
+
+  Note: "You May Also Like" is its own standalone section
+  (sections/product-recommendations.liquid), not a block on this
+  section -- see templates/product.json for how it's wired in by default.
 {% endcomment %}
 
 {{ 'main-product.css' | asset_url | stylesheet_tag }}
@@ -21,6 +31,10 @@
   data-section-id="{{ section.id }}"
   data-section-type="product"
   data-money-format="{{ shop.money_format | escape }}"
+  data-label-add-to-cart="{{ 'products.add_to_cart' | t }}"
+  data-label-sold-out="{{ 'products.sold_out' | t }}"
+  data-label-in-stock="{{ 'products.in_stock' | t }}"
+  data-label-unavailable="{{ 'products.unavailable' | t }}"
   style="
     --lv-pdp-pt: {{ section.settings.padding_top_mobile }}px;
     --lv-pdp-pb: {{ section.settings.padding_bottom_mobile }}px;
@@ -94,149 +108,249 @@
       {%- form 'product', product, id: product_form_id, novalidate: 'novalidate', class: 'lv-pdp-form' -%}
         <input type="hidden" name="id" id="variant-id-{{ section.id }}" value="{{ current_variant.id }}">
 
-        {%- for block in section.blocks -%}
-          {%- case block.type -%}
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
 
-          {%- when 'vendor' -%}
-            {%- if product.vendor != blank -%}
-              <p class="lv-pdp-block lv-pdp-vendor" {{ block.shopify_attributes }}>{{ product.vendor }}</p>
-            {%- endif -%}
-
-          {%- when 'title' -%}
-            <h1 class="lv-pdp-block lv-pdp-title" {{ block.shopify_attributes }}>{{ product.title }}</h1>
-
-          {%- when '@app' -%}
-            <div class="lv-pdp-block lv-pdp-app-block" {{ block.shopify_attributes }}>
-              {% render block %}
-            </div>
-
-          {%- when 'price' -%}
-            <div class="lv-pdp-block lv-pdp-price" id="lv-pdp-price-{{ section.id }}" {{ block.shopify_attributes }}>
-              {%- if current_variant.compare_at_price > current_variant.price -%}
-                <span class="lv-pdp-price__current is-sale">{{ current_variant.price | money }}</span>
-                <span class="lv-pdp-price__compare">{{ current_variant.compare_at_price | money }}</span>
-              {%- else -%}
-                <span class="lv-pdp-price__current">{{ current_variant.price | money }}</span>
-              {%- endif -%}
-              {%- if cart.taxes_included -%}<span class="lv-pdp-price__tax">{{ 'products.tax_included' | t }}</span>{%- endif -%}
-            </div>
-
-          {%- when 'variant_picker' -%}
-            {%- unless product.has_only_default_variant -%}
-              <div class="lv-pdp-block lv-pdp-variant-picker" {{ block.shopify_attributes }}>
-                {%- for option in product.options_with_values -%}
-                  <fieldset class="lv-pdp-option" data-option-position="{{ option.position }}">
-                    <legend class="lv-pdp-option__label">
-                      {{ option.name }}:
-                      <span class="lv-pdp-option__selected" data-selected-for="{{ option.position }}">{{ option.selected_value }}</span>
-                    </legend>
-                    <div class="lv-pdp-option__values">
-                      {%- for value in option.values -%}
-                        {%- assign input_id = section.id | append: '-' | append: option.position | append: '-' | append: forloop.index0 -%}
-                        <input
-                          type="radio"
-                          class="lv-pdp-opt-input"
-                          id="{{ input_id }}"
-                          name="option-{{ option.position }}"
-                          value="{{ value | escape }}"
-                          data-option-position="{{ option.position }}"
-                          {% if value.selected %}checked{% endif %}
-                        >
-                        {%- if value.swatch.image -%}
-                          <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
-                            <span class="lv-pdp-swatch__img" style="background-image:url({{ value.swatch.image | image_url: width: 100 }})"></span>
-                            <span class="visually-hidden">{{ value }}</span>
-                          </label>
-                        {%- elsif value.swatch.color -%}
-                          <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
-                            <span class="lv-pdp-swatch__color" style="background:{{ value.swatch.color }}"></span>
-                            <span class="visually-hidden">{{ value }}</span>
-                          </label>
-                        {%- else -%}
-                          <label class="lv-pdp-opt-label lv-pdp-pill" for="{{ input_id }}">{{ value }}</label>
-                        {%- endif -%}
-                      {%- endfor -%}
-                    </div>
-                  </fieldset>
-                {%- endfor -%}
-              </div>
-            {%- endunless -%}
-
-          {%- when 'availability' -%}
-            <p class="lv-pdp-block lv-pdp-availability{% unless current_variant.available %} is-out{% endunless %}" id="lv-pdp-availability-{{ section.id }}" {{ block.shopify_attributes }}>
-              <span class="lv-pdp-availability__dot"></span>
-              <span class="lv-pdp-availability__text">{% if current_variant.available %}{{ 'products.in_stock' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</span>
-            </p>
-
-          {%- when 'quantity' -%}
-            <div class="lv-pdp-block lv-pdp-qty" {{ block.shopify_attributes }}>
-              <label class="lv-pdp-qty__label" for="qty-{{ section.id }}">{{ 'accessibility.quantity' | t }}</label>
-              <div class="lv-pdp-qty__controls">
-                <button type="button" class="lv-pdp-qty__btn" data-qty-minus aria-label="{{ 'accessibility.decrease_quantity' | t }}">&minus;</button>
-                <input type="number" id="qty-{{ section.id }}" name="quantity" value="1" min="1" class="lv-pdp-qty__input" aria-label="{{ 'accessibility.quantity' | t }}">
-                <button type="button" class="lv-pdp-qty__btn" data-qty-plus aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
-              </div>
-            </div>
-
-          {%- when 'buy_buttons' -%}
-            <div class="lv-pdp-block lv-pdp-buy" {{ block.shopify_attributes }}>
-              <button
-                type="submit"
-                name="add"
-                class="lv-pdp-buy__atc"
-                id="lv-pdp-atc-{{ section.id }}"
-                {% unless current_variant.available %}disabled{% endunless %}
-              >
-                <span class="lv-pdp-buy__text">{% if current_variant.available %}Add to Cart{% else %}Sold out{% endif %}</span>
-                <span class="lv-pdp-buy__loading">Adding…</span>
-              </button>
-
-              {%- if block.settings.show_dynamic_checkout -%}
-                {{ form | payment_button }}
+            {%- when 'vendor' -%}
+              {%- if product.vendor != blank -%}
+                <p class="lv-pdp-block lv-pdp-vendor" {{ block.shopify_attributes }}>{{ product.vendor }}</p>
               {%- endif -%}
 
-              <p class="lv-pdp-buy__error" id="lv-pdp-error-{{ section.id }}" role="alert"></p>
-            </div>
+            {%- when 'title' -%}
+              <h1 class="lv-pdp-block lv-pdp-title" {{ block.shopify_attributes }}>{{ product.title }}</h1>
 
-          {%- when 'description' -%}
-            {%- if product.description != blank -%}
-              <div class="lv-pdp-block lv-pdp-description rte" {{ block.shopify_attributes }}>{{ product.description }}</div>
-            {%- endif -%}
+            {%- when '@app' -%}
+              <div class="lv-pdp-block lv-pdp-app-block" {{ block.shopify_attributes }}>
+                {% render block %}
+              </div>
 
-          {%- when 'collapsible_row' -%}
-            {%- if block.settings.heading != blank -%}
-              <details class="lv-pdp-block lv-pdp-collapsible" {% if block.settings.open_by_default %}open{% endif %} {{ block.shopify_attributes }}>
-                <summary class="lv-pdp-collapsible__summary">
-                  {{ block.settings.heading }}
-                  <svg class="lv-pdp-collapsible__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </summary>
-                <div class="lv-pdp-collapsible__body rte">
-                  {%- if block.settings.content != blank -%}{{ block.settings.content }}{%- endif -%}
-                  {%- if block.settings.page != blank -%}{{ block.settings.page.content }}{%- endif -%}
+            {%- when 'price' -%}
+              <div class="lv-pdp-block lv-pdp-price" id="lv-pdp-price-{{ section.id }}" {{ block.shopify_attributes }}>
+                {%- if current_variant.compare_at_price > current_variant.price -%}
+                  <span class="lv-pdp-price__current is-sale">{{ current_variant.price | money }}</span>
+                  <span class="lv-pdp-price__compare">{{ current_variant.compare_at_price | money }}</span>
+                {%- else -%}
+                  <span class="lv-pdp-price__current">{{ current_variant.price | money }}</span>
+                {%- endif -%}
+                {%- if cart.taxes_included -%}<span class="lv-pdp-price__tax">{{ 'products.tax_included' | t }}</span>{%- endif -%}
+              </div>
+
+            {%- when 'variant_picker' -%}
+              {%- unless product.has_only_default_variant -%}
+                <div class="lv-pdp-block lv-pdp-variant-picker" {{ block.shopify_attributes }}>
+                  {%- for option in product.options_with_values -%}
+                    <fieldset class="lv-pdp-option" data-option-position="{{ option.position }}">
+                      <legend class="lv-pdp-option__label">
+                        {{ option.name }}:
+                        <span class="lv-pdp-option__selected" data-selected-for="{{ option.position }}">{{ option.selected_value }}</span>
+                      </legend>
+                      <div class="lv-pdp-option__values">
+                        {%- for value in option.values -%}
+                          {%- assign input_id = section.id | append: '-' | append: option.position | append: '-' | append: forloop.index0 -%}
+                          <input
+                            type="radio"
+                            class="lv-pdp-opt-input"
+                            id="{{ input_id }}"
+                            name="option-{{ option.position }}"
+                            value="{{ value | escape }}"
+                            data-option-position="{{ option.position }}"
+                            {% if value.selected %}checked{% endif %}
+                          >
+                          {%- if value.swatch.image -%}
+                            <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
+                              <span class="lv-pdp-swatch__img" style="background-image:url({{ value.swatch.image | image_url: width: 100 }})"></span>
+                              <span class="visually-hidden">{{ value }}</span>
+                            </label>
+                          {%- elsif value.swatch.color -%}
+                            <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
+                              <span class="lv-pdp-swatch__color" style="background:{{ value.swatch.color }}"></span>
+                              <span class="visually-hidden">{{ value }}</span>
+                            </label>
+                          {%- else -%}
+                            <label class="lv-pdp-opt-label lv-pdp-pill" for="{{ input_id }}">{{ value }}</label>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      </div>
+                    </fieldset>
+                  {%- endfor -%}
                 </div>
-              </details>
+              {%- endunless -%}
+
+            {%- when 'availability' -%}
+              <p class="lv-pdp-block lv-pdp-availability{% unless current_variant.available %} is-out{% endunless %}" id="lv-pdp-availability-{{ section.id }}" {{ block.shopify_attributes }}>
+                <span class="lv-pdp-availability__dot"></span>
+                <span class="lv-pdp-availability__text">{% if current_variant.available %}{{ 'products.in_stock' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</span>
+              </p>
+
+            {%- when 'quantity' -%}
+              <div class="lv-pdp-block lv-pdp-qty" {{ block.shopify_attributes }}>
+                <label class="lv-pdp-qty__label" for="qty-{{ section.id }}">{{ 'accessibility.quantity' | t }}</label>
+                <div class="lv-pdp-qty__controls">
+                  <button type="button" class="lv-pdp-qty__btn" data-qty-minus aria-label="{{ 'accessibility.decrease_quantity' | t }}">&minus;</button>
+                  <input type="number" id="qty-{{ section.id }}" name="quantity" value="1" min="1" class="lv-pdp-qty__input" aria-label="{{ 'accessibility.quantity' | t }}">
+                  <button type="button" class="lv-pdp-qty__btn" data-qty-plus aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
+                </div>
+              </div>
+
+            {%- when 'buy_buttons' -%}
+              <div class="lv-pdp-block lv-pdp-buy" {{ block.shopify_attributes }}>
+                <button
+                  type="submit"
+                  name="add"
+                  class="lv-pdp-buy__atc"
+                  id="lv-pdp-atc-{{ section.id }}"
+                  {% unless current_variant.available %}disabled{% endunless %}
+                >
+                  <span class="lv-pdp-buy__text">{% if current_variant.available %}{{ 'products.add_to_cart' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</span>
+                  <span class="lv-pdp-buy__loading">{{ 'products.adding' | t }}</span>
+                </button>
+
+                {%- if block.settings.show_dynamic_checkout -%}
+                  {{ form | payment_button }}
+                {%- endif -%}
+
+                <p class="lv-pdp-buy__error" id="lv-pdp-error-{{ section.id }}" role="alert"></p>
+              </div>
+
+            {%- when 'description' -%}
+              {%- if product.description != blank -%}
+                <div class="lv-pdp-block lv-pdp-description rte" {{ block.shopify_attributes }}>{{ product.description }}</div>
+              {%- endif -%}
+
+            {%- when 'collapsible_row' -%}
+              {%- if block.settings.heading != blank -%}
+                <details class="lv-pdp-block lv-pdp-collapsible" {% if block.settings.open_by_default %}open{% endif %} {{ block.shopify_attributes }}>
+                  <summary class="lv-pdp-collapsible__summary">
+                    {{ block.settings.heading }}
+                    <svg class="lv-pdp-collapsible__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </summary>
+                  <div class="lv-pdp-collapsible__body rte">
+                    {%- if block.settings.content != blank -%}{{ block.settings.content }}{%- endif -%}
+                    {%- if block.settings.page != blank -%}{{ block.settings.page.content }}{%- endif -%}
+                  </div>
+                </details>
+              {%- endif -%}
+
+            {%- when 'trust' -%}
+              <ul class="lv-pdp-block lv-pdp-trust" {{ block.shopify_attributes }}>
+                {%- if block.settings.line_1 != blank -%}<li class="lv-pdp-trust__item"><svg class="lv-pdp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>{{ block.settings.line_1 }}</li>{%- endif -%}
+                {%- if block.settings.line_2 != blank -%}<li class="lv-pdp-trust__item"><svg class="lv-pdp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 9l9-6 9 6v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>{{ block.settings.line_2 }}</li>{%- endif -%}
+                {%- if block.settings.line_3 != blank -%}<li class="lv-pdp-trust__item"><svg class="lv-pdp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg>{{ block.settings.line_3 }}</li>{%- endif -%}
+              </ul>
+
+            {%- when 'share' -%}
+              <div class="lv-pdp-block lv-pdp-share" {{ block.shopify_attributes }}>
+                <span class="lv-pdp-share__label">{{ block.settings.label | default: 'Share' }}</span>
+                <a class="lv-pdp-share__btn" href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ product.url }}" target="_blank" rel="noopener" aria-label="{{ 'accessibility.share_on_facebook' | t }}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+                <a class="lv-pdp-share__btn" href="https://pinterest.com/pin/create/button/?url={{ shop.url }}{{ product.url }}&description={{ product.title | url_encode }}" target="_blank" rel="noopener" aria-label="{{ 'accessibility.share_on_pinterest' | t }}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12c0 4.2 2.6 7.8 6.4 9.3-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.6c0-1.5.9-2.6 1.9-2.6.9 0 1.3.7 1.3 1.5 0 .9-.6 2.3-.9 3.5-.2 1 .5 1.9 1.6 1.9 1.9 0 3.1-2.4 3.1-5.2 0-2.2-1.5-3.7-3.6-3.7-2.4 0-3.8 1.8-3.8 3.7 0 .7.3 1.5.6 1.9.1.1.1.2.1.3l-.2 1c0 .2-.2.2-.3.1-1.1-.5-1.7-2.1-1.7-3.4 0-2.7 2-5.2 5.7-5.2 3 0 5.3 2.1 5.3 5 0 3-1.9 5.4-4.5 5.4-.9 0-1.7-.5-2-1l-.5 2.1c-.2.8-.7 1.7-1.1 2.3.8.3 1.7.4 2.6.4 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg></a>
+                <a class="lv-pdp-share__btn" href="mailto:?subject={{ product.title | url_encode }}&body={{ shop.url }}{{ product.url }}" aria-label="{{ 'accessibility.share_by_email' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></a>
+              </div>
+
+            {%- when 'custom_liquid' -%}
+              <div class="lv-pdp-block" {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
+
+            {%- endcase -%}
+          {%- endfor -%}
+        {%- else -%}
+          {%- comment -%}
+            FALLBACK: no blocks configured on this section instance yet.
+            Renders the same default layout as the "product" preset below
+            so the page is never blank. Once blocks are added/saved in
+            the theme editor, this fallback is bypassed automatically.
+          {%- endcomment -%}
+
+          {%- if product.vendor != blank -%}
+            <p class="lv-pdp-block lv-pdp-vendor">{{ product.vendor }}</p>
+          {%- endif -%}
+
+          <h1 class="lv-pdp-block lv-pdp-title">{{ product.title }}</h1>
+
+          <div class="lv-pdp-block lv-pdp-price" id="lv-pdp-price-{{ section.id }}">
+            {%- if current_variant.compare_at_price > current_variant.price -%}
+              <span class="lv-pdp-price__current is-sale">{{ current_variant.price | money }}</span>
+              <span class="lv-pdp-price__compare">{{ current_variant.compare_at_price | money }}</span>
+            {%- else -%}
+              <span class="lv-pdp-price__current">{{ current_variant.price | money }}</span>
             {%- endif -%}
+            {%- if cart.taxes_included -%}<span class="lv-pdp-price__tax">{{ 'products.tax_included' | t }}</span>{%- endif -%}
+          </div>
 
-          {%- when 'trust' -%}
-            <ul class="lv-pdp-block lv-pdp-trust" {{ block.shopify_attributes }}>
-              {%- if block.settings.line_1 != blank -%}<li class="lv-pdp-trust__item"><svg class="lv-pdp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>{{ block.settings.line_1 }}</li>{%- endif -%}
-              {%- if block.settings.line_2 != blank -%}<li class="lv-pdp-trust__item"><svg class="lv-pdp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 9l9-6 9 6v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>{{ block.settings.line_2 }}</li>{%- endif -%}
-              {%- if block.settings.line_3 != blank -%}<li class="lv-pdp-trust__item"><svg class="lv-pdp-trust__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg>{{ block.settings.line_3 }}</li>{%- endif -%}
-            </ul>
-
-          {%- when 'share' -%}
-            <div class="lv-pdp-block lv-pdp-share" {{ block.shopify_attributes }}>
-              <span class="lv-pdp-share__label">{{ block.settings.label | default: 'Share' }}</span>
-              <a class="lv-pdp-share__btn" href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ product.url }}" target="_blank" rel="noopener" aria-label="{{ 'accessibility.share_on_facebook' | t }}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-              <a class="lv-pdp-share__btn" href="https://pinterest.com/pin/create/button/?url={{ shop.url }}{{ product.url }}&description={{ product.title | url_encode }}" target="_blank" rel="noopener" aria-label="{{ 'accessibility.share_on_pinterest' | t }}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12c0 4.2 2.6 7.8 6.4 9.3-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.6c0-1.5.9-2.6 1.9-2.6.9 0 1.3.7 1.3 1.5 0 .9-.6 2.3-.9 3.5-.2 1 .5 1.9 1.6 1.9 1.9 0 3.1-2.4 3.1-5.2 0-2.2-1.5-3.7-3.6-3.7-2.4 0-3.8 1.8-3.8 3.7 0 .7.3 1.5.6 1.9.1.1.1.2.1.3l-.2 1c0 .2-.2.2-.3.1-1.1-.5-1.7-2.1-1.7-3.4 0-2.7 2-5.2 5.7-5.2 3 0 5.3 2.1 5.3 5 0 3-1.9 5.4-4.5 5.4-.9 0-1.7-.5-2-1l-.5 2.1c-.2.8-.7 1.7-1.1 2.3.8.3 1.7.4 2.6.4 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg></a>
-              <a class="lv-pdp-share__btn" href="mailto:?subject={{ product.title | url_encode }}&body={{ shop.url }}{{ product.url }}" aria-label="{{ 'accessibility.share_by_email' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></a>
+          {%- unless product.has_only_default_variant -%}
+            <div class="lv-pdp-block lv-pdp-variant-picker">
+              {%- for option in product.options_with_values -%}
+                <fieldset class="lv-pdp-option" data-option-position="{{ option.position }}">
+                  <legend class="lv-pdp-option__label">
+                    {{ option.name }}:
+                    <span class="lv-pdp-option__selected" data-selected-for="{{ option.position }}">{{ option.selected_value }}</span>
+                  </legend>
+                  <div class="lv-pdp-option__values">
+                    {%- for value in option.values -%}
+                      {%- assign input_id = section.id | append: '-' | append: option.position | append: '-' | append: forloop.index0 -%}
+                      <input
+                        type="radio"
+                        class="lv-pdp-opt-input"
+                        id="{{ input_id }}"
+                        name="option-{{ option.position }}"
+                        value="{{ value | escape }}"
+                        data-option-position="{{ option.position }}"
+                        {% if value.selected %}checked{% endif %}
+                      >
+                      {%- if value.swatch.image -%}
+                        <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
+                          <span class="lv-pdp-swatch__img" style="background-image:url({{ value.swatch.image | image_url: width: 100 }})"></span>
+                          <span class="visually-hidden">{{ value }}</span>
+                        </label>
+                      {%- elsif value.swatch.color -%}
+                        <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
+                          <span class="lv-pdp-swatch__color" style="background:{{ value.swatch.color }}"></span>
+                          <span class="visually-hidden">{{ value }}</span>
+                        </label>
+                      {%- else -%}
+                        <label class="lv-pdp-opt-label lv-pdp-pill" for="{{ input_id }}">{{ value }}</label>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                </fieldset>
+              {%- endfor -%}
             </div>
+          {%- endunless -%}
 
-          {%- when 'custom_liquid' -%}
-            <div class="lv-pdp-block" {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
+          <p class="lv-pdp-block lv-pdp-availability{% unless current_variant.available %} is-out{% endunless %}" id="lv-pdp-availability-{{ section.id }}">
+            <span class="lv-pdp-availability__dot"></span>
+            <span class="lv-pdp-availability__text">{% if current_variant.available %}{{ 'products.in_stock' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</span>
+          </p>
 
-          {%- endcase -%}
-        {%- endfor -%}
+          <div class="lv-pdp-block lv-pdp-qty">
+            <label class="lv-pdp-qty__label" for="qty-{{ section.id }}">{{ 'accessibility.quantity' | t }}</label>
+            <div class="lv-pdp-qty__controls">
+              <button type="button" class="lv-pdp-qty__btn" data-qty-minus aria-label="{{ 'accessibility.decrease_quantity' | t }}">&minus;</button>
+              <input type="number" id="qty-{{ section.id }}" name="quantity" value="1" min="1" class="lv-pdp-qty__input" aria-label="{{ 'accessibility.quantity' | t }}">
+              <button type="button" class="lv-pdp-qty__btn" data-qty-plus aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
+            </div>
+          </div>
+
+          <div class="lv-pdp-block lv-pdp-buy">
+            <button
+              type="submit"
+              name="add"
+              class="lv-pdp-buy__atc"
+              id="lv-pdp-atc-{{ section.id }}"
+              {% unless current_variant.available %}disabled{% endunless %}
+            >
+              <span class="lv-pdp-buy__text">{% if current_variant.available %}{{ 'products.add_to_cart' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</span>
+              <span class="lv-pdp-buy__loading">{{ 'products.adding' | t }}</span>
+            </button>
+
+            {{ form | payment_button }}
+
+            <p class="lv-pdp-buy__error" id="lv-pdp-error-{{ section.id }}" role="alert"></p>
+          </div>
+
+          {%- if product.description != blank -%}
+            <div class="lv-pdp-block lv-pdp-description rte">{{ product.description }}</div>
+          {%- endif -%}
+        {%- endif -%}
       {%- endform -%}
     </div>{%- comment -%} /lv-pdp-info {%- endcomment -%}
   </div>
@@ -282,6 +396,7 @@
     padding-bottom: var(--lv-pdp-pb-d, 40px);
   }
 }
+
 {% endstylesheet %}
 
 {% javascript %}
@@ -351,7 +466,7 @@
       if (!variant) {
         if (atcBtn) {
           atcBtn.disabled = true;
-          atcBtn.querySelector('.lv-pdp-buy__text').textContent = 'Unavailable';
+          atcBtn.querySelector('.lv-pdp-buy__text').textContent = root.dataset.labelUnavailable || 'Unavailable';
         }
         return;
       }
@@ -371,13 +486,17 @@
 
       if (atcBtn) {
         atcBtn.disabled = !variant.available;
-        atcBtn.querySelector('.lv-pdp-buy__text').textContent = variant.available ? 'Add to Cart' : 'Sold out';
+        atcBtn.querySelector('.lv-pdp-buy__text').textContent = variant.available
+          ? (root.dataset.labelAddToCart || 'Add to Cart')
+          : (root.dataset.labelSoldOut || 'Sold out');
       }
 
       if (availEl) {
         availEl.classList.toggle('is-out', !variant.available);
         var txt = availEl.querySelector('.lv-pdp-availability__text');
-        if (txt) txt.textContent = variant.available ? 'In stock' : 'Sold out';
+        if (txt) txt.textContent = variant.available
+          ? (root.dataset.labelInStock || 'In stock')
+          : (root.dataset.labelSoldOut || 'Sold out');
       }
 
       updateGallery(variant);

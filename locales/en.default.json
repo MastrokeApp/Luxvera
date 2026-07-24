@@ -121,11 +121,13 @@
   "products": {
     "select_size": "Select Size",
     "choose_a_size": "Choose a size",
+    "add_to_cart": "Add to Cart",
     "add_to_cart_prefix": "Add To Cart — ",
     "adding": "Adding…",
     "added": "Added",
     "sold_out": "Sold Out",
     "in_stock": "In stock",
+    "unavailable": "Unavailable",
     "home": "Home",
     "tax_included": "Tax included.",
     "count": {

@@ -1,0 +1,456 @@
+{% comment %}
+  Section: Product Recommendations ("You May Also Like")
+
+  Shows related products in a Swiper carousel. Uses Shopify's native
+  recommendations API (routes.product_recommendations_url); if that returns
+  nothing (common on dev stores with no order history) it falls back to other
+  products from the product's collection, or all products, so the section is
+  never empty. Real recommendations take over automatically once Shopify has
+  data. Colors follow the selected color scheme.
+
+  Depends on:
+    - snippets/product-card.liquid
+    - assets/dress-looks.css
+    - assets/lv-variant-modal.css
+    - Swiper (loaded globally in theme.liquid)
+    - the cart-notification drawer (listens for "cart:open")
+{% endcomment %}
+
+{{ 'dress-looks.css' | asset_url | stylesheet_tag }}
+{{ 'lv-variant-modal.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign rec_source = 'fallback'
+  assign rec_products = collections.all.products
+  if recommendations.performed and recommendations.products_count > 0
+    assign rec_source = 'recommendations'
+    assign rec_products = recommendations.products
+  elsif product.collections.first != blank and product.collections.first.products_count > 1
+    assign rec_products = product.collections.first.products
+  endif
+-%}
+
+<div
+  id="lv-recs-{{ section.id }}"
+  class="lv-recs"
+  data-lv-recs-id="{{ section.id }}"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}&intent=related"
+>
+  {%- if rec_products.size > 0 -%}
+
+    {%- comment -%} Size-picker modal (for multi-variant cards) {%- endcomment -%}
+    <div class="lv-variant-modal" id="lv-vm-recs-{{ section.id }}" role="dialog" aria-modal="true" aria-label="{{ 'products.select_size' | t }}">
+      <div class="lv-variant-modal__box">
+        <div class="lv-variant-modal__head">
+          <span class="lv-variant-modal__title" id="lv-vm-recs-title-{{ section.id }}"></span>
+          <button class="lv-variant-modal__close" id="lv-vm-recs-close-{{ section.id }}" aria-label="{{ 'accessibility.close' | t }}">&times;</button>
+        </div>
+        <p class="lv-variant-modal__label">{{ 'products.select_size' | t }}</p>
+        <div class="lv-variant-modal__options" id="lv-vm-recs-opts-{{ section.id }}"></div>
+        <button
+          class="lv-variant-modal__atc"
+          id="lv-vm-recs-atc-{{ section.id }}"
+          data-label-choose="{{ 'products.choose_a_size' | t }}"
+          data-label-add-prefix="{{ 'products.add_to_cart_prefix' | t }}"
+          data-label-adding="{{ 'products.adding' | t }}"
+          data-label-sold-out="{{ 'products.sold_out' | t }}"
+          data-label-added="{{ 'products.added' | t }}"
+          disabled
+        >{{ 'products.choose_a_size' | t }}</button>
+      </div>
+    </div>
+
+    <div
+      class="section dress-section color-{{ section.settings.color_scheme }}"
+      id="lv-recs-section-{{ section.id }}"
+      data-rec-source="{{ rec_source }}"
+      style="
+        --dl-padding-top-desktop:    {{ section.settings.padding_top }}px;
+        --dl-padding-bottom-desktop: {{ section.settings.padding_bottom }}px;
+        --dl-padding-top-tablet:     {{ section.settings.padding_top | times: 0.7 | round }}px;
+        --dl-padding-bottom-tablet:  {{ section.settings.padding_bottom | times: 0.7 | round }}px;
+        --dl-padding-top-mobile:     {{ section.settings.padding_top | times: 0.5 | round }}px;
+        --dl-padding-bottom-mobile:  {{ section.settings.padding_bottom | times: 0.5 | round }}px;
+        --dl-heading-align:          {{ section.settings.heading_alignment }};
+        --dl-heading-size:           {{ section.settings.heading_size }}px;
+        --dl-heading-size-mobile:    {{ section.settings.heading_size | times: 0.72 | round }}px;
+        --dl-subtitle-size:          {{ section.settings.subtitle_size }}px;
+      "
+    >
+      <div class="container">
+        {%- if section.settings.heading != blank or section.settings.subtitle != blank -%}
+          <div class="sec-head">
+            {%- if section.settings.heading != blank -%}
+              <h2 class="sec-title">{{ section.settings.heading | escape }}</h2>
+            {%- endif -%}
+            {%- if section.settings.subtitle != blank -%}
+              <p class="sec-sub">{{ section.settings.subtitle | escape }}</p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        <div class="swiper lv-recs-swiper">
+          <div class="swiper-wrapper">
+            {%- assign shown = 0 -%}
+            {%- for p in rec_products -%}
+              {%- if rec_source != 'recommendations' and p.id == product.id -%}{%- continue -%}{%- endif -%}
+              {%- if shown >= section.settings.products_to_show -%}{%- break -%}{%- endif -%}
+              <div class="swiper-slide">
+                {% render 'product-card',
+                  product: p,
+                  card_context: 'dress-looks',
+                  atc_label: section.settings.atc_label,
+                  image_ratio: 'portrait'
+                %}
+              </div>
+              {%- assign shown = shown | plus: 1 -%}
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <div class="swiper-nav">
+          <button class="sw-prev" data-recs-prev aria-label="{{ 'accessibility.previous' | t }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+          <button class="sw-next" data-recs-next aria-label="{{ 'accessibility.next' | t }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+/* Keep price + Add-to-Cart pinned to the bottom of every card so CTAs line up
+   regardless of title length. */
+.lv-recs .product-card--dress-looks {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.lv-recs .product-card--dress-looks .product-info {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.lv-recs .product-card--dress-looks .product-name {
+  margin-bottom: 6px;
+}
+
+.lv-recs .product-card--dress-looks .price-color-row {
+  margin-top: auto;
+  padding-top: 8px;
+}
+{% endstylesheet %}
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function initRecs(container) {
+    var SID = container.dataset.lvRecsId;
+
+    function bindAndInit(root) {
+      var modal      = root.querySelector('#lv-vm-recs-' + SID);
+      var modalTitle = root.querySelector('#lv-vm-recs-title-' + SID);
+      var modalOpts  = root.querySelector('#lv-vm-recs-opts-' + SID);
+      var modalAtc   = root.querySelector('#lv-vm-recs-atc-' + SID);
+      var modalClose = root.querySelector('#lv-vm-recs-close-' + SID);
+      var selectedVid = null;
+      var lastTrigger = null;
+
+      var L = {
+        choose: (modalAtc && modalAtc.dataset.labelChoose) || 'Choose a size',
+        addPrefix: (modalAtc && modalAtc.dataset.labelAddPrefix) || 'Add To Cart — ',
+        adding: (modalAtc && modalAtc.dataset.labelAdding) || 'Adding…',
+        soldOut: (modalAtc && modalAtc.dataset.labelSoldOut) || 'Sold out',
+        added: (modalAtc && modalAtc.dataset.labelAdded) || 'Added'
+      };
+
+      function openModal(btn) {
+        if (!modal || !modalTitle || !modalOpts || !modalAtc) return;
+        lastTrigger = btn;
+        modalTitle.textContent = btn.dataset.productTitle || '';
+        modalOpts.innerHTML = '';
+        selectedVid = null;
+        modalAtc.disabled = true;
+        modalAtc.textContent = L.choose;
+
+        (btn.dataset.variants || '').split('::').forEach(function (v) {
+          if (!v) return;
+          var p = v.split('||'), vid = p[0], vtitle = p[1], avail = p[2];
+          if (!vid || !vtitle) return;
+
+          var opt = document.createElement('button');
+          opt.type = 'button';
+          opt.className = 'lv-variant-modal__opt';
+          opt.textContent = vtitle;
+          if (avail === 'false') { opt.disabled = true; opt.title = L.soldOut; }
+
+          opt.addEventListener('click', function () {
+            if (opt.disabled) return;
+            modalOpts.querySelectorAll('.lv-variant-modal__opt').forEach(function (o) { o.classList.remove('selected'); });
+            opt.classList.add('selected');
+            selectedVid = vid;
+            modalAtc.disabled = false;
+            modalAtc.textContent = L.addPrefix + vtitle;
+          });
+
+          modalOpts.appendChild(opt);
+        });
+
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        setTimeout(function () {
+          if (modalClose) modalClose.focus();
+        }, 50);
+      }
+
+      function closeModal() {
+        if (!modal) return;
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+        selectedVid = null;
+        if (lastTrigger) {
+          lastTrigger.focus();
+          lastTrigger = null;
+        }
+      }
+
+      if (modalClose) modalClose.addEventListener('click', closeModal);
+      if (modal) modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal && modal.classList.contains('open')) closeModal();
+      });
+
+      function doATC(vid, btn, origHTML) {
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+          body: JSON.stringify({ id: parseInt(vid, 10), quantity: 1 })
+        })
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function () {
+          if (btn) {
+            btn.classList.remove('adding');
+            btn.classList.add('added');
+            btn.innerHTML = (btn.dataset.labelAdded || L.added) + ' &#10003;';
+            setTimeout(function () { if (btn) { btn.innerHTML = origHTML; btn.classList.remove('added'); } }, 2200);
+          }
+          document.dispatchEvent(new CustomEvent('cart:updated', { bubbles: true, detail: { variantId: vid } }));
+          document.dispatchEvent(new CustomEvent('cart:open'));
+          closeModal();
+        })
+        .catch(function (err) {
+          console.warn('[Recs ATC]', err);
+          if (btn) { btn.classList.remove('adding'); btn.innerHTML = origHTML; }
+          closeModal();
+        });
+      }
+
+      if (modalAtc) modalAtc.addEventListener('click', function () {
+        if (!selectedVid) return;
+        var original = modalAtc.textContent;
+        modalAtc.disabled = true;
+        modalAtc.textContent = L.adding;
+        doATC(selectedVid, null, original);
+      });
+
+      root.addEventListener('click', function (e) {
+        var btn = e.target.closest('.add-to-cart');
+        if (!btn || btn.disabled || btn.getAttribute('aria-disabled') === 'true') return;
+        if (btn.classList.contains('adding') || btn.classList.contains('added')) return;
+
+        var vid = btn.dataset.variantId, isMulti = btn.dataset.multi === 'true';
+        if (isMulti) { openModal(btn); return; }
+        if (!vid || vid === '' || vid === 'undefined') { window.location.href = btn.dataset.productUrl || '/'; return; }
+
+        var origHTML = btn.innerHTML;
+        btn.classList.add('adding');
+        btn.innerHTML = btn.dataset.labelAdding || L.adding;
+        doATC(vid, btn, origHTML);
+      });
+
+      (function initSwiper() {
+        if (typeof Swiper === 'undefined') { setTimeout(initSwiper, 80); return; }
+        var el = root.querySelector('.lv-recs-swiper');
+        if (!el) return;
+        if (el.swiper) { try { el.swiper.destroy(true, true); } catch (e) {} }
+
+        new Swiper(el, {
+          grabCursor: true,
+          loop: false,
+          rewind: true,
+          watchOverflow: true,
+          observer: true,
+          observeParents: true,
+          navigation: {
+            prevEl: root.querySelector('[data-recs-prev]'),
+            nextEl: root.querySelector('[data-recs-next]')
+          },
+          breakpoints: {
+            0:    { slidesPerView: 1.2, spaceBetween: 12 },
+            480:  { slidesPerView: 2,   spaceBetween: 14 },
+            768:  { slidesPerView: 3,   spaceBetween: 16 },
+            1024: { slidesPerView: 4,   spaceBetween: 20 }
+          }
+        });
+      })();
+    }
+
+    // Init whatever is rendered server-side (fallback or recs) so the carousel works immediately.
+    if (container.querySelector('.lv-recs-swiper')) {
+      bindAndInit(container);
+    }
+
+    // Try to upgrade to real Shopify recommendations; only replace if the API returned some.
+    if (container.dataset.url && window.fetch) {
+      fetch(container.dataset.url)
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          var fresh = new DOMParser().parseFromString(html, 'text/html').getElementById('lv-recs-' + SID);
+          if (!fresh) return;
+          var freshSection = fresh.querySelector('[data-rec-source]');
+          if (freshSection && freshSection.getAttribute('data-rec-source') === 'recommendations') {
+            container.innerHTML = fresh.innerHTML;
+            bindAndInit(container);
+          }
+        })
+        .catch(function () {});
+    }
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.lv-recs').forEach(initRecs);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:general.you_may_also_like",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "You May Also Like"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "t:labels.heading_font_size_2",
+      "min": 16,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "t:labels.heading_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.heading_alignment.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.heading_alignment.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.heading_alignment.right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "t:labels.subtitle"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "t:labels.subtitle_font_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "atc_label",
+      "label": "t:labels.add_to_cart_label_single_variant",
+      "default": "Add To Cart"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "t:labels.products_to_show",
+      "min": 4,
+      "max": 10,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.you_may_also_like"
+    }
+  ]
+}
+{% endschema %}

@@ -11,10 +11,32 @@
   "sections": {
     "main": {
       "type": "product",
-      "settings": {}
+      "settings": {
+        "padding_top_desktop": 40,
+        "padding_bottom_desktop": 40,
+        "padding_top_mobile": 24,
+        "padding_bottom_mobile": 24,
+        "color_scheme": ""
+      }
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "You May Also Like",
+        "heading_size": 32,
+        "heading_alignment": "center",
+        "subtitle": "",
+        "subtitle_size": 13,
+        "color_scheme": "scheme-1",
+        "atc_label": "Add To Cart",
+        "products_to_show": 8,
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "recommendations"
   ]
 }
