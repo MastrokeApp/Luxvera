@@ -1,70 +1,644 @@
 {% comment %}
-  This section is used in the search template to render search results for
-  products, articles, and pages.
+  Section: Main Search
+
+  Renders search results on the search template. Product results render through
+  the shared product-card snippet (same layout as the collection grid); article
+  and page results render as simple linked cards. Colors follow the selected
+  color scheme.
 
   https://shopify.dev/docs/storefronts/themes/architecture/templates/search
+
+  Depends on:
+    - snippets/product-card.liquid
+    - lv-variant-modal.css (for multi-variant card add-to-cart, if used)
 {% endcomment %}
 
-<h1>{{ 'search.title' | t }}</h1>
+{{ 'lv-variant-modal.css' | asset_url | stylesheet_tag }}
 
-<form action="{{ routes.search_url }}" method="get" role="search">
-  <input
-    type="search"
-    size="50"
-    name="q"
-    value="{{ search.terms | escape }}"
-    placeholder="{{ 'search.placeholder' | t }}"
-  >
-  <button type="submit">{{ 'search.submit' | t }}</button>
-</form>
+<div
+  class="lv-search color-{{ section.settings.color_scheme }}"
+  id="lv-search-{{ section.id }}"
+  data-lv-search-id="{{ section.id }}"
+  style="
+    --lv-search-pt: {{ section.settings.padding_top }}px;
+    --lv-search-pb: {{ section.settings.padding_bottom }}px;
+    --lv-search-gap: {{ section.settings.grid_gap }}px;
+    --lv-search-gap-row: {{ section.settings.grid_gap_row }}px;
+    --lv-search-cols-d: {{ section.settings.columns_desktop }};
+    --lv-search-cols-t: {{ section.settings.columns_tablet }};
+    --lv-search-cols-m: {{ section.settings.columns_mobile }};
+    --lv-card-radius: {{ section.settings.card_radius }}px;
+    --lv-btn-radius: {{ section.settings.button_radius }}px;
+  "
+>
+  <div class="lv-search-inner">
+    <h1 class="lv-search-title">{{ section.settings.heading | default: 'Search' | escape }}</h1>
 
-{% if search.performed %}
-  {% if search.results_count == 0 %}
-    <p>{{ 'search.no_results_html' | t: terms: search.terms }}</p>
-  {% else %}
-    <p>{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="lv-search-form">
+      <input
+        type="search"
+        name="q"
+        value="{{ search.terms | escape }}"
+        placeholder="{{ section.settings.placeholder | default: 'Search our store' | escape }}"
+        class="lv-search-input"
+        aria-label="Search"
+      >
+      <button type="submit" class="lv-search-submit">{{ section.settings.submit_label | default: 'Search' | escape }}</button>
+    </form>
 
-    <div class="search-results">
-      {% paginate search.results by 20 %}
-        {% # Search result items may be an article, a page, or a product. %}
-        {% for result in search.results %}
-          <div class="search-result">
-            {% assign featured_image = result.featured_image | default: result.image %}
-            {% if featured_image %}
-              {% render 'image', class: 'search-result__image', image: featured_image, url: result.url, width: 400 %}
-            {% endif %}
-            <div class="search-result__content">
-              <p>
-                {{ result.title | link_to: result.url }}
-                {% if result.price %}
-                  {{ result.price | money_with_currency }}
-                {% endif %}
-              </p>
-            </div>
+    {%- if search.performed -%}
+      {%- if search.results_count == 0 -%}
+        <p class="lv-search-empty">No results found for &ldquo;{{ search.terms | escape }}&rdquo;.</p>
+      {%- else -%}
+        <p class="lv-search-count">{{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %} for &ldquo;{{ search.terms | escape }}&rdquo;</p>
+
+        {%- paginate search.results by section.settings.results_per_page -%}
+          <div class="lv-search-grid">
+            {%- for result in search.results -%}
+              {%- case result.object_type -%}
+
+                {%- when 'product' -%}
+                  {% render 'product-card',
+                    product: result,
+                    card_context: 'collection',
+                    section_id: section.id,
+                    atc_label: section.settings.atc_label,
+                    image_ratio: section.settings.image_ratio
+                  %}
+
+                {%- else -%}
+                  {%- comment -%} Article or page result {%- endcomment -%}
+                  <a class="lv-search-card lv-search-card--{{ result.object_type }}" href="{{ result.url }}">
+                    {%- assign result_image = result.featured_image | default: result.image -%}
+                    <div class="lv-search-card__media">
+                      {%- if result_image -%}
+                        <img
+                          src="{{ result_image | image_url: width: 600 }}"
+                          alt="{{ result.title | escape }}"
+                          width="600"
+                          height="600"
+                          loading="lazy"
+                        >
+                      {%- else -%}
+                        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                      {%- endif -%}
+                    </div>
+                    <div class="lv-search-card__body">
+                      <span class="lv-search-card__type">{{ result.object_type }}</span>
+                      <p class="lv-search-card__title">{{ result.title | escape }}</p>
+                    </div>
+                  </a>
+
+              {%- endcase -%}
+            {%- endfor -%}
           </div>
-        {% endfor %}
 
-        {{ paginate | default_pagination }}
-      {% endpaginate %}
+          {%- if paginate.pages > 1 -%}
+            <div class="lv-search-pagination">
+              {{ paginate | default_pagination }}
+            </div>
+          {%- endif -%}
+        {%- endpaginate -%}
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Size picker for multi-variant products {%- endcomment -%}
+  <div class="lv-variant-modal" id="lv-vm-search-{{ section.id }}" role="dialog" aria-modal="true" aria-label="Select Size">
+    <div class="lv-variant-modal__box">
+      <div class="lv-variant-modal__head">
+        <span class="lv-variant-modal__title" id="lv-vm-search-title-{{ section.id }}"></span>
+        <button class="lv-variant-modal__close" id="lv-vm-search-close-{{ section.id }}" aria-label="Close">&times;</button>
+      </div>
+      <p class="lv-variant-modal__label">Select Size</p>
+      <div class="lv-variant-modal__options" id="lv-vm-search-opts-{{ section.id }}"></div>
+      <button
+        class="lv-variant-modal__atc"
+        id="lv-vm-search-atc-{{ section.id }}"
+        data-label-choose="Choose a size"
+        data-label-add-prefix="Add To Cart — "
+        data-label-adding="Adding…"
+        disabled
+      >Choose a size</button>
     </div>
-  {% endif %}
-{% endif %}
+  </div>
+</div>
 
 {% stylesheet %}
-  .search-results {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+.lv-search {
+  padding-top: var(--lv-search-pt, 48px);
+  padding-bottom: var(--lv-search-pb, 64px);
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+.lv-search .lv-search-inner {
+  max-width: var(--lv-container-max, 1280px);
+  margin: 0 auto;
+  padding: 0 56px;
+}
+
+.lv-search .lv-search-title {
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 700;
+  font-family: var(--lv-font-heading, serif);
+  color: rgb(var(--color-foreground));
+  margin: 0 0 24px;
+}
+
+/* Search form */
+.lv-search .lv-search-form {
+  display: flex;
+  gap: 0;
+  max-width: 560px;
+  margin: 0 0 32px;
+  border: 1px solid rgba(var(--color-foreground), 0.25);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.lv-search .lv-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 13px 16px;
+  font-size: 14px;
+  color: rgb(var(--color-foreground));
+  outline: none;
+  min-width: 0;
+}
+
+.lv-search .lv-search-input::placeholder {
+  color: rgba(var(--color-foreground), 0.5);
+}
+
+.lv-search .lv-search-submit {
+  border: none;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  padding: 13px 24px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.lv-search .lv-search-submit:hover {
+  opacity: .85;
+}
+
+/* Result counts / empty */
+.lv-search .lv-search-count {
+  font-size: 13px;
+  color: rgb(var(--color-foreground));
+  opacity: .7;
+  margin: 0 0 24px;
+}
+
+.lv-search .lv-search-empty {
+  font-size: 15px;
+  color: rgb(var(--color-foreground));
+  opacity: .7;
+  padding: 32px 0;
+}
+
+/* Results grid */
+.lv-search .lv-search-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--lv-search-cols-d, 4), minmax(0, 1fr));
+  gap: var(--lv-search-gap-row, 32px) var(--lv-search-gap, 20px);
+}
+
+/* Product card shared styling (mirrors collection grid) */
+.lv-search .product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.lv-search .product-img-wrap {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  text-decoration: none;
+  background: rgb(var(--color-background));
+  border-radius: var(--lv-card-radius, 6px) var(--lv-card-radius, 6px) 0 0;
+}
+
+.lv-search .product-img-wrap--portrait { aspect-ratio: 3/4; }
+.lv-search .product-img-wrap--square { aspect-ratio: 1/1; }
+.lv-search .product-img-wrap--landscape { aspect-ratio: 4/3; }
+
+.lv-search .product-img-wrap img,
+.lv-search .product-img-wrap .placeholder-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform .35s ease;
+}
+
+.lv-search .product-card:hover .product-img-wrap img {
+  transform: scale(1.04);
+}
+
+.lv-search .product-info {
+  background: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), 0.14);
+  border-top: none;
+  border-radius: 0 0 var(--lv-card-radius, 6px) var(--lv-card-radius, 6px);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.lv-search .product-name {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: rgb(var(--color-foreground));
+  text-decoration: none;
+  margin-bottom: 6px;
+}
+
+.lv-search .product-name:hover {
+  opacity: .75;
+}
+
+.lv-search .price-color-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.lv-search .price-new {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(var(--color-foreground));
+}
+
+.lv-search .price-old {
+  font-size: 13px;
+  color: rgb(var(--color-foreground));
+  opacity: .5;
+  text-decoration: line-through;
+}
+
+.lv-search .add-to-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding: 13px 16px;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border: none;
+  border-radius: var(--lv-btn-radius, 0px);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.lv-search .add-to-cart svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.lv-search .add-to-cart:hover {
+  opacity: .82;
+}
+
+.lv-search .add-to-cart[disabled] {
+  opacity: .45;
+  cursor: not-allowed;
+  background: #aaa;
+}
+
+.lv-search .add-to-cart.adding {
+  opacity: .65;
+  cursor: wait;
+}
+
+.lv-search .add-to-cart.added {
+  background: var(--color-success, #2a7a2a) !important;
+  color: #fff;
+  opacity: 1;
+  cursor: default;
+}
+
+/* Article / page result card */
+.lv-search .lv-search-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  border: 1px solid rgba(var(--color-foreground), 0.14);
+  border-radius: var(--lv-card-radius, 6px);
+  overflow: hidden;
+  background: rgb(var(--color-background));
+}
+
+.lv-search .lv-search-card__media {
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: rgba(var(--color-foreground), 0.06);
+}
+
+.lv-search .lv-search-card__media img,
+.lv-search .lv-search-card__media .placeholder-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .35s ease;
+}
+
+.lv-search .lv-search-card:hover .lv-search-card__media img {
+  transform: scale(1.04);
+}
+
+.lv-search .lv-search-card__body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.lv-search .lv-search-card__type {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgb(var(--color-foreground));
+  opacity: .5;
+}
+
+.lv-search .lv-search-card__title {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: rgb(var(--color-foreground));
+  margin: 0;
+}
+
+/* Pagination */
+.lv-search .lv-search-pagination {
+  text-align: center;
+  margin-top: 48px;
+}
+
+.lv-search .lv-search-pagination a,
+.lv-search .lv-search-pagination span {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 0 3px;
+  border: 1px solid rgba(var(--color-foreground), 0.18);
+  color: rgb(var(--color-foreground));
+  font-size: 14px;
+  transition: background .2s, color .2s, border-color .2s;
+}
+
+.lv-search .lv-search-pagination a:hover,
+.lv-search .lv-search-pagination .current {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border-color: rgb(var(--color-button));
+}
+
+@media (max-width: 1024px) {
+  .lv-search .lv-search-inner {
+    padding: 0 32px;
   }
-  .search-results .prev,
-  .search-results .page,
-  .search-results .next {
-    grid-column: 1 / -1;
+
+  .lv-search .lv-search-grid {
+    grid-template-columns: repeat(var(--lv-search-cols-t, 3), minmax(0, 1fr));
   }
+}
+
+@media (max-width: 768px) {
+  .lv-search .lv-search-inner {
+    padding: 0 20px;
+  }
+
+  .lv-search .lv-search-grid {
+    grid-template-columns: repeat(var(--lv-search-cols-m, 2), minmax(0, 1fr));
+    gap: 20px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lv-search .lv-search-inner {
+    padding: 0 16px;
+  }
+
+  .lv-search .lv-search-grid {
+    gap: 16px 10px;
+  }
+}
 {% endstylesheet %}
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function initSearch(root) {
+    if (root.dataset.lvSearchInit) return;
+    root.dataset.lvSearchInit = '1';
+
+    var SID = root.dataset.lvSearchId;
+
+    var modal      = document.getElementById('lv-vm-search-' + SID);
+    var modalTitle = document.getElementById('lv-vm-search-title-' + SID);
+    var modalOpts  = document.getElementById('lv-vm-search-opts-' + SID);
+    var modalAtc   = document.getElementById('lv-vm-search-atc-' + SID);
+    var modalClose = document.getElementById('lv-vm-search-close-' + SID);
+    var selectedVid = null;
+
+    var L = {
+      choose: (modalAtc && modalAtc.dataset.labelChoose) || 'Choose a size',
+      addPrefix: (modalAtc && modalAtc.dataset.labelAddPrefix) || 'Add To Cart — ',
+      adding: (modalAtc && modalAtc.dataset.labelAdding) || 'Adding…'
+    };
+
+    function openModal(btn) {
+      if (!modal) return;
+      modalTitle.textContent = btn.dataset.productTitle || '';
+      modalOpts.innerHTML = '';
+      selectedVid = null;
+      modalAtc.disabled = true;
+      modalAtc.textContent = L.choose;
+
+      (btn.dataset.variants || '').split('::').forEach(function (v) {
+        if (!v) return;
+        var p = v.split('||');
+        var vid = p[0];
+        var vtitle = p[1];
+        var avail = p[2];
+        if (!vid || !vtitle) return;
+
+        var opt = document.createElement('button');
+        opt.type = 'button';
+        opt.className = 'lv-variant-modal__opt';
+        opt.textContent = vtitle;
+        if (avail === 'false') { opt.disabled = true; opt.title = 'Sold out'; }
+
+        opt.addEventListener('click', function () {
+          if (opt.disabled) return;
+          modalOpts.querySelectorAll('.lv-variant-modal__opt').forEach(function (o) { o.classList.remove('selected'); });
+          opt.classList.add('selected');
+          selectedVid = vid;
+          modalAtc.disabled = false;
+          modalAtc.textContent = L.addPrefix + vtitle;
+        });
+
+        modalOpts.appendChild(opt);
+      });
+
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      selectedVid = null;
+    }
+
+    function doATC(vid, btn, origHTML) {
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({ id: parseInt(vid, 10), quantity: 1 })
+      })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function () {
+        if (btn) {
+          btn.classList.remove('adding');
+          btn.classList.add('added');
+          btn.innerHTML = 'Added &#10003;';
+          setTimeout(function () { if (btn) { btn.innerHTML = origHTML; btn.classList.remove('added'); } }, 2000);
+        }
+        document.dispatchEvent(new CustomEvent('cart:updated', { bubbles: true, detail: { variantId: vid } }));
+        document.dispatchEvent(new CustomEvent('cart:open'));
+        closeModal();
+      })
+      .catch(function (err) {
+        console.warn('[Search ATC]', err);
+        if (btn) { btn.classList.remove('adding'); btn.innerHTML = origHTML; }
+        closeModal();
+      });
+    }
+
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modal) modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal && modal.classList.contains('open')) closeModal();
+    });
+
+    if (modalAtc) modalAtc.addEventListener('click', function () {
+      if (!selectedVid) return;
+      var original = modalAtc.textContent;
+      modalAtc.disabled = true;
+      modalAtc.textContent = L.adding;
+      doATC(selectedVid, null, original);
+    });
+
+    root.addEventListener('click', function (e) {
+      var btn = e.target.closest('.add-to-cart');
+      if (!btn || btn.disabled || btn.getAttribute('aria-disabled') === 'true') return;
+      if (btn.classList.contains('adding') || btn.classList.contains('added')) return;
+
+      var vid = btn.dataset.variantId;
+      var isMulti = btn.dataset.multi === 'true';
+
+      if (isMulti) { openModal(btn); return; }
+      if (!vid || vid === '' || vid === 'undefined') { window.location.href = btn.dataset.productUrl || '/'; return; }
+
+      var origHTML = btn.innerHTML;
+      btn.classList.add('adding');
+      btn.innerHTML = 'Adding…';
+      doATC(vid, btn, origHTML);
+    });
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.lv-search').forEach(initSearch);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+})();
+{% endjavascript %}
 
 {% schema %}
 {
-  "name": "t:general.search",
-  "settings": []
+  "name": "Search",
+  "tag": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+
+    { "type": "header", "content": "Text" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Search" },
+    { "type": "text", "id": "placeholder", "label": "Search box placeholder", "default": "Search our store" },
+    { "type": "text", "id": "submit_label", "label": "Submit button label", "default": "Search" },
+
+    { "type": "header", "content": "Results Grid" },
+    { "type": "range", "id": "results_per_page", "label": "Results per page", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "range", "id": "columns_desktop", "label": "Columns — Desktop", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns_tablet", "label": "Columns — Tablet", "min": 2, "max": 4, "step": 1, "default": 3 },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns — Mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2"
+    },
+    { "type": "range", "id": "grid_gap", "label": "Grid Column Gap", "min": 0, "max": 40, "step": 2, "default": 20 },
+    { "type": "range", "id": "grid_gap_row", "label": "Grid Row Gap", "min": 0, "max": 50, "step": 2, "default": 32 },
+
+    { "type": "header", "content": "Product Card" },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "options": [
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "landscape", "label": "Landscape (4:3)" }
+      ],
+      "default": "portrait"
+    },
+    { "type": "range", "id": "card_radius", "label": "Card Radius", "min": 0, "max": 24, "step": 1, "default": 6 },
+    { "type": "range", "id": "button_radius", "label": "Button Radius", "min": 0, "max": 24, "step": 1, "default": 0 },
+    { "type": "text", "id": "atc_label", "label": "Add To Cart Label", "default": "Add To Cart" },
+
+    { "type": "header", "content": "Section Padding" },
+    { "type": "range", "id": "padding_top", "label": "Padding Top", "min": 0, "max": 120, "step": 4, "default": 48 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom", "min": 0, "max": 120, "step": 4, "default": 64 }
+  ]
 }
 {% endschema %}

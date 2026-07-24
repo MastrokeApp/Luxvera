@@ -234,8 +234,8 @@
 }
 
 .cart-notif__btn--continue {
-  background: #f5f5f5;
-  color: #111;
+  background: #111111;
+  color: #ffffff;
 }
 
 .cart-notif__btn--continue:hover {
