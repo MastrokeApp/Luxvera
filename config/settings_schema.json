@@ -269,6 +269,13 @@
         "default": false
       },
       {
+        "type": "checkbox",
+        "id": "cart_show_dynamic_checkout",
+        "label": "t:labels.show_dynamic_checkout_buttons",
+        "info": "t:labels.shows_shop_pay_paypal_etc_when",
+        "default": true
+      },
+      {
         "type": "header",
         "content": "t:labels.cart_text_settings"
       },

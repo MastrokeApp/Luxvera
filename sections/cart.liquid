@@ -118,6 +118,11 @@
           <button type="submit" name="checkout" class="lv-cart-checkout">
             {{ settings.checkout_button_text | default: 'Proceed to Checkout' }}
           </button>
+          {%- if settings.cart_show_dynamic_checkout and additional_checkout_buttons -%}
+            <div class="lv-cart-accelerated-checkout additional-checkout-buttons--vertical">
+              {{ content_for_additional_checkout_buttons }}
+            </div>
+          {%- endif -%}
           <a href="{{ routes.all_products_collection_url }}" class="lv-cart-continue">
             {{ settings.continue_shopping_text | default: 'Continue Shopping' }}
           </a>
@@ -381,6 +386,10 @@
 
 .lv-cart .lv-cart-checkout:hover {
   opacity: .82;
+}
+
+.lv-cart .lv-cart-accelerated-checkout {
+  margin-top: 10px;
 }
 
 .lv-cart .lv-cart-continue {
