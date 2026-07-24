@@ -212,7 +212,6 @@
     "enable_mega_menu": "Enable Mega Menu",
     "enable_mobile_filter_drawer_button": "Enable Mobile Filter Drawer Button",
     "enable_order_note": "Enable Order Note",
-    "enable_order_notes": "Enable Order Notes",
     "enable_scroll_animations": "Enable Scroll Animations",
     "enable_shipping_link": "Enable Shipping Link",
     "end_date_and_time": "End Date & Time",
@@ -227,6 +226,8 @@
     "foreground_image": "Foreground Image",
     "form_heading": "Form Heading",
     "format_yyyy_mm_ddthh_mm_ss": "Format: YYYY-MM-DDTHH:MM:SS. If left blank, the section auto-sets the countdown to 6 days from the current time.",
+    "gift_note_label": "Gift Message Label",
+    "gift_note_placeholder": "Gift Message Placeholder",
     "google_maps_embed_code": "Google Maps Embed Code",
     "grid_column_gap": "Grid Column Gap",
     "grid_gap": "Grid spacing",
@@ -274,8 +275,6 @@
     "max_content_width": "Max Content Width",
     "max_products_per_tab": "Max Products Per Tab",
     "max_products_to_show": "Max Products to Show",
-    "mega_menu_col_1_heading": "Mega Menu Col 1 Heading",
-    "mega_menu_col_2_heading": "Mega Menu Col 2 Heading",
     "menu": "Menu",
     "message": "Message",
     "min_height": "Min Height",
@@ -406,7 +405,6 @@
     "verified_purchase": "Verified Purchase",
     "vertical_padding": "Vertical Padding",
     "video": "Video",
-    "write_a_review_label": "Write a Review Label",
     "youtube_url": "YouTube URL"
   },
   "options": {

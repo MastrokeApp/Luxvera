@@ -264,12 +264,6 @@
       },
       {
         "type": "checkbox",
-        "id": "cart_notes",
-        "label": "t:labels.enable_order_notes",
-        "default": true
-      },
-      {
-        "type": "checkbox",
         "id": "cart_gift_notes",
         "label": "t:labels.enable_gift_message",
         "default": false
@@ -342,6 +336,18 @@
         "id": "order_note_placeholder",
         "label": "t:labels.order_note_placeholder",
         "default": "Add a note..."
+      },
+      {
+        "type": "text",
+        "id": "gift_note_label",
+        "label": "t:labels.gift_note_label",
+        "default": "Gift Message"
+      },
+      {
+        "type": "text",
+        "id": "gift_note_placeholder",
+        "label": "t:labels.gift_note_placeholder",
+        "default": "Add a gift message (optional)"
       },
       {
         "type": "text",

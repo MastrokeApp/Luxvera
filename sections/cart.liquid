@@ -103,6 +103,18 @@
             </div>
           {%- endif -%}
 
+          {%- if settings.cart_gift_notes -%}
+            <div class="lv-cart-note">
+              <label for="lv-cart-gift-note-{{ section.id }}">{{ settings.gift_note_label | default: 'Gift Message' }}</label>
+              <textarea
+                id="lv-cart-gift-note-{{ section.id }}"
+                name="attributes[Gift Message]"
+                placeholder="{{ settings.gift_note_placeholder | default: 'Add a gift message (optional)' }}"
+                data-cart-gift-note
+              >{{ cart.attributes['Gift Message'] }}</textarea>
+            </div>
+          {%- endif -%}
+
           <button type="submit" name="checkout" class="lv-cart-checkout">
             {{ settings.checkout_button_text | default: 'Proceed to Checkout' }}
           </button>
@@ -614,6 +626,21 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ note: noteEl.value })
+          }).catch(function () {});
+        }, 600);
+      });
+    }
+
+    var giftNoteEl = root.querySelector('[data-cart-gift-note]');
+    if (giftNoteEl) {
+      var giftNoteTimeout;
+      giftNoteEl.addEventListener('input', function () {
+        clearTimeout(giftNoteTimeout);
+        giftNoteTimeout = setTimeout(function () {
+          fetch('/cart/update.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ attributes: { 'Gift Message': giftNoteEl.value } })
           }).catch(function () {});
         }, 600);
       });
