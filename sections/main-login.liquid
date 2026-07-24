@@ -1,0 +1,137 @@
+{% comment %}
+  Section: Main Login
+
+  Renders the sign-in form on the customer login template. A second,
+  hidden form for requesting a password-reset email lives in the same
+  section and is swapped in by a small inline toggle -- there's no
+  separate template for it, matching how Shopify surfaces password
+  recovery from the login page itself.
+{% endcomment %}
+
+{{ 'lv-account.css' | asset_url | stylesheet_tag }}
+
+<div class="lv-acct color-{{ section.settings.color_scheme }}" id="lv-login-{{ section.id }}">
+  <div class="lv-acct-wrap lv-acct-wrap--narrow">
+
+    <div id="lv-login-panel-{{ section.id }}">
+      <h1 class="lv-acct-title">{{ 'customers.login.title' | t }}</h1>
+
+      {%- form 'customer_login', class: 'lv-acct-form' -%}
+        {%- if form.errors -%}
+          <div class="lv-acct-error">{{ form.errors | default_errors }}</div>
+        {%- endif -%}
+
+        <div class="lv-acct-field">
+          <label for="lv-login-email-{{ section.id }}">{{ 'customers.login.email' | t }}</label>
+          <input type="email" id="lv-login-email-{{ section.id }}" name="customer[email]" autocomplete="email" autocorrect="off" autocapitalize="off" required>
+        </div>
+
+        <div class="lv-acct-field">
+          <label for="lv-login-password-{{ section.id }}">{{ 'customers.login.password' | t }}</label>
+          <input type="password" id="lv-login-password-{{ section.id }}" name="customer[password]" autocomplete="current-password" required>
+        </div>
+
+        <label class="lv-acct-check">
+          <input type="checkbox" name="customer[remember_me]" value="1">
+          {{ 'customers.login.remember_me' | t }}
+        </label>
+
+        <button type="submit" class="lv-acct-submit">{{ 'customers.login.submit' | t }}</button>
+
+        <div class="lv-acct-links">
+          <button type="button" class="lv-acct-link-btn" id="lv-login-recover-toggle-{{ section.id }}">
+            {{ 'customers.login.forgot_password' | t }}
+          </button>
+          <span>{{ 'customers.login.no_account' | t }} <a href="{{ routes.account_register_url }}">{{ 'customers.login.create_account' | t }}</a></span>
+        </div>
+      {%- endform -%}
+    </div>
+
+    <div id="lv-recover-panel-{{ section.id }}" hidden>
+      <h1 class="lv-acct-title">{{ 'customers.recover_password.title' | t }}</h1>
+      <p class="lv-acct-lede">{{ 'customers.recover_password.subtext' | t }}</p>
+
+      {%- form 'recover_customer_password', class: 'lv-acct-form' -%}
+        {%- if form.errors -%}
+          <div class="lv-acct-error">{{ form.errors | default_errors }}</div>
+        {%- endif -%}
+
+        {%- if form.posted_successfully? -%}
+          <div class="lv-acct-success">{{ 'customers.recover_password.success' | t }}</div>
+        {%- else -%}
+          <div class="lv-acct-field">
+            <label for="lv-recover-email-{{ section.id }}">{{ 'customers.login.email' | t }}</label>
+            <input type="email" id="lv-recover-email-{{ section.id }}" name="email" autocomplete="email" autocorrect="off" autocapitalize="off" required>
+          </div>
+
+          <div class="lv-acct-links lv-acct-links--end">
+            <button type="button" class="lv-acct-link-btn" id="lv-recover-cancel-{{ section.id }}">{{ 'customers.login.cancel' | t }}</button>
+            <button type="submit" class="lv-acct-submit">{{ 'customers.recover_password.submit' | t }}</button>
+          </div>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+
+  </div>
+</div>
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function initLogin(root) {
+    if (root.dataset.lvAcctInit) return;
+    root.dataset.lvAcctInit = '1';
+
+    var loginPanel = root.querySelector('[id^="lv-login-panel-"]');
+    var recoverPanel = root.querySelector('[id^="lv-recover-panel-"]');
+    var toggle = root.querySelector('[id^="lv-login-recover-toggle-"]');
+    var cancel = root.querySelector('[id^="lv-recover-cancel-"]');
+
+    function showRecover() {
+      if (loginPanel) loginPanel.hidden = true;
+      if (recoverPanel) recoverPanel.hidden = false;
+    }
+
+    function showLogin() {
+      if (recoverPanel) recoverPanel.hidden = true;
+      if (loginPanel) loginPanel.hidden = false;
+    }
+
+    if (toggle) toggle.addEventListener('click', showRecover);
+    if (cancel) cancel.addEventListener('click', showLogin);
+
+    // If the recover form was just submitted (with errors, or successfully),
+    // Shopify re-renders this same template -- keep the recover panel open.
+    if (recoverPanel && recoverPanel.querySelector('.lv-acct-error, .lv-acct-success')) {
+      showRecover();
+    }
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.lv-acct').forEach(initLogin);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) { initAll(e.target); });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:general.login",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

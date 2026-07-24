@@ -172,6 +172,12 @@
     </p>
 
     <div class="lv-footer-bottom-right">
+      {%- if section.settings.show_follow_on_shop and shop -%}
+        <div class="lv-footer-follow-shop">
+          {{ shop | login_button: action: 'follow' }}
+        </div>
+      {%- endif -%}
+
       {%- if section.settings.show_currency_switcher -%}
         {% render 'currency-switcher', position: 'footer' %}
       {%- endif -%}
@@ -271,6 +277,13 @@
       "type": "checkbox",
       "id": "show_social_icons",
       "label": "t:labels.show_social_icons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_follow_on_shop",
+      "label": "t:labels.show_follow_on_shop_button",
+      "info": "t:labels.lets_customers_follow_your_store_in",
       "default": true
     },
     {

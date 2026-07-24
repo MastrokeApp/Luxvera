@@ -1,0 +1,60 @@
+{% comment %}
+  Section: Main Register
+
+  Renders the account-creation form on the customer register template.
+{% endcomment %}
+
+{{ 'lv-account.css' | asset_url | stylesheet_tag }}
+
+<div class="lv-acct color-{{ section.settings.color_scheme }}" id="lv-register-{{ section.id }}">
+  <div class="lv-acct-wrap lv-acct-wrap--narrow">
+    <h1 class="lv-acct-title">{{ 'customers.register.title' | t }}</h1>
+
+    {%- form 'create_customer', class: 'lv-acct-form' -%}
+      {%- if form.errors -%}
+        <div class="lv-acct-error">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+
+      <div class="lv-acct-form-row">
+        <div class="lv-acct-field">
+          <label for="lv-register-first-name-{{ section.id }}">{{ 'customers.register.first_name' | t }}</label>
+          <input type="text" id="lv-register-first-name-{{ section.id }}" name="customer[first_name]" autocomplete="given-name" value="{{ form.first_name | escape }}">
+        </div>
+        <div class="lv-acct-field">
+          <label for="lv-register-last-name-{{ section.id }}">{{ 'customers.register.last_name' | t }}</label>
+          <input type="text" id="lv-register-last-name-{{ section.id }}" name="customer[last_name]" autocomplete="family-name" value="{{ form.last_name | escape }}">
+        </div>
+      </div>
+
+      <div class="lv-acct-field">
+        <label for="lv-register-email-{{ section.id }}">{{ 'customers.register.email' | t }}</label>
+        <input type="email" id="lv-register-email-{{ section.id }}" name="customer[email]" autocomplete="email" autocorrect="off" autocapitalize="off" value="{{ form.email | escape }}" required>
+      </div>
+
+      <div class="lv-acct-field">
+        <label for="lv-register-password-{{ section.id }}">{{ 'customers.register.password' | t }}</label>
+        <input type="password" id="lv-register-password-{{ section.id }}" name="customer[password]" autocomplete="new-password" required>
+      </div>
+
+      <button type="submit" class="lv-acct-submit">{{ 'customers.register.submit' | t }}</button>
+
+      <div class="lv-acct-links lv-acct-links--end">
+        <span>{{ 'customers.register.already_have_account' | t }} <a href="{{ routes.account_login_url }}">{{ 'customers.register.sign_in' | t }}</a></span>
+      </div>
+    {%- endform -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:general.register",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

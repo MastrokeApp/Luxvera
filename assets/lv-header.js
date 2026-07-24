@@ -19,6 +19,7 @@
     els.searchOverlay = byId('lvSearchOverlay');
     els.searchClose = byId('lvSearchClose');
     els.searchInput = byId('lvSearchInput');
+    els.predictiveResults = byId('lvPredictiveResults');
     els.stickyHeader = document.querySelector('.lv-header-wrap--sticky');
   }
 
@@ -64,6 +65,45 @@
     if (els.searchOverlay) els.searchOverlay.classList.remove('open');
     document.body.style.overflow = '';
     if (wasOpen && els.searchBtn) els.searchBtn.focus();
+    clearPredictive();
+  }
+
+  var predictiveTimer = null;
+  var predictiveController = null;
+
+  function clearPredictive() {
+    if (!els.predictiveResults) return;
+    els.predictiveResults.innerHTML = '';
+    els.predictiveResults.hidden = true;
+  }
+
+  function runPredictiveSearch(term) {
+    if (!els.predictiveResults || !window.fetch) return;
+    if (predictiveController) predictiveController.abort();
+    predictiveController = ('AbortController' in window) ? new AbortController() : null;
+
+    fetch('/search/suggest?q=' + encodeURIComponent(term) + '&section_id=predictive-search', {
+      signal: predictiveController ? predictiveController.signal : undefined
+    })
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var section = doc.getElementById('shopify-section-predictive-search');
+        var content = section ? section.innerHTML.trim() : '';
+        els.predictiveResults.innerHTML = content;
+        els.predictiveResults.hidden = content === '';
+      })
+      .catch(function () {});
+  }
+
+  function handleSearchInput() {
+    var term = els.searchInput.value.trim();
+    clearTimeout(predictiveTimer);
+    if (term.length < 2) {
+      clearPredictive();
+      return;
+    }
+    predictiveTimer = setTimeout(function () { runPredictiveSearch(term); }, 300);
   }
 
   function closeAllDropdowns() {
@@ -226,6 +266,7 @@
     bindOnce(els.drawerClose, 'click', closeDrawer);
     bindOnce(els.searchBtn, 'click', openSearch);
     bindOnce(els.searchClose, 'click', closeSearch);
+    bindOnce(els.searchInput, 'input', handleSearchInput);
 
     if (els.mobileMenu && !els.mobileMenu.dataset.lvBoundBackdrop) {
       els.mobileMenu.dataset.lvBoundBackdrop = '1';

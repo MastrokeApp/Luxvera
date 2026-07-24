@@ -40,6 +40,9 @@
                 {%- if item.selling_plan_allocation -%}
                   <p class="lv-cart-item-subscription">{{ item.selling_plan_allocation.selling_plan.name }}</p>
                 {%- endif -%}
+                {%- if item.variant.unit_price_measurement -%}
+                  <p class="lv-cart-item-unit-price">{{ item.variant.unit_price | money | unit_price_with_measurement: item.variant.unit_price_measurement }}</p>
+                {%- endif -%}
                 <div class="lv-cart-item-row">
                   <div class="lv-cart-qty">
                     <button class="lv-cart-qty-btn" type="button" data-action="decrease" aria-label="{{ 'accessibility.decrease_quantity' | t }}" {% if item.quantity <= 1 %}disabled{% endif %}>&minus;</button>
@@ -215,6 +218,12 @@
 }
 
 .lv-cart .lv-cart-item-subscription {
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 12px;
+}
+
+.lv-cart .lv-cart-item-unit-price {
   font-size: 12px;
   color: #888;
   margin: 0 0 12px;

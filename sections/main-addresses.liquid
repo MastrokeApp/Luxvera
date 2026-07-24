@@ -1,0 +1,179 @@
+{% comment %}
+  Section: Main Addresses
+
+  Customer's saved-address book: add a new address, edit or delete an
+  existing one, and mark one as the default. Country selects are filled
+  from Shopify's all_country_option_tags object; a small script reads
+  each option's data-provinces attribute to keep the matching state/
+  province select in sync when the shopper changes country.
+{% endcomment %}
+
+{{ 'lv-account.css' | asset_url | stylesheet_tag }}
+
+<div class="lv-acct color-{{ section.settings.color_scheme }}" id="lv-addresses-{{ section.id }}">
+  <div class="lv-acct-wrap">
+    <div class="lv-acct-header">
+      <h1 class="lv-acct-title">{{ 'customers.addresses.title' | t }}</h1>
+      <a class="lv-acct-logout" href="{{ routes.account_url }}">{{ 'customers.order.back_to_account' | t }}</a>
+    </div>
+
+    <div class="lv-acct-new-address-toggle">
+      <button type="button" class="lv-acct-submit" data-lv-address-toggle="new">{{ 'customers.addresses.add_new' | t }}</button>
+    </div>
+
+    <div class="lv-acct-address-form" id="lv-address-form-new-{{ section.id }}" hidden>
+      {%- form 'customer_address', customer.new_address, class: 'lv-acct-form' -%}
+        {%- if form.errors -%}
+          <div class="lv-acct-error">{{ form.errors | default_errors }}</div>
+        {%- endif -%}
+
+        {%- render 'address-fields', form: form, form_id: 'new' -%}
+
+        <label class="lv-acct-check">
+          {{ form.set_as_default_checkbox }}
+          {{ 'customers.addresses.set_default' | t }}
+        </label>
+
+        <div class="lv-acct-links lv-acct-links--end">
+          <button type="button" class="lv-acct-link-btn" data-lv-address-toggle="new">{{ 'customers.addresses.cancel' | t }}</button>
+          <button type="submit" class="lv-acct-submit">{{ 'customers.addresses.save' | t }}</button>
+        </div>
+      {%- endform -%}
+    </div>
+
+    {%- paginate customer.addresses by 20 -%}
+      {%- if customer.addresses.size == 0 -%}
+        <p class="lv-acct-empty">{{ 'customers.addresses.no_addresses' | t }}</p>
+      {%- else -%}
+        <div class="lv-acct-address-grid">
+          {%- for address in customer.addresses -%}
+            <div class="lv-acct-address-card">
+              {%- if address.id == customer.default_address.id -%}
+                <span class="lv-acct-badge">{{ 'customers.addresses.default' | t }}</span>
+              {%- endif -%}
+              <p>{{ address | format_address }}</p>
+              <div class="lv-acct-address-card__actions">
+                <button type="button" data-lv-address-toggle="{{ address.id }}">{{ 'customers.addresses.edit' | t }}</button>
+                <form method="post" action="{{ routes.account_addresses_url }}/{{ address.id }}" data-lv-address-delete data-confirm-message="{{ 'customers.addresses.delete_confirm' | t }}">
+                  <input type="hidden" name="_method" value="delete">
+                  <button type="submit">{{ 'customers.addresses.delete' | t }}</button>
+                </form>
+              </div>
+            </div>
+
+            <div class="lv-acct-address-form" id="lv-address-form-{{ address.id }}-{{ section.id }}" hidden>
+              {%- form 'customer_address', address, class: 'lv-acct-form' -%}
+                {%- if form.errors -%}
+                  <div class="lv-acct-error">{{ form.errors | default_errors }}</div>
+                {%- endif -%}
+
+                {%- render 'address-fields', form: form, form_id: form.id -%}
+
+                <label class="lv-acct-check">
+                  {{ form.set_as_default_checkbox }}
+                  {{ 'customers.addresses.set_default' | t }}
+                </label>
+
+                <div class="lv-acct-links lv-acct-links--end">
+                  <button type="button" class="lv-acct-link-btn" data-lv-address-toggle="{{ address.id }}">{{ 'customers.addresses.cancel' | t }}</button>
+                  <button type="submit" class="lv-acct-submit">{{ 'customers.addresses.save' | t }}</button>
+                </div>
+              {%- endform -%}
+            </div>
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <div class="lv-acct-pagination">{{ paginate | default_pagination }}</div>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function initAddresses(root) {
+    if (root.dataset.lvAcctInit) return;
+    root.dataset.lvAcctInit = '1';
+
+    function formFor(key) {
+      return root.querySelector('[id^="lv-address-form-' + key + '-"]');
+    }
+
+    root.querySelectorAll('[data-lv-address-toggle]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = formFor(btn.dataset.lvAddressToggle);
+        if (target) target.hidden = !target.hidden;
+      });
+    });
+
+    root.querySelectorAll('[data-lv-address-delete]').forEach(function (form) {
+      form.addEventListener('submit', function (e) {
+        var message = form.dataset.confirmMessage;
+        if (message && !window.confirm(message)) e.preventDefault();
+      });
+    });
+
+    root.querySelectorAll('[data-lv-country-select]').forEach(function (countrySelect) {
+      var provinceSelect = root.querySelector('[data-lv-province-select="' + countrySelect.dataset.lvCountrySelect + '"]');
+      var provinceWrap = provinceSelect ? provinceSelect.closest('[data-lv-province-wrap]') : null;
+
+      function syncProvinces() {
+        var selected = countrySelect.options[countrySelect.selectedIndex];
+        var provinces = [];
+        try { provinces = JSON.parse((selected && selected.dataset.provinces) || '[]'); } catch (e) { provinces = []; }
+
+        if (!provinceSelect) return;
+        provinceSelect.innerHTML = '';
+        if (provinces.length === 0) {
+          if (provinceWrap) provinceWrap.hidden = true;
+          return;
+        }
+        if (provinceWrap) provinceWrap.hidden = false;
+        provinces.forEach(function (p) {
+          var value = Array.isArray(p) ? p[0] : p;
+          var label = Array.isArray(p) ? p[1] : p;
+          var opt = document.createElement('option');
+          opt.value = value;
+          opt.textContent = label;
+          if (value === provinceSelect.dataset.default) opt.selected = true;
+          provinceSelect.appendChild(opt);
+        });
+      }
+
+      if (countrySelect.dataset.default) countrySelect.value = countrySelect.dataset.default;
+      countrySelect.addEventListener('change', syncProvinces);
+      syncProvinces();
+    });
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.lv-acct').forEach(initAddresses);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) { initAll(e.target); });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:general.addresses",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

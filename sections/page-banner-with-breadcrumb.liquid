@@ -1,0 +1,544 @@
+{% comment %}Luxvera Page Banner Breadcrumb{% endcomment %}
+
+{%- liquid
+  assign banner_heading = section.settings.heading
+  if banner_heading == blank
+    case template.name
+      when 'collection'
+        assign banner_heading = collection.title
+      when 'product'
+        assign banner_heading = product.title
+      when 'page'
+        assign banner_heading = page.title
+      when 'blog'
+        assign banner_heading = blog.title
+      when 'article'
+        assign banner_heading = article.title
+      else
+        assign banner_heading = 'Page heading'
+    endcase
+  endif
+
+  assign banner_subtext = section.settings.subtext
+-%}
+
+<section
+  class="lv-page-banner color-{{ section.settings.color_scheme }}"
+  id="lv-page-banner-{{ section.id }}"
+  style="
+    --lv-banner-height-desktop: {{ section.settings.height_desktop }}px;
+    --lv-banner-height-tablet: {{ section.settings.height_tablet }}px;
+    --lv-banner-height-mobile: {{ section.settings.height_mobile }}px;
+    --lv-banner-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --lv-banner-overlay-color: {{ section.settings.overlay_color }};
+    --lv-banner-content-align: {{ section.settings.content_alignment }};
+  "
+>
+  <div class="lv-page-banner__bg">
+    {% if section.settings.background_image != blank %}
+      <div
+        class="lv-page-banner__bg-image"
+        style="background-image:
+          linear-gradient(
+            to right,
+            color-mix(in srgb, {{ section.settings.overlay_color }} calc(var(--lv-banner-overlay-opacity) * 100%), transparent) 32%,
+            color-mix(in srgb, {{ section.settings.overlay_color }} calc(var(--lv-banner-overlay-opacity) * 10%), transparent) 100%
+          ),
+          url('{{ section.settings.background_image | image_url: width: 1920 }}');"
+      ></div>
+    {% else %}
+      <div class="lv-page-banner__bg-placeholder">
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'lv-page-banner__placeholder-svg' }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="lv-page-banner__content">
+    {% if section.settings.show_breadcrumbs %}
+      <nav class="lv-page-banner__breadcrumbs" aria-label="{{ 'accessibility.breadcrumb' | t }}">
+        <ol class="lv-page-banner__breadcrumbs-list">
+          <li class="lv-page-banner__breadcrumbs-item">
+            <a class="lv-page-banner__breadcrumbs-link" href="{{ routes.root_url }}">
+              {{ section.settings.breadcrumb_home_label | default: 'Home' | escape }}
+            </a>
+          </li>
+
+          {%- if template.name == 'collection' -%}
+            <li class="lv-page-banner__breadcrumbs-item" aria-current="page">{{ collection.title | escape }}</li>
+
+          {%- elsif template.name == 'product' -%}
+            {%- if product.collections.first != blank -%}
+              <li class="lv-page-banner__breadcrumbs-item">
+                <a class="lv-page-banner__breadcrumbs-link" href="{{ product.collections.first.url }}">
+                  {{ product.collections.first.title | escape }}
+                </a>
+              </li>
+            {%- endif -%}
+            <li class="lv-page-banner__breadcrumbs-item" aria-current="page">{{ product.title | escape }}</li>
+
+          {%- elsif template.name == 'page' -%}
+            <li class="lv-page-banner__breadcrumbs-item" aria-current="page">{{ page.title | escape }}</li>
+
+          {%- elsif template.name == 'blog' -%}
+            <li class="lv-page-banner__breadcrumbs-item" aria-current="page">{{ blog.title | escape }}</li>
+
+          {%- elsif template.name == 'article' -%}
+            <li class="lv-page-banner__breadcrumbs-item">
+              <a class="lv-page-banner__breadcrumbs-link" href="{{ blog.url }}">{{ blog.title | escape }}</a>
+            </li>
+            <li class="lv-page-banner__breadcrumbs-item" aria-current="page">{{ article.title | escape }}</li>
+
+          {%- else -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'breadcrumb_item' -%}
+                <li class="lv-page-banner__breadcrumbs-item" {% if forloop.last %}aria-current="page"{% endif %} {{ block.shopify_attributes }}>
+                  {%- if block.settings.url != blank and forloop.last == false -%}
+                    <a class="lv-page-banner__breadcrumbs-link" href="{{ block.settings.url }}">{{ block.settings.label | escape }}</a>
+                  {%- else -%}
+                    {{ block.settings.label | escape }}
+                  {%- endif -%}
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </ol>
+      </nav>
+    {% endif %}
+
+    {% if banner_heading != blank %}
+      <h1 class="lv-page-banner__heading">{{ banner_heading | escape }}</h1>
+    {% endif %}
+
+    {% if banner_subtext != blank %}
+      <div class="lv-page-banner__subtext rte">{{ banner_subtext }}</div>
+    {% elsif request.design_mode %}
+      <div class="lv-page-banner__subtext rte">
+        <p>Add a short description for this page banner.</p>
+      </div>
+    {% endif %}
+
+    {% if section.settings.button_label != blank and section.settings.button_url != blank %}
+      <p>
+        <a
+          href="{{ section.settings.button_url }}"
+          class="lv-page-banner__btn"
+          {% if section.settings.button_open_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+        >
+          {{ section.settings.button_label | escape }}
+        </a>
+      </p>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  #lv-page-banner-{{ section.id }}.lv-page-banner {
+    position: relative;
+    height: var(--lv-banner-height-desktop, 420px);
+    overflow: clip;
+    background: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__bg,
+  #lv-page-banner-{{ section.id }} .lv-page-banner__bg-image,
+  #lv-page-banner-{{ section.id }} .lv-page-banner__bg-placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__bg-image {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__bg-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(var(--color-background));
+    overflow: hidden;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__placeholder-svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__placeholder-svg svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  @keyframes lv-page-banner-zoom {
+    from { transform: scale(1.04); }
+    to { transform: scale(1); }
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__bg-image,
+  #lv-page-banner-{{ section.id }} .lv-page-banner__bg-placeholder {
+    animation: lv-page-banner-zoom 1.4s cubic-bezier(.25, .46, .45, .94) forwards;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__content {
+    position: relative;
+    z-index: 2;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 56px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: var(--lv-banner-content-align, flex-start);
+    text-align: {{ section.settings.content_alignment | replace: 'flex-start', 'left' | replace: 'center', 'center' | replace: 'flex-end', 'right' }};
+  }
+
+  @keyframes lv-page-banner-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__breadcrumbs {
+    animation: lv-page-banner-fade-up .7s ease both;
+    animation-delay: .2s;
+    margin: 0 0 18px;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__heading {
+    animation: lv-page-banner-fade-up .7s ease both;
+    animation-delay: .38s;
+    color: rgb(var(--color-foreground));
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: 500;
+    line-height: 1.15;
+    margin: 0 0 20px;
+    max-width: 720px;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__subtext {
+    animation: lv-page-banner-fade-up .7s ease both;
+    animation-delay: .52s;
+    color: rgb(var(--color-foreground));
+    font-size: 18px;
+    font-weight: 400;
+    margin: 0;
+    max-width: 480px;
+    opacity: .88;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__subtext p {
+    margin: 0;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__btn {
+    animation: lv-page-banner-fade-up .7s ease both;
+    animation-delay: .66s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0 34px;
+    margin-top: 36px;
+    border: 2px solid rgb(var(--color-foreground));
+    background: transparent;
+    color: rgb(var(--color-foreground));
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color .3s, color .3s, border-color .3s, transform .3s;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__btn:hover {
+    background: rgb(var(--color-foreground));
+    color: rgb(var(--color-background));
+    transform: translateY(-2px);
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__breadcrumbs-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__breadcrumbs-item {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .18em;
+    color: rgb(var(--color-foreground));
+    opacity: .75;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__breadcrumbs-item + .lv-page-banner__breadcrumbs-item::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-right: 1.5px solid currentColor;
+    border-top: 1.5px solid currentColor;
+    transform: rotate(45deg);
+    margin: 0 10px;
+    opacity: .6;
+    flex-shrink: 0;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__breadcrumbs-item[aria-current="page"] {
+    opacity: 1;
+    font-weight: 600;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__breadcrumbs-link {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity .2s;
+  }
+
+  #lv-page-banner-{{ section.id }} .lv-page-banner__breadcrumbs-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 768px) {
+    #lv-page-banner-{{ section.id }}.lv-page-banner {
+      height: var(--lv-banner-height-tablet, 320px);
+    }
+
+    #lv-page-banner-{{ section.id }} .lv-page-banner__content {
+      padding: 0 28px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #lv-page-banner-{{ section.id }}.lv-page-banner {
+      height: var(--lv-banner-height-mobile, 260px);
+    }
+
+    #lv-page-banner-{{ section.id }} .lv-page-banner__content {
+      padding: 0 24px;
+      justify-content: center;
+    }
+
+    #lv-page-banner-{{ section.id }} .lv-page-banner__heading {
+      font-size: {{ section.settings.heading_size | times: 0.65 | round }}px;
+      margin-bottom: 16px;
+    }
+
+    #lv-page-banner-{{ section.id }} .lv-page-banner__subtext {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    #lv-page-banner-{{ section.id }} .lv-page-banner__btn {
+      width: 100%;
+      max-width: 280px;
+      margin-top: 28px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "t:general.page_banner_breadcrumb",
+  "tag": "section",
+  "class": "luxvera-page-banner",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.background"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "t:labels.background_image_2",
+      "info": "t:labels.recommended_1920_1080px"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "t:labels.overlay_color",
+      "default": "#100a04"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "t:labels.overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 70
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_height"
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "label": "t:labels.desktop_height",
+      "min": 200,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "default": 420
+    },
+    {
+      "type": "range",
+      "id": "height_tablet",
+      "label": "t:labels.tablet_height",
+      "min": 180,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "label": "t:labels.mobile_height",
+      "min": 160,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "default": 260
+    },
+    {
+      "type": "header",
+      "content": "t:labels.content"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:labels.content_alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.content_alignment.flex_start"
+        },
+        {
+          "value": "center",
+          "label": "t:options.content_alignment.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.content_alignment.flex_end"
+        }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.breadcrumb"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumbs",
+      "label": "t:labels.show_breadcrumb",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "breadcrumb_home_label",
+      "label": "t:labels.home_label",
+      "default": "Home"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Page heading"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "t:labels.heading_font_size",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 42
+    },
+    {
+      "type": "richtext",
+      "id": "subtext",
+      "label": "t:labels.subtext"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:labels.button_label_2",
+      "default": "Explore now"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "t:labels.button_link"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_open_new_tab",
+      "label": "t:labels.open_link_in_new_tab",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "breadcrumb_item",
+      "name": "t:general.custom_breadcrumb_item",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:labels.label",
+          "default": "Category"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "t:labels.link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.page_banner_breadcrumb"
+    }
+  ]
+}
+{% endschema %}

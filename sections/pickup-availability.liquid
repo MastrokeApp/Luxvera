@@ -1,0 +1,56 @@
+{% comment %}
+  API-only section, no schema, not addable from the theme editor.
+
+  Store pickup availability can only be sorted by proximity to the shopper
+  when it's requested through Shopify's Section Rendering API, so this
+  section exists purely to be fetched at /variants/[id]/?section_id=pickup-availability --
+  see the pickup lookup inside the JS at the bottom of sections/product.liquid
+  for the fetch-and-swap logic that requests it and drops the result into
+  the placeholder left in the buy buttons block.
+
+  Because of that, Shopify hands this template `product_variant` rather
+  than the usual `product` / `current_variant` pair.
+{% endcomment %}
+{% comment %} theme-check-disable UndefinedObject {% endcomment %}
+{%- assign lv_pickup_locations = product_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+
+{%- if lv_pickup_locations.size > 0 -%}
+  {%- assign lv_pickup_nearest = lv_pickup_locations.first -%}
+  {%- assign lv_pickup_other_count = lv_pickup_locations.size | minus: 1 -%}
+
+  <details class="lv-pickup">
+    <summary class="lv-pickup__summary">
+      <span class="lv-pickup__dot{% unless lv_pickup_nearest.available %} is-out{% endunless %}" aria-hidden="true"></span>
+      <span class="lv-pickup__headline">
+        {%- if lv_pickup_nearest.available -%}
+          {{ 'pickup_availability.available_at' | t: location: lv_pickup_nearest.location.name }}
+        {%- else -%}
+          {{ 'pickup_availability.unavailable_at' | t: location: lv_pickup_nearest.location.name }}
+        {%- endif -%}
+      </span>
+      {%- if lv_pickup_other_count > 0 -%}
+        <span class="lv-pickup__more">{{ 'pickup_availability.more_locations' | t: count: lv_pickup_other_count }}</span>
+      {%- endif -%}
+    </summary>
+
+    <ul class="lv-pickup__list" role="list">
+      {%- for location in lv_pickup_locations -%}
+        <li class="lv-pickup__item">
+          <p class="lv-pickup__location">
+            <span class="lv-pickup__dot{% unless location.available %} is-out{% endunless %}" aria-hidden="true"></span>
+            {{ location.location.name | escape }}
+          </p>
+          <p class="lv-pickup__status">
+            {%- if location.available -%}
+              {%- assign lv_pickup_time = location.pick_up_time | downcase -%}
+              {{ 'pickup_availability.ready_in' | t: time: lv_pickup_time }}
+            {%- else -%}
+              {{ 'pickup_availability.unavailable' | t }}
+            {%- endif -%}
+          </p>
+          <address class="lv-pickup__address">{{ location.location.address | format_address }}</address>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </details>
+{%- endif -%}

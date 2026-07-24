@@ -1,0 +1,120 @@
+{% comment %}
+  Section: Main Order
+
+  Order-detail page inside the customer account: line items, shipping
+  and billing address, fulfillment/tracking info, and a totals summary.
+{% endcomment %}
+
+{{ 'lv-account.css' | asset_url | stylesheet_tag }}
+
+<div class="lv-acct color-{{ section.settings.color_scheme }}" id="lv-order-{{ section.id }}">
+  <div class="lv-acct-wrap">
+    <div class="lv-acct-header">
+      <h1 class="lv-acct-title">{{ 'customers.order.title' | t: name: order.name }}</h1>
+      <a class="lv-acct-logout" href="{{ routes.account_url }}">{{ 'customers.order.back_to_account' | t }}</a>
+    </div>
+
+    <div class="lv-acct-order-meta">
+      <div>
+        <p>{{ 'customers.account.date' | t }}</p>
+        <p>{{ order.created_at | date: '%B %d, %Y' }}</p>
+      </div>
+      <div>
+        <p>{{ 'customers.order.payment_status' | t }}</p>
+        <p><span class="lv-acct-badge">{{ order.financial_status | capitalize }}</span></p>
+      </div>
+      <div>
+        <p>{{ 'customers.order.fulfillment_status' | t }}</p>
+        <p><span class="lv-acct-badge">{{ order.fulfillment_status | default: 'Unfulfilled' | capitalize }}</span></p>
+      </div>
+    </div>
+
+    <table class="lv-acct-order-items">
+      <thead>
+        <tr>
+          <th>{{ 'customers.order.product' | t }}</th>
+          <th>{{ 'customers.order.quantity' | t }}</th>
+          <th>{{ 'customers.order.price' | t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for line_item in order.line_items -%}
+          <tr>
+            <td>
+              {%- if line_item.image -%}
+                <img src="{{ line_item.image | image_url: width: 112 }}" alt="{{ line_item.title | escape }}" width="56" height="56" loading="lazy">
+              {%- endif -%}
+              <a href="{{ line_item.url }}">{{ line_item.title | escape }}</a>
+              {%- if line_item.sku != blank -%}<br><small>{{ 'customers.order.sku' | t }}: {{ line_item.sku }}</small>{%- endif -%}
+            </td>
+            <td>{{ line_item.quantity }}</td>
+            <td>{{ line_item.final_line_price | money }}</td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+
+    {%- for fulfillment in order.fulfillments -%}
+      {%- if fulfillment.tracking_number -%}
+        <p class="lv-acct-lede">
+          {{ 'customers.order.tracking_number_html' | t: number: fulfillment.tracking_number }}
+          {%- if fulfillment.tracking_url %} — <a href="{{ fulfillment.tracking_url }}">{{ fulfillment.tracking_company }}</a>{%- endif -%}
+        </p>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <div class="lv-acct-order-totals">
+      <div class="lv-acct-order-totals__row">
+        <span>{{ 'customers.order.subtotal' | t }}</span>
+        <span>{{ order.subtotal_price | money }}</span>
+      </div>
+      {%- if order.total_discounts > 0 -%}
+        <div class="lv-acct-order-totals__row">
+          <span>{{ 'customers.order.discount' | t }}</span>
+          <span>-{{ order.total_discounts | money }}</span>
+        </div>
+      {%- endif -%}
+      <div class="lv-acct-order-totals__row">
+        <span>{{ 'customers.order.shipping' | t }}</span>
+        <span>{{ order.shipping_price | money }}</span>
+      </div>
+      <div class="lv-acct-order-totals__row">
+        <span>{{ 'customers.order.tax' | t }}</span>
+        <span>{{ order.tax_price | money }}</span>
+      </div>
+      <div class="lv-acct-order-totals__row lv-acct-order-totals__row--grand">
+        <span>{{ 'customers.order.grand_total' | t }}</span>
+        <span>{{ order.total_price | money }}</span>
+      </div>
+    </div>
+
+    <div class="lv-acct-order-addresses">
+      {%- if order.shipping_address -%}
+        <div>
+          <h2 class="lv-acct-section__heading">{{ 'customers.order.shipping_address' | t }}</h2>
+          <p>{{ order.shipping_address | format_address }}</p>
+        </div>
+      {%- endif -%}
+      {%- if order.billing_address -%}
+        <div>
+          <h2 class="lv-acct-section__heading">{{ 'customers.order.billing_address' | t }}</h2>
+          <p>{{ order.billing_address | format_address }}</p>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:general.order",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

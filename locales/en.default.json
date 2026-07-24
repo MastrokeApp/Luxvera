@@ -95,10 +95,100 @@
   },
   "customers": {
     "login": {
+      "title": "Login",
       "email": "Email",
       "password": "Password",
       "submit": "Sign in",
-      "title": "Login"
+      "forgot_password": "Forgot your password?",
+      "cancel": "Cancel",
+      "remember_me": "Remember me",
+      "no_account": "New customer?",
+      "create_account": "Create account"
+    },
+    "recover_password": {
+      "title": "Reset your password",
+      "subtext": "We'll send you an email to reset your password.",
+      "submit": "Submit",
+      "success": "We've sent you an email with a link to update your password."
+    },
+    "reset_password": {
+      "title": "Reset account password",
+      "subtext": "Enter a new password for {{ email }}",
+      "password": "New password",
+      "password_confirm": "Confirm new password",
+      "submit": "Reset password"
+    },
+    "activate_account": {
+      "title": "Activate account",
+      "subtext": "Create your password to activate your account.",
+      "password": "Password",
+      "password_confirm": "Confirm password",
+      "submit": "Activate account",
+      "decline": "Decline invitation"
+    },
+    "register": {
+      "title": "Create account",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create",
+      "already_have_account": "Already have an account?",
+      "sign_in": "Sign in"
+    },
+    "account": {
+      "title": "My account",
+      "logout": "Log out",
+      "order_history": "Order history",
+      "no_orders": "You haven't placed any orders yet.",
+      "order_number": "Order",
+      "date": "Date",
+      "payment_status": "Payment status",
+      "fulfillment_status": "Fulfillment status",
+      "total": "Total",
+      "view_addresses": "View addresses"
+    },
+    "order": {
+      "title": "Order {{ name }}",
+      "back_to_account": "Back to account",
+      "placed_on": "Placed on {{ date }}",
+      "shipping_address": "Shipping address",
+      "billing_address": "Billing address",
+      "payment_status": "Payment status",
+      "fulfillment_status": "Fulfillment status",
+      "product": "Product",
+      "sku": "SKU",
+      "price": "Price",
+      "quantity": "Quantity",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "tax": "Tax",
+      "discount": "Discount",
+      "grand_total": "Total",
+      "tracking_number_html": "Tracking number: {{ number }}",
+      "fulfilled_on_html": "Fulfilled on {{ date }}"
+    },
+    "addresses": {
+      "title": "Addresses",
+      "add_new": "Add a new address",
+      "edit": "Edit",
+      "delete": "Delete",
+      "delete_confirm": "Are you sure you want to delete this address?",
+      "default": "Default",
+      "set_default": "Set as default address",
+      "no_addresses": "You don't have any addresses saved yet.",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "company": "Company",
+      "address1": "Address",
+      "address2": "Apartment, suite, etc.",
+      "city": "City",
+      "country": "Country/region",
+      "province": "State/province",
+      "zip": "Postal/ZIP code",
+      "phone": "Phone",
+      "save": "Save address",
+      "cancel": "Cancel"
     }
   },
   "collections": {
@@ -135,6 +225,16 @@
       "other": "{{ count }} items"
     }
   },
+  "pickup_availability": {
+    "available_at": "Pickup available at {{ location }}",
+    "unavailable_at": "Pickup unavailable at {{ location }}",
+    "ready_in": "Ready in {{ time }}",
+    "unavailable": "Currently unavailable",
+    "more_locations": {
+      "one": "+{{ count }} more location",
+      "other": "+{{ count }} more locations"
+    }
+  },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
     "card": "Gift card",
@@ -152,6 +252,7 @@
     "placeholder": "Search articles, pages, or products",
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
-    "results_for_html": "{{ count }} results found for {{ terms }}"
+    "results_for_html": "{{ count }} results found for {{ terms }}",
+    "view_all_results_html": "View all results for {{ terms }}"
   }
 }

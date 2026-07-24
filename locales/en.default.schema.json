@@ -10,6 +10,9 @@
 {
   "general": {
     "404": "Not found",
+    "account": "Account",
+    "activate_account": "Activate account",
+    "addresses": "Addresses",
     "announcement_ticker": "Announcement Ticker",
     "article": "Article",
     "availability": "Availability",
@@ -36,9 +39,9 @@
     "column": "Column",
     "contact_page": "Contact Page",
     "content": "Content",
+    "custom_breadcrumb_item": "Custom breadcrumb item",
     "custom_liquid": "Custom Liquid",
     "custom_section": "Custom section",
-    "demo": "Demo",
     "description": "Description",
     "dress_looks": "Dress Looks",
     "faq_accordion": "FAQ Accordion",
@@ -48,20 +51,23 @@
     "footer": "Footer",
     "group": "Group",
     "header": "Header",
-    "hello_world": "Hello World",
-    "hello_world_template": "Hello World Template",
     "hero_banner": "Hero Banner",
     "image": "Image",
     "image_with_text": "Image with text",
+    "image_with_text_2": "Advanced image with text",
     "instagram_carousel": "Instagram Carousel",
     "instagram_post": "Instagram Post",
     "layout": "Layout",
+    "login": "Login",
     "main": "Main",
     "main_page_content": "Main Page Content",
     "menu": "Menu",
     "newsletter": "Newsletter",
     "one_of_a_kind": "One of a Kind",
+    "order": "Order",
     "page": "Page",
+    "page_banner_breadcrumb": "Page Banner Breadcrumb",
+    "pairs_well_with": "Pairs Well With",
     "password": "Password",
     "price": "Price",
     "primary": "Primary",
@@ -70,6 +76,8 @@
     "products": "Products",
     "promotional": "Promotional",
     "quantity_selector": "Quantity selector",
+    "register": "Register",
+    "reset_password": "Reset password",
     "review": "Review",
     "row": "Row",
     "sale_countdown": "Sale Countdown",
@@ -123,6 +131,7 @@
     "body_font": "Body Font",
     "body_font_size": "Body font size",
     "body_text": "Body Text",
+    "body_text_size": "Body Text Size",
     "bottom_padding": "Bottom padding",
     "bottom_tagline": "Bottom tagline",
     "brand_identity": "Brand Identity",
@@ -132,10 +141,14 @@
     "brand_tagline": "Brand Tagline",
     "breadcrumb": "Breadcrumb",
     "button": "Button",
+    "button_border_radius": "Button Border Radius",
+    "button_font_size": "Button Font Size",
     "button_label": "Button Label",
     "button_label_2": "Button label",
     "button_label_single_variant": "Button Label (single variant)",
     "button_link": "Button link",
+    "button_padding_h": "Button Padding H",
+    "button_padding_v": "Button Padding V",
     "button_radius": "Button Radius",
     "button_style": "Button Style",
     "button_url": "Button URL",
@@ -157,6 +170,8 @@
     "color": "Color",
     "color_scheme": "Color scheme",
     "colors": "Colors",
+    "column_gap_desktop": "Column Gap — Desktop",
+    "column_gap_mobile": "Column Gap — Mobile",
     "column_heading_size": "Column heading size",
     "columns_desktop": "Columns (Desktop)",
     "columns_desktop_2": "Columns — Desktop",
@@ -184,6 +199,7 @@
     "cta_heading": "CTA Heading",
     "cta_text": "CTA Text",
     "custom_image": "Custom Image",
+    "custom_image_height": "Custom Image Height",
     "custom_label": "Custom Label",
     "custom_link": "Custom Link",
     "custom_liquid": "Custom Liquid",
@@ -218,6 +234,7 @@
     "enable_shipping_link": "Enable Shipping Link",
     "end_date_and_time": "End Date & Time",
     "explore_label": "Explore Label",
+    "eyebrow_size": "Eyebrow Size",
     "eyebrow_text": "Eyebrow Text",
     "facebook_url": "Facebook URL",
     "favicon": "Favicon",
@@ -247,14 +264,22 @@
     "heading_font_size_2": "Heading Font Size",
     "heading_scale": "Heading Scale",
     "heading_size": "Heading size",
+    "heading_tag": "Heading Tag",
+    "heading_weight": "Heading Weight",
     "hide_empty_collections": "Hide empty collections",
     "home_label": "Home label",
     "hours": "Hours",
     "icon": "Icon",
     "image": "Image",
     "image_behavior": "Image behavior",
+    "image_border_radius": "Image Border Radius",
+    "image_column_flex_ratio_text_column": "Image column flex ratio. Text column is the inverse.",
+    "image_column_width_fr": "Image Column Width (fr)",
+    "image_height": "Image Height",
     "image_height_desktop": "Image height (desktop)",
     "image_height_mobile": "Image height (mobile)",
+    "image_position_desktop": "Image Position — Desktop",
+    "image_position_mobile": "Image Position — Mobile",
     "image_ratio": "Image Ratio",
     "input_corner_radius": "Input corner radius",
     "instagram_link": "Instagram Link",
@@ -265,9 +290,11 @@
     "layout_direction": "Layout direction",
     "leave_blank_to_use_the_collection": "Leave blank to use the collection title.",
     "leave_blank_to_use_the_collection_2": "Leave blank to use the collection description.",
+    "lets_customers_follow_your_store_in": "Lets customers follow your store in the Shop app.",
     "line_1": "Line 1",
     "line_2": "Line 2",
     "line_3": "Line 3",
+    "link": "Link",
     "location_label": "Location Label",
     "logo": "Logo",
     "logo_max_width": "Logo Max Width",
@@ -291,9 +318,12 @@
     "mobile_top_padding": "Mobile top padding",
     "navigation": "Navigation",
     "newsletter_email_placeholder": "Newsletter email placeholder",
+    "only_used_when_image_height_is": "Only used when Image Height is set to Custom.",
     "open_by_default": "Open by default",
     "open_first_item_by_default": "Open first item by default",
     "open_in_new_tab": "Open in new tab",
+    "open_in_new_tab_2": "Open in New Tab",
+    "open_link_in_new_tab": "Open link in new tab",
     "optional_gradient_background": "Optional gradient background",
     "options": "Options",
     "order_note_label": "Order Note Label",
@@ -363,8 +393,10 @@
     "show_breadcrumb": "Show breadcrumb",
     "show_currency_switcher": "Show currency switcher",
     "show_demo_placeholders_when_no_collections": "Show demo placeholders when no collections exist",
+    "show_divider_line": "Show Divider Line",
     "show_dynamic_checkout_buttons": "Show dynamic checkout buttons",
     "show_filter_sidebar": "Show Filter Sidebar",
+    "show_follow_on_shop_button": "Show \"Follow on Shop\" button",
     "show_map": "Show Map",
     "show_payment_icons": "Show payment icons",
     "show_product_count_badge": "Show product count badge",
@@ -398,7 +430,10 @@
     "tablet_height": "Tablet height",
     "tablet_height_2": "Tablet Height",
     "text": "Text",
+    "text_alignment": "Text Alignment",
     "text_colour": "Text Colour",
+    "text_column_width_fr": "Text Column Width (fr)",
+    "text_content": "Text Content",
     "text_style": "Text style",
     "thank_you_message": "Thank you message",
     "tiktok_url": "TikTok URL",
@@ -410,6 +445,7 @@
     "total_label": "Total Label",
     "typography": "Typography",
     "verified_purchase": "Verified Purchase",
+    "vertical_alignment": "Vertical Alignment",
     "vertical_padding": "Vertical Padding",
     "video": "Video",
     "youtube_url": "YouTube URL"
@@ -419,6 +455,11 @@
       "center": "Center",
       "left": "Left",
       "right": "Right"
+    },
+    "btn_style": {
+      "outline": "Outline",
+      "solid": "Solid",
+      "text": "Text / Link"
     },
     "button_style": {
       "rounded": "Rounded (24px)",
@@ -448,6 +489,11 @@
       "no_overlap": "No overlap",
       "overlap": "Overlap"
     },
+    "content_vertical_align": {
+      "center": "Middle",
+      "end": "Bottom",
+      "start": "Top"
+    },
     "default_view": {
       "grid": "Grid",
       "list": "List"
@@ -476,9 +522,31 @@
       "left": "Left",
       "right": "Right"
     },
+    "heading_tag": {
+      "h1": "H1",
+      "h2": "H2",
+      "h3": "H3"
+    },
+    "heading_weight": {
+      "400": "Regular",
+      "500": "Medium",
+      "600": "Semi-Bold",
+      "700": "Bold"
+    },
     "image_behavior": {
       "none": "None",
       "zoom_in": "Ambient zoom"
+    },
+    "image_height": {
+      "custom": "Custom Height",
+      "landscape": "Landscape (16:9)",
+      "natural": "Natural (auto)",
+      "portrait": "Portrait (3:4)",
+      "square": "Square (1:1)"
+    },
+    "image_position": {
+      "left": "Image Left",
+      "right": "Image Right"
     },
     "image_ratio": {
       "landscape": "Landscape (4:3)",
@@ -496,6 +564,10 @@
       "left": "Left",
       "right": "Right"
     },
+    "mobile_image_position": {
+      "image_first": "Image on Top",
+      "text_first": "Text on Top"
+    },
     "mobile_layout": {
       "slide": "Slide (swipe carousel)",
       "stack": "Stack (vertical)"
@@ -507,6 +579,11 @@
     "size": {
       "large": "Large",
       "small": "Small"
+    },
+    "text_alignment": {
+      "center": "Center",
+      "left": "Left",
+      "right": "Right"
     },
     "text_style": {
       "normal": "Normal text",

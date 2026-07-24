@@ -1,0 +1,55 @@
+{% comment %}
+  API-only section, no schema, not addable from the theme editor.
+
+  Renders the dropdown body for the header's search-as-you-type results.
+  Fetched by assets/lv-header.js at /search/suggest?q=...&section_id=predictive-search
+  whenever the header search field's value changes, then swapped into the
+  results container inside the search overlay in sections/header.liquid.
+
+  Shopify hands this template a `predictive_search` object (rather than
+  the usual `search` object) -- it's only populated in this fetch context.
+{% endcomment %}
+{% comment %} theme-check-disable UndefinedObject {% endcomment %}
+
+{%- if predictive_search.performed -%}
+  {%- assign lv_ps_products = predictive_search.resources.products -%}
+  {%- assign lv_ps_other = predictive_search.resources.collections | concat: predictive_search.resources.pages | concat: predictive_search.resources.articles -%}
+
+  {%- if lv_ps_products.size > 0 or lv_ps_other.size > 0 -%}
+    {%- if lv_ps_products.size > 0 -%}
+      <ul class="lv-predictive__group" role="list">
+        {%- for product in lv_ps_products -%}
+          <li class="lv-predictive__item">
+            <a class="lv-predictive__link" href="{{ product.url }}">
+              <span class="lv-predictive__thumb">
+                {%- if product.featured_image -%}
+                  {{ product.featured_image | image_url: width: 100 | image_tag: loading: 'lazy', alt: product.title }}
+                {%- endif -%}
+              </span>
+              <span class="lv-predictive__info">
+                <span class="lv-predictive__title">{{ product.title | escape }}</span>
+                <span class="lv-predictive__price">{{ product.price_min | money }}</span>
+              </span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if lv_ps_other.size > 0 -%}
+      <ul class="lv-predictive__group lv-predictive__group--text" role="list">
+        {%- for result in lv_ps_other -%}
+          <li class="lv-predictive__item">
+            <a class="lv-predictive__link lv-predictive__link--text" href="{{ result.url }}">{{ result.title | escape }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <a class="lv-predictive__view-all" href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}">
+      {{ 'search.view_all_results_html' | t: terms: predictive_search.terms }}
+    </a>
+  {%- else -%}
+    <p class="lv-predictive__empty">{{ 'search.no_results_html' | t: terms: predictive_search.terms }}</p>
+  {%- endif -%}
+{%- endif -%}

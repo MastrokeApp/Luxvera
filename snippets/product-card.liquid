@@ -72,6 +72,9 @@
         <span class="price-old">{{ product.compare_at_price | money }}</span>
       {%- endif -%}
     </div>
+    {%- if fv.unit_price_measurement -%}
+      <div class="price-unit">{{ fv.unit_price | money | unit_price_with_measurement: fv.unit_price_measurement }}</div>
+    {%- endif -%}
 
     <button
       class="add-to-cart product-card__atc"

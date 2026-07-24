@@ -222,6 +222,11 @@
   flex-wrap: wrap;
 }
 
+.lv-footer .lv-footer-follow-shop {
+  display: flex;
+  align-items: center;
+}
+
 /* Dynamic payment icons */
 .lv-footer .lv-pay-icons {
   display: flex;

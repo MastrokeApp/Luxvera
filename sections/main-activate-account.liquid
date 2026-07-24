@@ -1,0 +1,51 @@
+{% comment %}
+  Section: Main Activate Account
+
+  Reached via the account-invitation link a merchant sends a customer;
+  lets them set a password to activate the account, or decline the
+  invitation outright via the second submit button in the same form.
+{% endcomment %}
+
+{{ 'lv-account.css' | asset_url | stylesheet_tag }}
+
+<div class="lv-acct color-{{ section.settings.color_scheme }}" id="lv-activate-account-{{ section.id }}">
+  <div class="lv-acct-wrap lv-acct-wrap--narrow">
+    <h1 class="lv-acct-title">{{ 'customers.activate_account.title' | t }}</h1>
+    <p class="lv-acct-lede">{{ 'customers.activate_account.subtext' | t }}</p>
+
+    {%- form 'activate_customer_password', class: 'lv-acct-form' -%}
+      {%- if form.errors -%}
+        <div class="lv-acct-error">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+
+      <div class="lv-acct-field">
+        <label for="lv-activate-password-{{ section.id }}">{{ 'customers.activate_account.password' | t }}</label>
+        <input type="password" id="lv-activate-password-{{ section.id }}" name="customer[password]" autocomplete="new-password" required>
+      </div>
+
+      <div class="lv-acct-field">
+        <label for="lv-activate-password-confirm-{{ section.id }}">{{ 'customers.activate_account.password_confirm' | t }}</label>
+        <input type="password" id="lv-activate-password-confirm-{{ section.id }}" name="customer[password_confirmation]" autocomplete="new-password" required>
+      </div>
+
+      <div class="lv-acct-links lv-acct-links--end">
+        <button type="submit" name="decline" value="{{ 'customers.activate_account.decline' | t }}" class="lv-acct-link-btn">{{ 'customers.activate_account.decline' | t }}</button>
+        <button type="submit" class="lv-acct-submit">{{ 'customers.activate_account.submit' | t }}</button>
+      </div>
+    {%- endform -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:general.activate_account",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

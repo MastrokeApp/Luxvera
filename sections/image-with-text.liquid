@@ -1,0 +1,761 @@
+{% comment %}
+  Section: Image with Text
+
+  A two-column image + text block with configurable layout (image left/right,
+  mobile order, column widths), an optional eyebrow, heading, body, divider,
+  and button. Layout and typography come from settings; colors follow the
+  selected color scheme.
+{% endcomment %}
+
+<div
+  class="lv-iwt color-{{ section.settings.color_scheme }}"
+  id="lv-iwt-{{ section.id }}"
+  data-image-position="{{ section.settings.image_position }}"
+  data-mobile-position="{{ section.settings.mobile_image_position }}"
+  data-text-align="{{ section.settings.text_alignment }}"
+  data-image-height="{{ section.settings.image_height }}"
+  data-btn-style="{{ section.settings.btn_style }}"
+  style="
+    --lv-iwt-pt: {{ section.settings.padding_top }}px;
+    --lv-iwt-pb: {{ section.settings.padding_bottom }}px;
+    --lv-iwt-pt-m: {{ section.settings.padding_top_mobile }}px;
+    --lv-iwt-pb-m: {{ section.settings.padding_bottom_mobile }}px;
+    --lv-iwt-img-w: {{ section.settings.image_width }}fr;
+    --lv-iwt-text-w: {{ section.settings.text_width }}fr;
+    --lv-iwt-gap: {{ section.settings.column_gap }}px;
+    --lv-iwt-gap-t: {{ section.settings.column_gap | times: 0.7 | round }}px;
+    --lv-iwt-gap-m: {{ section.settings.mobile_gap }}px;
+    --lv-iwt-valign: {{ section.settings.content_vertical_align }};
+    --lv-iwt-img-radius: {{ section.settings.image_border_radius }}px;
+    --lv-iwt-img-height: {{ section.settings.image_custom_height }}px;
+    --lv-iwt-eyebrow-size: {{ section.settings.eyebrow_size }}px;
+    --lv-iwt-heading-size: {{ section.settings.heading_size }}px;
+    --lv-iwt-heading-size-m: {{ section.settings.heading_size | times: 0.7 | round }}px;
+    --lv-iwt-heading-weight: {{ section.settings.heading_weight }};
+    --lv-iwt-text-size: {{ section.settings.text_size }}px;
+    --lv-iwt-btn-size: {{ section.settings.btn_font_size }}px;
+    --lv-iwt-btn-pv: {{ section.settings.btn_padding_v }}px;
+    --lv-iwt-btn-ph: {{ section.settings.btn_padding_h }}px;
+    --lv-iwt-btn-radius: {{ section.settings.btn_border_radius }}px;
+  "
+>
+  <div class="lv-iwt-inner">
+
+    {%- comment -%} Image column {%- endcomment -%}
+    <div class="lv-iwt-image-wrap">
+      {%- if section.settings.image != blank -%}
+        <img
+          src="{{ section.settings.image | image_url: width: 1200 }}"
+          alt="{{ section.settings.image.alt | default: section.settings.heading | escape }}"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          loading="lazy"
+        >
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Text column {%- endcomment -%}
+    <div class="lv-iwt-text">
+      {%- if section.settings.show_divider -%}
+        <div class="lv-iwt-divider"></div>
+      {%- endif -%}
+
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="lv-iwt-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <{{ section.settings.heading_tag }} class="lv-iwt-heading">
+          {{ section.settings.heading | escape }}
+        </{{ section.settings.heading_tag }}>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="lv-iwt-text-body rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.btn_label != blank and section.settings.btn_url != blank -%}
+        <a
+          href="{{ section.settings.btn_url }}"
+          class="lv-iwt-btn"
+          {% if section.settings.btn_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+        >
+          {{- section.settings.btn_label | escape -}}
+        </a>
+      {%- endif -%}
+    </div>
+
+  </div>
+</div>
+
+{% stylesheet %}
+.lv-iwt {
+  padding-top: var(--lv-iwt-pt, 80px);
+  padding-bottom: var(--lv-iwt-pb, 80px);
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+.lv-iwt .lv-iwt-inner {
+  max-width: var(--lv-container-max, 1280px);
+  margin: 0 auto;
+  padding: 0 56px;
+  display: grid;
+  grid-template-columns: var(--lv-iwt-img-w, 1fr) var(--lv-iwt-text-w, 1fr);
+  gap: var(--lv-iwt-gap, 80px);
+  align-items: var(--lv-iwt-valign, center);
+}
+
+.lv-iwt[data-image-position="right"] .lv-iwt-inner {
+  direction: rtl;
+}
+
+.lv-iwt[data-image-position="right"] .lv-iwt-inner > * {
+  direction: ltr;
+}
+
+/* Image */
+.lv-iwt .lv-iwt-image-wrap {
+  overflow: hidden;
+  border-radius: var(--lv-iwt-img-radius, 8px);
+}
+
+.lv-iwt[data-image-height="square"] .lv-iwt-image-wrap {
+  aspect-ratio: 1 / 1;
+}
+
+.lv-iwt[data-image-height="portrait"] .lv-iwt-image-wrap {
+  aspect-ratio: 3 / 4;
+}
+
+.lv-iwt[data-image-height="landscape"] .lv-iwt-image-wrap {
+  aspect-ratio: 16 / 9;
+}
+
+.lv-iwt[data-image-height="custom"] .lv-iwt-image-wrap {
+  height: var(--lv-iwt-img-height, 500px);
+}
+
+.lv-iwt .lv-iwt-image-wrap img,
+.lv-iwt .lv-iwt-image-wrap .placeholder-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lv-iwt[data-image-height="natural"] .lv-iwt-image-wrap img,
+.lv-iwt[data-image-height="natural"] .lv-iwt-image-wrap .placeholder-svg {
+  height: auto;
+}
+
+/* Text */
+.lv-iwt .lv-iwt-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: var(--lv-iwt-valign, center);
+  align-items: flex-start;
+  text-align: left;
+}
+
+.lv-iwt[data-text-align="center"] .lv-iwt-text {
+  align-items: center;
+  text-align: center;
+}
+
+.lv-iwt[data-text-align="right"] .lv-iwt-text {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.lv-iwt .lv-iwt-eyebrow {
+  display: inline-block;
+  font-size: var(--lv-iwt-eyebrow-size, 12px);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: rgb(var(--color-foreground));
+  opacity: 0.7;
+  margin-bottom: 14px;
+}
+
+.lv-iwt .lv-iwt-heading {
+  font-size: var(--lv-iwt-heading-size, 36px);
+  font-weight: var(--lv-iwt-heading-weight, 700);
+  line-height: 1.2;
+  color: rgb(var(--color-foreground));
+  margin: 0 0 20px;
+}
+
+.lv-iwt .lv-iwt-text-body {
+  font-size: var(--lv-iwt-text-size, 16px);
+  line-height: 1.8;
+  color: rgb(var(--color-foreground));
+  opacity: 0.8;
+  margin: 0 0 32px;
+  max-width: 540px;
+}
+
+.lv-iwt .lv-iwt-divider {
+  width: 48px;
+  height: 2px;
+  background: rgb(var(--color-foreground));
+  opacity: 0.5;
+  margin-bottom: 24px;
+}
+
+.lv-iwt[data-text-align="center"] .lv-iwt-divider {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.lv-iwt[data-text-align="right"] .lv-iwt-divider {
+  margin-left: auto;
+}
+
+/* Button */
+.lv-iwt .lv-iwt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.2s;
+  white-space: nowrap;
+  cursor: pointer;
+  font-size: var(--lv-iwt-btn-size, 13px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: var(--lv-iwt-btn-pv, 14px) var(--lv-iwt-btn-ph, 32px);
+  border-radius: var(--lv-iwt-btn-radius, 4px);
+}
+
+/* Button — solid (default) */
+.lv-iwt[data-btn-style="solid"] .lv-iwt-btn {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border: 2px solid rgb(var(--color-button));
+}
+
+.lv-iwt[data-btn-style="solid"] .lv-iwt-btn:hover {
+  background: transparent;
+  color: rgb(var(--color-button));
+  transform: translateY(-2px);
+}
+
+/* Button — outline */
+.lv-iwt[data-btn-style="outline"] .lv-iwt-btn {
+  background: transparent;
+  color: rgb(var(--color-button));
+  border: 2px solid rgb(var(--color-button));
+}
+
+.lv-iwt[data-btn-style="outline"] .lv-iwt-btn:hover {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  transform: translateY(-2px);
+}
+
+/* Button — text / link */
+.lv-iwt[data-btn-style="text"] .lv-iwt-btn {
+  background: transparent;
+  color: rgb(var(--color-button));
+  border: none;
+  padding-left: 0;
+  padding-right: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .lv-iwt .lv-iwt-inner {
+    padding: 0 32px;
+    gap: var(--lv-iwt-gap-t, 56px);
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .lv-iwt {
+    padding-top: var(--lv-iwt-pt-m, 48px);
+    padding-bottom: var(--lv-iwt-pb-m, 48px);
+  }
+
+  .lv-iwt .lv-iwt-inner {
+    grid-template-columns: 1fr;
+    direction: ltr;
+    padding: 0 20px;
+    gap: var(--lv-iwt-gap-m, 32px);
+  }
+
+  .lv-iwt[data-mobile-position="text_first"] .lv-iwt-image-wrap {
+    order: 2;
+  }
+
+  .lv-iwt[data-mobile-position="text_first"] .lv-iwt-text {
+    order: 1;
+  }
+
+  .lv-iwt[data-mobile-position="image_first"] .lv-iwt-image-wrap {
+    order: 1;
+  }
+
+  .lv-iwt[data-mobile-position="image_first"] .lv-iwt-text {
+    order: 2;
+  }
+
+  .lv-iwt .lv-iwt-heading {
+    font-size: var(--lv-iwt-heading-size-m, 25px);
+  }
+
+  .lv-iwt .lv-iwt-text {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .lv-iwt .lv-iwt-divider {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .lv-iwt .lv-iwt-inner {
+    padding: 0 16px;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.image_with_text_2",
+  "tag": "section",
+  "class": "luxvera-image-with-text",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:labels.colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.layout"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "t:labels.image_position_desktop",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.image_position.left"
+        },
+        {
+          "value": "right",
+          "label": "t:options.image_position.right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "mobile_image_position",
+      "label": "t:labels.image_position_mobile",
+      "options": [
+        {
+          "value": "image_first",
+          "label": "t:options.mobile_image_position.image_first"
+        },
+        {
+          "value": "text_first",
+          "label": "t:options.mobile_image_position.text_first"
+        }
+      ],
+      "default": "image_first"
+    },
+    {
+      "type": "select",
+      "id": "content_vertical_align",
+      "label": "t:labels.vertical_alignment",
+      "options": [
+        {
+          "value": "start",
+          "label": "t:options.content_vertical_align.start"
+        },
+        {
+          "value": "center",
+          "label": "t:options.content_vertical_align.center"
+        },
+        {
+          "value": "end",
+          "label": "t:options.content_vertical_align.end"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "label": "t:labels.image_column_width_fr",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 1,
+      "info": "t:labels.image_column_flex_ratio_text_column"
+    },
+    {
+      "type": "range",
+      "id": "text_width",
+      "label": "t:labels.text_column_width_fr",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "t:labels.column_gap_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "t:labels.column_gap_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:labels.padding_top_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:labels.padding_bottom_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "t:labels.image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:labels.image"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "label": "t:labels.image_height",
+      "options": [
+        {
+          "value": "natural",
+          "label": "t:options.image_height.natural"
+        },
+        {
+          "value": "square",
+          "label": "t:options.image_height.square"
+        },
+        {
+          "value": "portrait",
+          "label": "t:options.image_height.portrait"
+        },
+        {
+          "value": "landscape",
+          "label": "t:options.image_height.landscape"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.image_height.custom"
+        }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "range",
+      "id": "image_custom_height",
+      "label": "t:labels.custom_image_height",
+      "min": 200,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "default": 500,
+      "info": "t:labels.only_used_when_image_height_is"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "t:labels.image_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "t:labels.text_content"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "t:labels.text_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.text_alignment.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.text_alignment.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.text_alignment.right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "t:labels.show_divider_line",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow_text",
+      "default": "Our Story"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "label": "t:labels.eyebrow_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "t:labels.heading_tag",
+      "options": [
+        {
+          "value": "h1",
+          "label": "t:options.heading_tag.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.heading_tag.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.heading_tag.h3"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Welcome to Luxvera Fashion"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "t:labels.heading_font_size_2",
+      "min": 18,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "t:labels.heading_weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "t:options.heading_weight.400"
+        },
+        {
+          "value": "500",
+          "label": "t:options.heading_weight.500"
+        },
+        {
+          "value": "600",
+          "label": "t:options.heading_weight.600"
+        },
+        {
+          "value": "700",
+          "label": "t:options.heading_weight.700"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:labels.body_text",
+      "default": "<p>Hey there, beautiful soul. We built this space from a feeling — a desire to create something that celebrates you, exactly as you are.</p>"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "t:labels.body_text_size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "t:labels.button"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "t:labels.button_label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "btn_url",
+      "label": "t:labels.button_url"
+    },
+    {
+      "type": "checkbox",
+      "id": "btn_new_tab",
+      "label": "t:labels.open_in_new_tab_2",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "btn_style",
+      "label": "t:labels.button_style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "t:options.btn_style.solid"
+        },
+        {
+          "value": "outline",
+          "label": "t:options.btn_style.outline"
+        },
+        {
+          "value": "text",
+          "label": "t:options.btn_style.text"
+        }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size",
+      "label": "t:labels.button_font_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_v",
+      "label": "t:labels.button_padding_v",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_h",
+      "label": "t:labels.button_padding_h",
+      "min": 12,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "btn_border_radius",
+      "label": "t:labels.button_border_radius",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.image_with_text_2",
+      "category": "t:general.image",
+      "settings": {
+        "image_position": "left",
+        "mobile_image_position": "image_first",
+        "heading": "Welcome to Luxvera Fashion",
+        "eyebrow": "Our Story",
+        "btn_label": "Shop Now"
+      }
+    }
+  ]
+}
+{% endschema %}

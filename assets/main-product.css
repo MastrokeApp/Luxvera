@@ -102,11 +102,15 @@
 }
 
 .lv-pdp-gallery__media img,
-.lv-pdp-gallery__media .placeholder-svg {
+.lv-pdp-gallery__media .placeholder-svg,
+.lv-pdp-gallery__media video,
+.lv-pdp-gallery__media iframe,
+.lv-pdp-gallery__media model-viewer {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  border: none;
   transition: opacity .2s ease;
 }
 
@@ -500,6 +504,84 @@
 
 .lv-pdp-buy__error.is-visible {
   display: block;
+}
+
+/* Pickup availability */
+.lv-pdp-pickup:empty {
+  display: none;
+}
+
+.lv-pickup {
+  border: 1px solid var(--lv-pdp-border);
+  border-radius: var(--lv-pdp-radius-sm);
+  padding: 12px 14px;
+}
+
+.lv-pickup__summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--lv-pdp-fg);
+  list-style: none;
+}
+
+.lv-pickup__summary::-webkit-details-marker {
+  display: none;
+}
+
+.lv-pickup__more {
+  color: var(--lv-pdp-muted);
+  text-decoration: underline;
+  margin-left: auto;
+}
+
+.lv-pickup__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2d9a55;
+  flex-shrink: 0;
+}
+
+.lv-pickup__dot.is-out {
+  background: var(--lv-pdp-sale);
+}
+
+.lv-pickup__list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--lv-pdp-border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lv-pickup__location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lv-pdp-fg);
+}
+
+.lv-pickup__status {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--lv-pdp-muted);
+}
+
+.lv-pickup__address {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-style: normal;
+  color: var(--lv-pdp-muted);
 }
 
 /* Trust */

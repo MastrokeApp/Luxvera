@@ -1,0 +1,68 @@
+{% comment %}
+  Section: Main Account
+
+  Customer account overview: greeting, order history table, and a link
+  through to the saved-addresses page. Requires a logged-in customer --
+  Shopify only serves the customers/account template to one.
+{% endcomment %}
+
+{{ 'lv-account.css' | asset_url | stylesheet_tag }}
+
+<div class="lv-acct color-{{ section.settings.color_scheme }}" id="lv-account-{{ section.id }}">
+  <div class="lv-acct-wrap">
+    <div class="lv-acct-header">
+      <h1 class="lv-acct-title">{{ 'customers.account.title' | t }}</h1>
+      <a class="lv-acct-logout" href="{{ routes.account_logout_url }}">{{ 'customers.account.logout' | t }}</a>
+    </div>
+
+    <div class="lv-acct-section">
+      <h2 class="lv-acct-section__heading">{{ 'customers.account.order_history' | t }}</h2>
+
+      {%- if customer.orders_count == 0 -%}
+        <p class="lv-acct-empty">{{ 'customers.account.no_orders' | t }}</p>
+      {%- else -%}
+        <table class="lv-acct-orders">
+          <thead>
+            <tr>
+              <th>{{ 'customers.account.order_number' | t }}</th>
+              <th>{{ 'customers.account.date' | t }}</th>
+              <th>{{ 'customers.account.payment_status' | t }}</th>
+              <th>{{ 'customers.account.fulfillment_status' | t }}</th>
+              <th>{{ 'customers.account.total' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for order in customer.orders -%}
+              <tr>
+                <td><a href="{{ order.customer_url }}">{{ order.name }}</a></td>
+                <td>{{ order.created_at | date: '%B %d, %Y' }}</td>
+                <td><span class="lv-acct-badge">{{ order.financial_status | capitalize }}</span></td>
+                <td><span class="lv-acct-badge">{{ order.fulfillment_status | default: 'Unfulfilled' | capitalize }}</span></td>
+                <td>{{ order.total_price | money }}</td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      {%- endif -%}
+    </div>
+
+    <div class="lv-acct-section">
+      <h2 class="lv-acct-section__heading">{{ 'customers.addresses.title' | t }}</h2>
+      <a class="lv-acct-submit" href="{{ routes.account_addresses_url }}">{{ 'customers.account.view_addresses' | t }}</a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:general.account",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

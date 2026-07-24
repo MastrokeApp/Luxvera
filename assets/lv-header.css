@@ -602,10 +602,14 @@
   display: flex;
 }
 
+.lv-search-panel {
+  width: 100%;
+  max-width: 600px;
+}
+
 .lv-search-box {
   background: rgb(var(--color-background));
   width: 100%;
-  max-width: 600px;
   display: flex;
   border-radius: 4px;
   overflow: hidden;
@@ -642,6 +646,105 @@
 
 .lv-search-close:hover {
   color: rgb(var(--color-foreground));
+}
+
+.lv-predictive {
+  background: rgb(var(--color-background));
+  border-radius: 4px;
+  margin-top: 8px;
+  max-height: 60vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+}
+
+.lv-predictive[hidden] {
+  display: none;
+}
+
+.lv-predictive__group {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+}
+
+.lv-predictive__group:first-child {
+  border-top: none;
+}
+
+.lv-predictive__link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+}
+
+.lv-predictive__link:hover {
+  background: rgba(var(--color-foreground), 0.06);
+}
+
+.lv-predictive__thumb {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(var(--color-foreground), 0.06);
+}
+
+.lv-predictive__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lv-predictive__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lv-predictive__title {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lv-predictive__price {
+  font-size: 12px;
+  opacity: .65;
+}
+
+.lv-predictive__link--text {
+  padding: 10px 8px;
+  font-size: 13px;
+}
+
+.lv-predictive__view-all {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  color: rgb(var(--color-foreground));
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+}
+
+.lv-predictive__empty {
+  margin: 0;
+  padding: 16px;
+  font-size: 13px;
+  text-align: center;
+  opacity: .65;
 }
 
 @media (max-width: 1024px) {

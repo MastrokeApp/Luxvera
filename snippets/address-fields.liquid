@@ -1,0 +1,69 @@
+{% doc %}
+  Renders the shared set of input fields for a customer address form
+  (used for both the "add new address" and "edit address" forms in
+  sections/main-addresses.liquid). The country select is filled from
+  Shopify's all_country_option_tags object; assets bundled with the
+  parent section read each option's data-provinces attribute to keep
+  the province select in sync with the chosen country.
+
+  @param {form} form - The active customer_address form object
+  @param {string} form_id - Unique suffix for this form's field ids (e.g. "new" or the address id)
+
+  @example
+  {% render 'address-fields', form: form, form_id: 'new' %}
+{% enddoc %}
+
+<div class="lv-acct-form-row">
+  <div class="lv-acct-field">
+    <label for="lv-address-first-name-{{ form_id }}">{{ 'customers.addresses.first_name' | t }}</label>
+    <input type="text" id="lv-address-first-name-{{ form_id }}" name="address[first_name]" value="{{ form.first_name | escape }}" autocomplete="given-name">
+  </div>
+  <div class="lv-acct-field">
+    <label for="lv-address-last-name-{{ form_id }}">{{ 'customers.addresses.last_name' | t }}</label>
+    <input type="text" id="lv-address-last-name-{{ form_id }}" name="address[last_name]" value="{{ form.last_name | escape }}" autocomplete="family-name">
+  </div>
+</div>
+
+<div class="lv-acct-field">
+  <label for="lv-address-company-{{ form_id }}">{{ 'customers.addresses.company' | t }}</label>
+  <input type="text" id="lv-address-company-{{ form_id }}" name="address[company]" value="{{ form.company | escape }}" autocomplete="organization">
+</div>
+
+<div class="lv-acct-field">
+  <label for="lv-address-address1-{{ form_id }}">{{ 'customers.addresses.address1' | t }}</label>
+  <input type="text" id="lv-address-address1-{{ form_id }}" name="address[address1]" value="{{ form.address1 | escape }}" autocomplete="address-line1">
+</div>
+
+<div class="lv-acct-field">
+  <label for="lv-address-address2-{{ form_id }}">{{ 'customers.addresses.address2' | t }}</label>
+  <input type="text" id="lv-address-address2-{{ form_id }}" name="address[address2]" value="{{ form.address2 | escape }}" autocomplete="address-line2">
+</div>
+
+<div class="lv-acct-form-row">
+  <div class="lv-acct-field">
+    <label for="lv-address-city-{{ form_id }}">{{ 'customers.addresses.city' | t }}</label>
+    <input type="text" id="lv-address-city-{{ form_id }}" name="address[city]" value="{{ form.city | escape }}" autocomplete="address-level2">
+  </div>
+  <div class="lv-acct-field">
+    <label for="lv-address-zip-{{ form_id }}">{{ 'customers.addresses.zip' | t }}</label>
+    <input type="text" id="lv-address-zip-{{ form_id }}" name="address[zip]" value="{{ form.zip | escape }}" autocomplete="postal-code">
+  </div>
+</div>
+
+<div class="lv-acct-form-row">
+  <div class="lv-acct-field">
+    <label for="lv-address-country-{{ form_id }}">{{ 'customers.addresses.country' | t }}</label>
+    <select id="lv-address-country-{{ form_id }}" name="address[country]" data-lv-country-select="{{ form_id }}" data-default="{{ form.country }}" autocomplete="country">
+      {{ all_country_option_tags }}
+    </select>
+  </div>
+  <div class="lv-acct-field" data-lv-province-wrap>
+    <label for="lv-address-province-{{ form_id }}">{{ 'customers.addresses.province' | t }}</label>
+    <select id="lv-address-province-{{ form_id }}" name="address[province]" data-lv-province-select="{{ form_id }}" data-default="{{ form.province }}" autocomplete="address-level1"></select>
+  </div>
+</div>
+
+<div class="lv-acct-field">
+  <label for="lv-address-phone-{{ form_id }}">{{ 'customers.addresses.phone' | t }}</label>
+  <input type="tel" id="lv-address-phone-{{ form_id }}" name="address[phone]" value="{{ form.phone | escape }}" autocomplete="tel">
+</div>
