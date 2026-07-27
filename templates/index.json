@@ -9,11 +9,6 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
-      "disabled": true,
-      "settings": {}
-    },
     "hero_banner_bHfJMf": {
       "type": "hero-banner",
       "blocks": {
@@ -457,7 +452,6 @@
     }
   },
   "order": [
-    "main",
     "hero_banner_bHfJMf",
     "announcement_ticker_qd9XG3",
     "category_grid_JzzWFE",
