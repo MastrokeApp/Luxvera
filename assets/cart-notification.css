@@ -239,7 +239,7 @@
 }
 
 .cart-notif__btn--continue:hover {
-  background: #eee;
+  background: #333;
 }
 
 /* No scroll on body when drawer open */
