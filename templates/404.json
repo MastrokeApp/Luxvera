@@ -11,7 +11,12 @@
   "sections": {
     "main": {
       "type": "404",
-      "settings": {}
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_search": true,
+        "padding_top": 100,
+        "padding_bottom": 100
+      }
     }
   },
   "order": [

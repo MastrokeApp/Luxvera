@@ -1,23 +1,198 @@
 {% comment %}
-  This section is used in the 404 template to render page shown when customers
-  enter an invalid store URL.
+  Section: 404 (Page not found)
+
+  Centered error state shown when a customer lands on an invalid store
+  URL. Optionally includes a search box so they can find what they were
+  actually looking for instead of just bouncing. Colors follow the
+  selected color scheme.
 
   https://shopify.dev/docs/storefronts/themes/architecture/templates/404
 {% endcomment %}
 
-<h1>{{ '404.title' | t }}</h1>
+<div
+  class="lv-404 color-{{ section.settings.color_scheme }}"
+  id="lv-404-{{ section.id }}"
+  style="
+    --lv-404-pt: {{ section.settings.padding_top }}px;
+    --lv-404-pb: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="lv-404-inner">
+    <p class="lv-404-code" aria-hidden="true">404</p>
+    <h1 class="lv-404-title">{{ '404.title' | t }}</h1>
+    <p class="lv-404-text">{{ '404.not_found' | t }}</p>
 
-<p>
-  {{ '404.not_found' | t }}
-</p>
+    {%- if section.settings.show_search -%}
+      <form action="{{ routes.search_url }}" method="get" role="search" class="lv-404-search">
+        <input
+          type="search"
+          name="q"
+          placeholder="{{ 'search.placeholder' | t }}"
+          class="lv-404-search__input"
+          aria-label="{{ 'accessibility.search' | t }}"
+        >
+        <button type="submit" class="lv-404-search__submit" aria-label="{{ 'search.submit' | t }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </form>
+    {%- endif -%}
 
-<a href="{{ routes.all_products_collection_url }}">
-  {{ '404.back_to_shopping' | t }}
-</a>
+    <a href="{{ routes.all_products_collection_url }}" class="lv-404-cta">{{ '404.back_to_shopping' | t }}</a>
+  </div>
+</div>
+
+{% stylesheet %}
+.lv-404 {
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  padding-top: var(--lv-404-pt, 100px);
+  padding-bottom: var(--lv-404-pb, 100px);
+}
+
+.lv-404-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.lv-404-code {
+  font-size: clamp(64px, 12vw, 120px);
+  font-weight: 700;
+  line-height: 1;
+  font-family: var(--lv-font-heading, serif);
+  color: rgb(var(--color-foreground));
+  opacity: 0.12;
+  margin: 0;
+}
+
+.lv-404-title {
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 700;
+  font-family: var(--lv-font-heading, serif);
+  margin: 8px 0 12px;
+}
+
+.lv-404-text {
+  font-size: 14px;
+  line-height: 1.7;
+  opacity: 0.7;
+  margin: 0 0 32px;
+}
+
+.lv-404-search {
+  display: flex;
+  gap: 0;
+  margin: 0 0 28px;
+  border: 1px solid rgba(var(--color-foreground), 0.2);
+  border-radius: var(--lv-btn-radius, 4px);
+  overflow: hidden;
+}
+
+.lv-404-search__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  padding: 13px 16px;
+  font-size: 14px;
+  color: rgb(var(--color-foreground));
+  font-family: var(--lv-font-body, sans-serif);
+}
+
+.lv-404-search__input::placeholder {
+  color: rgba(var(--color-foreground), 0.5);
+}
+
+.lv-404-search__submit {
+  border: none;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  padding: 0 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .2s;
+}
+
+.lv-404-search__submit:hover {
+  opacity: 0.85;
+}
+
+.lv-404-search__submit svg {
+  width: 18px;
+  height: 18px;
+}
+
+.lv-404-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 32px;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: var(--lv-btn-radius, 0px);
+  transition: opacity .2s;
+}
+
+.lv-404-cta:hover {
+  opacity: 0.82;
+}
+
+@media (max-width: 480px) {
+  .lv-404-inner {
+    padding: 0 16px;
+  }
+}
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.404",
-  "settings": []
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "t:labels.show_search_box",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 100
+    }
+  ]
 }
 {% endschema %}
