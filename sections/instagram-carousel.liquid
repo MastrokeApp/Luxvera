@@ -51,11 +51,14 @@
 
 #instagram-{{ section.id }} .insta-card {
   position: relative;
+  display: block;
   aspect-ratio: 3/4;
   overflow: hidden;
   border-radius: {{ section.settings.card_border_radius | default: 12 }}px;
   cursor: pointer;
   background: rgba(var(--color-foreground), 0.08);
+  text-decoration: none;
+  color: inherit;
 }
 
 #instagram-{{ section.id }} .insta-card img,
@@ -225,67 +228,69 @@
 
     <div class="swiper swiper-instagram-{{ section.id }}">
       <div class="swiper-wrapper">
+        {%- liquid
+          if section.settings.insta_link != blank
+            assign insta_card_tag = 'a'
+          else
+            assign insta_card_tag = 'div'
+          endif
+        -%}
         {%- for block in section.blocks -%}
           <div class="swiper-slide" {{ block.shopify_attributes }}>
-            <div class="insta-card">
-             {%- if block.settings.image != blank -%}
-
-  <img
-    src="{{ block.settings.image | image_url: width: 500, height: 660, crop: 'center' }}"
-    alt="{{ block.settings.alt | default: 'Instagram post' | escape }}"
-    width="500"
-    height="660"
-    loading="lazy"
-  >
-
-{%- elsif block.settings.video != blank -%}
-
-{% assign source = block.settings.video.sources | first %}
-
-<video
-  autoplay
-  muted
-  loop
-  playsinline
-  preload="none"
-  class="insta-video">
-  <source src="{{ source.url }}" type="{{ source.mime_type }}">
-</video>
-{% else %}
+            <{{ insta_card_tag }}
+              class="insta-card"
+              {%- if insta_card_tag == 'a' -%}
+                href="{{ section.settings.insta_link }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="{{ 'accessibility.view_on_instagram' | t }}"
+              {%- endif -%}
+            >
+              {%- if block.settings.image != blank -%}
+                <img
+                  src="{{ block.settings.image | image_url: width: 500, height: 660, crop: 'center' }}"
+                  alt="{{ block.settings.alt | default: 'Instagram post' | escape }}"
+                  width="500"
+                  height="660"
+                  loading="lazy"
+                >
+              {%- elsif block.settings.video != blank -%}
+                {%- assign source = block.settings.video.sources | first -%}
+                <video autoplay muted loop playsinline preload="none" class="insta-video">
+                  <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                </video>
+              {%- else -%}
                 {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
               {%- endif -%}
-{% if section.settings.insta_link != blank %}
-  <a
-    href="{{ section.settings.insta_link }}"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-{% endif %}
 
-<div class="insta-icon-badge">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-    <rect x="2" y="2" width="20" height="20" rx="5"/>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-  </svg>
-</div>
-
-{% if section.settings.insta_link != blank %}
-  </a>
-{% endif %}
+              <div class="insta-icon-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="2" y="2" width="20" height="20" rx="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                </svg>
+              </div>
               <div class="insta-play-btn">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <polygon points="5 3 19 12 5 21 5 3"/>
                 </svg>
               </div>
-            </div>
+            </{{ insta_card_tag }}>
           </div>
         {%- else -%}
           {%- for i in (1..8) -%}
             <div class="swiper-slide">
-              <div class="insta-card">
+              <{{ insta_card_tag }}
+                class="insta-card"
+                {%- if insta_card_tag == 'a' -%}
+                  href="{{ section.settings.insta_link }}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="{{ 'accessibility.view_on_instagram' | t }}"
+                {%- endif -%}
+              >
                 {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
-                <div class="insta-icon-badge">
+                <div class="insta-icon-badge" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <rect x="2" y="2" width="20" height="20" rx="5"/>
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
@@ -297,7 +302,7 @@
                     <polygon points="5 3 19 12 5 21 5 3"/>
                   </svg>
                 </div>
-              </div>
+              </{{ insta_card_tag }}>
             </div>
           {%- endfor -%}
         {%- endfor -%}
