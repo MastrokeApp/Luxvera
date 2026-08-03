@@ -9,6 +9,13 @@
  */
 {
   "sections": {
+    "newsletter_popup": {
+      "type": "newsletter-popup",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "popup_delay": 2
+      }
+    },
     "hero_banner_bHfJMf": {
       "type": "hero-banner",
       "blocks": {
@@ -452,6 +459,7 @@
     }
   },
   "order": [
+    "newsletter_popup",
     "hero_banner_bHfJMf",
     "announcement_ticker_qd9XG3",
     "category_grid_JzzWFE",

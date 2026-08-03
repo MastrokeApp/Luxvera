@@ -1,0 +1,406 @@
+{% comment %}
+  Section: Newsletter Popup
+
+  Welcome/signup overlay wired into templates/index.json only, so it can
+  never render on any other page. Shows once per visitor (remembered via
+  localStorage) after a configurable delay; if no image is set, the
+  content column expands to fill the whole box. Reuses the same
+  `customer` form + `contact[tags]=newsletter` mechanism as the footer's
+  newsletter block.
+{% endcomment %}
+
+{%- assign lv_popup_form_id = 'newsletter-popup-' | append: section.id -%}
+
+<div
+  class="lv-popup color-{{ section.settings.color_scheme }}"
+  id="lv-popup-{{ section.id }}"
+  data-delay="{{ section.settings.popup_delay }}"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="lv-popup-heading-{{ section.id }}"
+>
+  <div class="lv-popup__backdrop" data-lv-popup-close></div>
+
+  <div class="lv-popup__box{% if section.settings.image == blank %} lv-popup__box--no-image{% endif %}">
+    <button type="button" class="lv-popup__close" data-lv-popup-close aria-label="{{ 'accessibility.close' | t }}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <div class="lv-popup__content">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="lv-popup__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="lv-popup__heading" id="lv-popup-heading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.body_text != blank -%}
+        <div class="lv-popup__body rte">{{ section.settings.body_text }}</div>
+      {%- endif -%}
+
+      {%- form 'customer', id: lv_popup_form_id, class: 'lv-popup__form' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="lv-popup__success">{{ section.settings.success_message }}</p>
+        {%- else -%}
+          {%- if form.errors -%}
+            <div class="lv-popup__error">{{ form.errors | default_errors }}</div>
+          {%- endif -%}
+
+          <input type="hidden" name="contact[tags]" value="newsletter">
+
+          <div class="lv-popup__field">
+            <input
+              type="email"
+              name="contact[email]"
+              placeholder="{{ section.settings.email_placeholder | escape }}"
+              aria-label="{{ section.settings.email_placeholder | escape }}"
+              required
+            >
+            <button type="submit">{{ section.settings.button_label | escape }}</button>
+          </div>
+
+          {%- if section.settings.consent_text != blank -%}
+            <p class="lv-popup__consent">{{ section.settings.consent_text | escape }}</p>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+
+    {%- if section.settings.image != blank -%}
+      <div class="lv-popup__media">
+        {{ section.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(max-width: 640px) 0px, 440px', widths: '440,660,880,1200' }}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+.lv-popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.lv-popup.is-open {
+  display: flex;
+}
+
+.lv-popup__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.lv-popup__box {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  max-width: 880px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: rgb(var(--color-background));
+  border-radius: 6px;
+}
+
+.lv-popup__box--no-image {
+  grid-template-columns: 1fr;
+  max-width: 480px;
+}
+
+.lv-popup__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.lv-popup__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.lv-popup__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 56px 48px;
+  text-align: center;
+}
+
+.lv-popup__eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgb(var(--color-foreground));
+  opacity: 0.75;
+  margin: 0 0 8px;
+}
+
+.lv-popup__heading {
+  font-size: clamp(32px, 5vw, 44px);
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-family: var(--lv-font-heading, serif);
+  color: rgb(var(--color-foreground));
+  margin: 0 0 20px;
+}
+
+.lv-popup__body {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgb(var(--color-foreground));
+  opacity: 0.75;
+  margin: 0 0 28px;
+}
+
+.lv-popup__field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.lv-popup__field input {
+  width: 100%;
+  padding: 13px 16px;
+  font-size: 14px;
+  font-family: var(--lv-font-body, sans-serif);
+  color: rgb(var(--color-foreground));
+  background: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), 0.25);
+  border-radius: var(--lv-btn-radius, 4px);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.lv-popup__field button {
+  width: 100%;
+  padding: 14px 20px;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--lv-btn-radius, 4px);
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.lv-popup__field button:hover {
+  opacity: 0.85;
+}
+
+.lv-popup__consent {
+  font-size: 11px;
+  line-height: 1.6;
+  color: rgb(var(--color-foreground));
+  opacity: 0.55;
+  margin: 0;
+}
+
+.lv-popup__success {
+  font-size: 15px;
+  color: var(--color-success, #2a7a2a);
+  margin: 0;
+}
+
+.lv-popup__error {
+  font-size: 13px;
+  color: var(--color-error, #b3261e);
+  margin: 0 0 16px;
+}
+
+.lv-popup__media {
+  position: relative;
+}
+
+.lv-popup__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .lv-popup__box {
+    grid-template-columns: 1fr;
+  }
+
+  .lv-popup__media {
+    display: none;
+  }
+
+  .lv-popup__content {
+    padding: 48px 28px;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function initPopup(root) {
+    if (root.dataset.lvPopupInit) return;
+    root.dataset.lvPopupInit = '1';
+
+    var storageKey = 'lv-popup-dismissed-' + root.id;
+    var delay = (parseFloat(root.dataset.delay) || 0) * 1000;
+
+    function open() {
+      root.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close(remember) {
+      root.classList.remove('is-open');
+      document.body.style.overflow = '';
+      if (remember) {
+        try { localStorage.setItem(storageKey, '1'); } catch (e) {}
+      }
+    }
+
+    root.querySelectorAll('[data-lv-popup-close]').forEach(function (el) {
+      el.addEventListener('click', function () { close(true); });
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && root.classList.contains('is-open')) close(true);
+    });
+
+    if (root.querySelector('.lv-popup__success, .lv-popup__error')) {
+      if (root.querySelector('.lv-popup__success')) {
+        try { localStorage.setItem(storageKey, '1'); } catch (e) {}
+      }
+      open();
+      return;
+    }
+
+    var dismissed = false;
+    try { dismissed = localStorage.getItem(storageKey) === '1'; } catch (e) {}
+    if (dismissed) return;
+
+    setTimeout(open, delay);
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.lv-popup').forEach(initPopup);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) { initAll(e.target); });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:general.newsletter_popup",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:labels.image"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.text"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow_text",
+      "default": "Welcome to"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Luxvera"
+    },
+    {
+      "type": "richtext",
+      "id": "body_text",
+      "label": "t:labels.body_text",
+      "default": "<p>Sign up to receive <strong>15% off</strong> your first order, along with exclusive access to new collections, limited releases, and member-only offers.</p>"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.newsletter_form"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "t:labels.newsletter_email_placeholder",
+      "default": "Email"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:labels.button_label",
+      "default": "Unlock Now"
+    },
+    {
+      "type": "text",
+      "id": "consent_text",
+      "label": "t:labels.consent_text",
+      "default": "By signing up, you agree to receive marketing emails. View our Privacy Policy and Terms of Service for more info."
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "t:labels.thank_you_message",
+      "default": "Thanks for signing up! Your 15% off code is on its way to your inbox."
+    },
+    {
+      "type": "header",
+      "content": "t:labels.popup_timing"
+    },
+    {
+      "type": "range",
+      "id": "popup_delay",
+      "label": "t:labels.delay_seconds",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "default": 2
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.newsletter_popup"
+    }
+  ]
+}
+{% endschema %}
