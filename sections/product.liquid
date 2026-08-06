@@ -59,6 +59,32 @@
   <div class="lv-pdp-layout">
     {%- comment -%} ── MEDIA GALLERY ── {%- endcomment -%}
     <div class="lv-pdp-gallery" id="lv-pdp-gallery-{{ section.id }}">
+      {%- if product.media.size > 1 -%}
+        <div class="lv-pdp-gallery__rail">
+          <button type="button" class="lv-pdp-gallery__arrow lv-pdp-gallery__arrow--up" data-thumbs-arrow="up" aria-label="{{ 'accessibility.previous_images' | t }}" hidden>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M6 15l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <div class="lv-pdp-gallery__thumbs" role="list" aria-label="{{ 'accessibility.product_media' | t }}" data-thumbs-track>
+            {%- for media in product.media -%}
+              <button
+                type="button"
+                class="lv-pdp-gallery__thumb"
+                data-thumb-for="{{ media.id }}"
+                aria-current="{% if media == current_variant.featured_media or forloop.first and current_variant.featured_media == blank %}true{% else %}false{% endif %}"
+                aria-label="View image {{ forloop.index }}"
+              >
+                <img src="{{ media.preview_image | image_url: width: 150 }}" alt="" width="75" height="75" loading="lazy">
+              </button>
+            {%- endfor -%}
+          </div>
+
+          <button type="button" class="lv-pdp-gallery__arrow lv-pdp-gallery__arrow--down" data-thumbs-arrow="down" aria-label="{{ 'accessibility.next_images' | t }}">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      {%- endif -%}
+
       <div class="lv-pdp-gallery__main">
         {%- if product.media.size > 0 -%}
           {%- for media in product.media -%}
@@ -90,22 +116,6 @@
           <span class="lv-pdp-badge" data-sale-badge>{{ pct }}% Off</span>
         {%- endif -%}
       </div>
-
-      {%- if product.media.size > 1 -%}
-        <div class="lv-pdp-gallery__thumbs" role="list" aria-label="{{ 'accessibility.product_media' | t }}">
-          {%- for media in product.media -%}
-            <button
-              type="button"
-              class="lv-pdp-gallery__thumb"
-              data-thumb-for="{{ media.id }}"
-              aria-current="{% if media == current_variant.featured_media or forloop.first and current_variant.featured_media == blank %}true{% else %}false{% endif %}"
-              aria-label="View image {{ forloop.index }}"
-            >
-              <img src="{{ media.preview_image | image_url: width: 150 }}" alt="" width="75" height="75" loading="lazy">
-            </button>
-          {%- endfor -%}
-        </div>
-      {%- endif -%}
     </div>
 
     {%- comment -%} ── PRODUCT INFO (blocks) ── {%- endcomment -%}
@@ -572,6 +582,30 @@
         });
       });
     });
+
+    var thumbsTrack = root.querySelector('[data-thumbs-track]');
+    var arrowUp = root.querySelector('[data-thumbs-arrow="up"]');
+    var arrowDown = root.querySelector('[data-thumbs-arrow="down"]');
+
+    if (thumbsTrack && arrowUp && arrowDown) {
+      var scrollThumbs = function (direction) {
+        var firstThumb = thumbsTrack.querySelector('.lv-pdp-gallery__thumb');
+        var step = firstThumb ? firstThumb.offsetHeight + 8 : 72;
+        thumbsTrack.scrollBy({ top: direction * step * 3, behavior: 'smooth' });
+      };
+
+      var updateArrows = function () {
+        var maxScroll = thumbsTrack.scrollHeight - thumbsTrack.clientHeight;
+        arrowUp.hidden = thumbsTrack.scrollTop <= 0;
+        arrowDown.hidden = thumbsTrack.scrollTop >= maxScroll - 1;
+      };
+
+      arrowUp.addEventListener('click', function () { scrollThumbs(-1); });
+      arrowDown.addEventListener('click', function () { scrollThumbs(1); });
+      thumbsTrack.addEventListener('scroll', updateArrows);
+      window.addEventListener('resize', updateArrows);
+      updateArrows();
+    }
 
     var qty = document.getElementById('qty-' + SID);
     var minus = root.querySelector('[data-qty-minus]');
