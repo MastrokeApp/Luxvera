@@ -61,10 +61,11 @@
       --lv-font-heading:   '{{ font_heading_family }}', {{ font_heading_fallback }};
       --lv-font-body:      '{{ font_body_family }}',    {{ font_body_fallback }};
       --lv-font-body-size: {{ settings.font_body_size  | default: 15 }}px;
-      --lv-container-max:  {{ settings.container_max  | default: 1280 }}px;
+      --lv-container-max:  {{ settings.container_max  | default: 1920 }}px;
       --lv-grid-gutter:    {{ settings.grid_gutter    | default: 24 }}px;
       --lv-logo-width:     {{ settings.logo_width     | default: 140 }}px;
       --lv-btn-radius:     {{ btn_radius }};
+      --lv-color-bg-pro-info: {{ settings.color_bg_pro_info | default: '#F7FCD8' }};
     }
     body {
       font-family: var(--lv-font-body);

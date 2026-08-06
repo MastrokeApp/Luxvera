@@ -132,10 +132,10 @@
         "id": "container_max",
         "label": "t:labels.max_content_width",
         "min": 960,
-        "max": 1600,
+        "max": 1920,
         "step": 40,
         "unit": "px",
-        "default": 1280
+        "default": 1920
       },
       {
         "type": "range",
@@ -194,6 +194,16 @@
         "id": "enable_animations",
         "label": "t:labels.enable_scroll_animations",
         "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:labels.product_cards"
+      },
+      {
+        "type": "color",
+        "id": "color_bg_pro_info",
+        "label": "t:labels.product_info_background",
+        "default": "#F7FCD8"
       }
     ]
   },
@@ -201,14 +211,28 @@
     "name": "t:general.social_media",
     "settings": [
       {
+        "type": "checkbox",
+        "id": "enable_instagram",
+        "label": "t:labels.show_instagram_icon",
+        "default": true
+      },
+      {
         "type": "text",
         "id": "social_instagram_link",
         "label": "t:labels.instagram_url"
       },
       {
-        "type": "text",
-        "id": "social_facebook_link",
-        "label": "t:labels.facebook_url"
+        "type": "checkbox",
+        "id": "enable_facebook",
+        "label": "t:labels.show_facebook_icon",
+        "default": true
+      },
+      { "type": "text", "id": "social_facebook_link", "label": "t:labels.facebook_url" },
+      {
+        "type": "checkbox",
+        "id": "enable_pinterest",
+        "label": "t:labels.show_pinterest_icon",
+        "default": true
       },
       {
         "type": "text",
@@ -216,15 +240,19 @@
         "label": "t:labels.pinterest_url"
       },
       {
-        "type": "text",
-        "id": "social_tiktok_link",
-        "label": "t:labels.tiktok_url"
+        "type": "checkbox",
+        "id": "enable_tiktok",
+        "label": "t:labels.show_tiktok_icon",
+        "default": true
       },
+      { "type": "text", "id": "social_tiktok_link", "label": "t:labels.tiktok_url" },
       {
-        "type": "text",
-        "id": "social_youtube_link",
-        "label": "t:labels.youtube_url"
-      }
+        "type": "checkbox",
+        "id": "enable_youtube",
+        "label": "t:labels.show_youtube_icon",
+        "default": true
+      },
+      { "type": "text", "id": "social_youtube_link", "label": "t:labels.youtube_url" }
     ]
   },
   {

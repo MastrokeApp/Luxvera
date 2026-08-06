@@ -21,13 +21,15 @@
 }
 
 .lv-top-bar__inner {
-  max-width: 1280px;
+  max-width: var(--lv-container-max, 1920px);
   margin: 0 auto;
   padding: 0 56px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, .08);
+  padding-bottom: 7px;
 }
 
 .lv-top-bar a {
@@ -52,7 +54,7 @@
 }
 
 .lv-nav {
-  max-width: 1280px;
+  max-width: var(--lv-container-max, 1920px);
   margin: 0 auto;
   padding: 0 56px;
   height: var(--lv-hdr-height, 64px);

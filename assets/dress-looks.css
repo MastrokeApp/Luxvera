@@ -9,7 +9,7 @@
 }
 
 .dress-section .container {
-  max-width: var(--dl-container-max, 1280px);
+  max-width: var(--lv-container-max, 1920px);
   margin: 0 auto;
   padding: 0 56px;
 }
@@ -100,8 +100,7 @@
 }
 
 .dress-section .product-card--placeholder .product-info {
-  background: var(--lv-color-bg-alt, #f7f4f0);
-  border: 1px solid var(--lv-color-border, #e5e0d8);
+  background: var(--lv-color-bg-pro-info, #F7FCD8);
   border-top: none;
   border-radius: 0 0 6px 6px;
   padding: 12px 12px 14px;

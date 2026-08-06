@@ -7,7 +7,7 @@
 }
 
 .lv-footer .lv-footer-grid {
-  max-width: 1280px;
+  max-width: var(--lv-container-max, 1920px);
   margin: 0 auto;
   display: grid;
   grid-template-columns: 2fr 1.2fr 1.2fr 2fr;
@@ -16,7 +16,7 @@
 }
 
 .lv-footer .lv-footer-bottom {
-  max-width: 1280px;
+  max-width: var(--lv-container-max, 1920px);
   margin: 0 auto;
   padding: 20px 56px;
   border-top: 1px solid rgba(var(--color-foreground), 0.12);

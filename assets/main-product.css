@@ -15,7 +15,7 @@
   --lv-pdp-radius: 12px;
   --lv-pdp-radius-sm: 8px;
 
-  max-width: var(--lv-container-max, 1280px);
+  max-width: var(--lv-container-max, 1920px);
   margin: 0 auto;
   padding: 16px 56px 72px;
   background: var(--lv-pdp-bg);

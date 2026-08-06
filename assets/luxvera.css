@@ -32,7 +32,7 @@
   --spacing-xl:    40px;
   --spacing-2xl:   64px;
   --spacing-3xl:   96px;
-  --container-max:        1280px;
+  --container-max:  var(--lv-container-max, 1920px);
   --container-padding:    56px;
   --container-padding-md: 32px;
   --container-padding-sm: 20px;

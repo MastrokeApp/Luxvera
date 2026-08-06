@@ -9,18 +9,10 @@
   {%- if section.settings.show_top_bar -%}
   <div class="lv-top-bar color-{{ section.settings.top_bar_color_scheme }}">
     <div class="lv-top-bar__inner">
-   
       {% render 'currency-switcher', position: 'topbar' %}
-      <!-- Centre -->
-      <span>{{ section.settings.top_bar_center | default: 'Welcome to our Store' }}</span>
-      <!-- Right -->
-      {% if section.settings.top_bar_link_url != blank %}
-  <a href="{{ section.settings.top_bar_link_url }}">
-    {{ section.settings.top_bar_right | default: 'Sign In / Register' }}
-  </a>
-{% endif %}
     </div>
   </div>
+
   {%- endif -%}
 
   <!-- HEADER -->
@@ -33,42 +25,41 @@
       <div class="lv-nav__left">
         <button class="lv-hamburger" id="lvHamburger" aria-label="{{ 'accessibility.open_menu' | t }}" aria-expanded="false" aria-controls="lvMobileMenu"><span></span><span></span><span></span></button>
         <div class="lv-nav__links">
-         {%- for link in linklists[section.settings.menu].links -%}
-  {%- if link.links.size > 0 -%}
-
-    {%- assign is_mega = false -%}
-
-    {%- if section.settings.enable_mega_menu -%}
-      {%- assign is_mega = true -%}
-    {%- endif -%}
-
-    <div class="lv-nav__item" data-lv-dropdown>
-      <button
-        class="lv-nav__link"
-        aria-haspopup="true"
-        aria-expanded="false"
-      >
-        {{ link.title }}
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
-      </button>
-
-      {%- if is_mega -%}
-        {% render 'lv-menu-mega', link: link %}
-      {%- else -%}
-        {% render 'lv-menu-dropdown', link: link %}
-      {%- endif -%}
-    </div>
-
-  {%- else -%}
-
-    <div class="lv-nav__item">
-      <a class="lv-nav__link" href="{{ link.url }}">{{ link.title }}</a>
-    </div>
-
-  {%- endif -%}
-{%- endfor -%}
+          {%- for link in linklists[section.settings.menu].links -%}
+            {%- if forloop.first -%}
+              <div class="lv-nav__item lv-nav__item--home">
+                <a class="lv-nav__link lv-nav__link--icon" href="{{ link.url | default: routes.root_url }}" aria-label="{% if link.title != blank %}{{ link.title }}{% else %}{{ 'accessibility.home' | t }}{% endif %}">
+                  {{ 'icon-home.svg' | inline_asset_content }}
+                </a>
+              </div>
+            {%- elsif link.links.size > 0 -%}
+              {%- assign is_mega = false -%}
+              {%- if section.settings.enable_mega_menu -%}
+                {%- assign is_mega = true -%}
+              {%- endif -%}
+              <div class="lv-nav__item" data-lv-dropdown>
+                <button
+                  class="lv-nav__link"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  {{ link.title }}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+                {%- if is_mega -%}
+                  {% render 'lv-menu-mega', link: link %}
+                {%- else -%}
+                  {% render 'lv-menu-dropdown', link: link %}
+                {%- endif -%}
+              </div>
+            {%- else -%}
+              <div class="lv-nav__item">
+                <a class="lv-nav__link" href="{{ link.url }}">{{ link.title }}</a>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
         </div>
       </div>
 
@@ -191,23 +182,6 @@
       "id": "top_bar_color_scheme",
       "label": "t:labels.top_bar_color_scheme",
       "default": "scheme-1"
-    },
-    {
-      "type": "text",
-      "id": "top_bar_center",
-      "label": "t:labels.centre_text",
-      "default": "Welcome to Our Store"
-    },
-    {
-      "type": "text",
-      "id": "top_bar_right",
-      "label": "t:labels.right_link_text",
-      "default": "Sign In / Register"
-    },
-    {
-      "type": "url",
-      "id": "top_bar_link_url",
-      "label": "t:labels.right_link_url"
     },
     {
       "type": "header",
