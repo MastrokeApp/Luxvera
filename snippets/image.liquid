@@ -13,10 +13,11 @@
   @param {number} [width] - The highest resolution width of the image to be rendered
   @param {number} [height] - The highest resolution height of the image to be rendered
   @param {string} [crop] - The crop position of the image
+  @param {string} [alt] - Alt text; falls back to the image's own alt text, then to the shop name
 
   @example
-  {% render 'image', image: product.featured_image %}
-  {% render 'image', image: product.featured_image, url: product.url %}
+  {% render 'image', image: product.featured_image, alt: product.title %}
+  {% render 'image', image: product.featured_image, url: product.url, alt: product.title %}
   {% render 'image',
     class: 'product__image',
     image: product.featured_image,
@@ -24,6 +25,7 @@
     width: 1200,
     height: 800,
     crop: 'center',
+    alt: product.title,
   %}
 {% enddoc %}
 
@@ -37,6 +39,8 @@
   else
     assign wrapper = 'div'
   endif
+
+  assign resolved_alt = alt | default: image.alt | default: shop.name
 %}
 
 <{{ wrapper }}
@@ -45,7 +49,7 @@
     href="{{ url }}"
   {% endif %}
 >
-  {{ image | image_url: width: width, height: height, crop: crop | image_tag }}
+  {{ image | image_url: width: width, height: height, crop: crop | image_tag: alt: resolved_alt }}
 </{{ wrapper }}>
 
 {% stylesheet %}

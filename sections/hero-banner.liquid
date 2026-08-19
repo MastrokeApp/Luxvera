@@ -44,7 +44,7 @@
           {%- if block.settings.image != blank -%}
             <img
               src="{{ block.settings.image | image_url: width: 1920 }}"
-              alt="{{ block.settings.image.alt | escape }}"
+              alt="{{ block.settings.image.alt | default: block.settings.heading | default: shop.name | escape }}"
               class="hero-slide__img"
               loading="{% if is_first %}eager{% else %}lazy{% endif %}"
               {% if is_first %}fetchpriority="high"{% endif %}

@@ -85,7 +85,7 @@
         {%- if section.settings.image != blank -%}
           <img
             src="{{ section.settings.image | image_url: width: 1600 }}"
-            alt="{{ section.settings.image.alt | escape }}"
+            alt="{{ section.settings.image.alt | default: section.settings.heading | strip_html | default: shop.name | escape }}"
             loading="lazy"
             width="{{ section.settings.image.width }}"
             height="{{ section.settings.image.height }}"

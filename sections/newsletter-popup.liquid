@@ -68,8 +68,9 @@
     </div>
 
     {%- if section.settings.image != blank -%}
+      {%- assign popup_image_alt = section.settings.image.alt | default: section.settings.heading | default: shop.name -%}
       <div class="lv-popup__media">
-        {{ section.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(max-width: 640px) 0px, 440px', widths: '440,660,880,1200' }}
+        {{ section.settings.image | image_url: width: 1200 | image_tag: alt: popup_image_alt, loading: 'lazy', sizes: '(max-width: 640px) 0px, 440px', widths: '440,660,880,1200' }}
       </div>
     {%- endif -%}
   </div>
