@@ -1,0 +1,430 @@
+{% comment %}
+  Section: Newsletter
+
+  Newsletter signup section. Reuses the same Shopify customer form +
+  contact[tags]=newsletter mechanism used elsewhere in the theme.
+  Colors follow the selected color scheme.
+{% endcomment %}
+
+{%- assign lv_newsletter_form_id = 'newsletter-' | append: section.id -%}
+
+<section
+  class="lv-newsletter color-{{ section.settings.color_scheme }}"
+  id="lv-newsletter-{{ section.id }}"
+  style="
+    --lv-nl-pt: {{ section.settings.padding_top }}px;
+    --lv-nl-pb: {{ section.settings.padding_bottom }}px;
+    --lv-nl-pt-m: {{ section.settings.padding_top_mobile }}px;
+    --lv-nl-pb-m: {{ section.settings.padding_bottom_mobile }}px;
+    --lv-nl-content-width: {{ section.settings.content_width }}px;
+    --lv-nl-text-align: {{ section.settings.text_alignment }};
+    --lv-nl-heading-size: {{ section.settings.heading_size }}px;
+    --lv-nl-heading-size-m: {{ section.settings.heading_size_mobile }}px;
+  "
+>
+  <div class="lv-newsletter__container">
+
+    <div class="lv-newsletter__content">
+
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="lv-newsletter__eyebrow">
+          {{ section.settings.eyebrow | escape }}
+        </p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="lv-newsletter__heading">
+          {{ section.settings.heading | escape }}
+        </h2>
+      {%- endif -%}
+
+      {%- if section.settings.body_text != blank -%}
+        <div class="lv-newsletter__body rte">
+          {{ section.settings.body_text }}
+        </div>
+      {%- endif -%}
+
+      {%- form 'customer', id: lv_newsletter_form_id, class: 'lv-newsletter__form' -%}
+
+        <input type="hidden" name="contact[tags]" value="newsletter">
+
+        <div class="lv-newsletter__field">
+          <input
+            type="email"
+            name="contact[email]"
+            id="NewsletterEmail-{{ section.id }}"
+            placeholder="{{ section.settings.email_placeholder | escape }}"
+            aria-label="{{ section.settings.email_placeholder | escape }}"
+            autocomplete="email"
+            autocorrect="off"
+            autocapitalize="off"
+            required
+          >
+
+          <button type="submit" class="lv-newsletter__button">
+            {{ section.settings.button_label | escape }}
+          </button>
+        </div>
+
+        {%- if section.settings.consent_text != blank -%}
+          <p class="lv-newsletter__consent">
+            {{ section.settings.consent_text | escape }}
+          </p>
+        {%- endif -%}
+
+        {%- if form.posted_successfully? -%}
+          <p class="lv-newsletter__success">
+            {{ section.settings.success_message | escape }}
+          </p>
+        {%- else -%}
+          {%- if form.errors -%}
+            <div class="lv-newsletter__error">
+              {{ form.errors | default_errors }}
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+
+      {%- endform -%}
+
+    </div>
+
+  </div>
+</section>
+
+{% stylesheet %}
+.lv-newsletter {
+  padding-top: var(--lv-nl-pt, 60px);
+  padding-bottom: var(--lv-nl-pb, 60px);
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+.lv-newsletter__container {
+  max-width: var(--lv-container-max, 1920px);
+  margin: 0 auto;
+  padding: 0 56px;
+  box-sizing: border-box;
+}
+
+.lv-newsletter__content {
+  width: 100%;
+  max-width: var(--lv-nl-content-width, 600px);
+  margin: 0 auto;
+  text-align: var(--lv-nl-text-align, center);
+}
+
+.lv-newsletter__eyebrow {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgb(var(--color-foreground));
+  opacity: .75;
+}
+
+.lv-newsletter__heading {
+  margin: 0 0 20px;
+  font-size: var(--lv-nl-heading-size, 40px);
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-family: var(--lv-font-heading, serif);
+  color: rgb(var(--color-foreground));
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.lv-newsletter__body {
+  margin: 0 auto 28px;
+  max-width: 100%;
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgb(var(--color-foreground));
+  opacity: .75;
+}
+
+.lv-newsletter__body p {
+  margin: 0;
+}
+
+.lv-newsletter__form {
+  width: 100%;
+}
+
+.lv-newsletter__field {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.lv-newsletter__field input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-family: var(--lv-font-body, sans-serif);
+  color: rgb(var(--color-foreground));
+  background: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), .25);
+  border-radius: var(--lv-btn-radius, 4px);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.lv-newsletter__field input:focus {
+  border-color: rgb(var(--color-foreground));
+}
+
+.lv-newsletter__field input::placeholder {
+  color: rgb(var(--color-foreground));
+  opacity: .55;
+}
+
+.lv-newsletter__button {
+  flex: 0 0 auto;
+  min-width: 150px;
+  padding: 14px 20px;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--lv-btn-radius, 4px);
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.lv-newsletter__button:hover {
+  opacity: .85;
+}
+
+.lv-newsletter__consent {
+  margin: 12px 0 0;
+  font-size: 11px;
+  line-height: 1.6;
+  color: rgb(var(--color-foreground));
+  opacity: .55;
+}
+
+.lv-newsletter__success {
+  margin: 16px 0 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-success, #2a7a2a);
+  border-radius: var(--lv-btn-radius, 4px);
+}
+
+.lv-newsletter__error {
+  margin: 16px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-error, #b3261e);
+}
+
+/* Tablet */
+@media screen and (max-width: 1024px) {
+  .lv-newsletter__container {
+    padding: 0 32px;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 640px) {
+  .lv-newsletter {
+    padding-top: var(--lv-nl-pt-m, 40px);
+    padding-bottom: var(--lv-nl-pb-m, 40px);
+  }
+
+  .lv-newsletter__container {
+    padding: 0 20px;
+  }
+
+  .lv-newsletter__heading {
+    font-size: var(--lv-nl-heading-size-m, 30px);
+  }
+
+  .lv-newsletter__field {
+    flex-direction: column;
+  }
+
+  .lv-newsletter__button {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .lv-newsletter__container {
+    padding: 0 16px;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "tag": "section",
+  "class": "section-newsletter",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:labels.colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.text"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow_text",
+      "default": "Stay connected"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Join our newsletter"
+    },
+    {
+      "type": "richtext",
+      "id": "body_text",
+      "label": "t:labels.body_text",
+      "default": "<p>Sign up to receive exclusive access to new collections, limited releases, and member-only offers.</p>"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.newsletter_form"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "t:labels.newsletter_email_placeholder",
+      "default": "Email"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:labels.button_label",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "consent_text",
+      "label": "t:labels.consent_text",
+      "default": "By signing up, you agree to receive marketing emails."
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "t:labels.thank_you_message",
+      "default": "Thanks for signing up!"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.layout"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "t:labels.text_alignment",
+      "options": [
+        { "value": "left", "label": "t:options.text_alignment.left" },
+        { "value": "center", "label": "t:options.text_alignment.center" },
+        { "value": "right", "label": "t:options.text_alignment.right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content width",
+      "min": 400,
+      "max": 1920,
+      "step": 20,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Desktop heading size",
+      "min": 20,
+      "max": 70,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Mobile heading size",
+      "min": 20,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top_desktop",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom_desktop",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "t:labels.padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "t:labels.padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter"
+    }
+  ]
+}
+{% endschema %}

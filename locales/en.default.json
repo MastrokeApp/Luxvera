@@ -224,6 +224,9 @@
     "unavailable": "Unavailable",
     "home": "Home",
     "tax_included": "Tax included.",
+    "minimum_order": "Minimum order: {{ count }}",
+    "maximum_order": "Maximum order: {{ count }}",
+    "sold_in_multiples_of": "Sold in multiples of {{ count }}",
     "count": {
       "one": "{{ count }} item",
       "other": "{{ count }} items"

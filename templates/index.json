@@ -348,6 +348,25 @@
         "products_limit": 8
       }
     },
+    "one_of_a_kind_fiJkdT": {
+      "type": "one-of-a-kind",
+      "name": "t:general.one_of_a_kind",
+      "settings": {
+        "padding_top_desktop": 80,
+        "padding_bottom_desktop": 80,
+        "padding_top_mobile": 48,
+        "padding_bottom_mobile": 48,
+        "color_scheme": "",
+        "overlay_color": "#f7f4f0",
+        "overlay_opacity": 95,
+        "min_height": 460,
+        "heading": "One of A Kind,\nJust Like You",
+        "heading_size": 48,
+        "text": "We're here to empower women to feel confident and beautiful in their own skin",
+        "button_label": "Shop the Collection",
+        "button_url": ""
+      }
+    },
     "instagram_carousel_E6wRtz": {
       "type": "instagram-carousel",
       "name": "Instagram Carousel",
@@ -484,23 +503,190 @@
         "mobile_layout": "stack"
       }
     },
-    "one_of_a_kind_fiJkdT": {
-      "type": "one-of-a-kind",
-      "name": "t:general.one_of_a_kind",
+    "featured_product_T9jB7e": {
+      "type": "featured-product",
+      "blocks": {
+        "heading_ThwCre": {
+          "type": "heading",
+          "settings": {
+            "heading": "Featured Product"
+          }
+        },
+        "vendor_6GxNmD": {
+          "type": "vendor",
+          "settings": {}
+        },
+        "title_86mB78": {
+          "type": "title",
+          "settings": {
+            "placeholder_title": "Featured Product"
+          }
+        },
+        "price_DD74tK": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant_picker_YyzUgf": {
+          "type": "variant_picker",
+          "settings": {
+            "show_placeholder": true,
+            "placeholder_label": "Size"
+          }
+        },
+        "availability_7VUimK": {
+          "type": "availability",
+          "settings": {}
+        },
+        "quantity_BczbDL": {
+          "type": "quantity",
+          "settings": {}
+        },
+        "buy_buttons_QXFB9L": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "add_to_cart_text": "Add to cart",
+            "buy_now_text": "Buy it now"
+          }
+        },
+        "trust_nqQMGp": {
+          "type": "trust",
+          "settings": {
+            "line_1": "Free shipping over $75",
+            "line_2": "Easy 30-day returns",
+            "line_3": "Secure checkout"
+          }
+        },
+        "description_JAGXJX": {
+          "type": "description",
+          "settings": {
+            "heading": "Description",
+            "open_by_default": false
+          }
+        },
+        "collapsible_row_h4KXNM": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Shipping & Returns",
+            "content": "",
+            "page": "",
+            "open_by_default": false
+          }
+        },
+        "collapsible_row_jQdNfr": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Care Instructions",
+            "content": "",
+            "page": "",
+            "open_by_default": false
+          }
+        },
+        "share_iGiPLP": {
+          "type": "share",
+          "settings": {
+            "label": "Share"
+          }
+        }
+      },
+      "block_order": [
+        "heading_ThwCre",
+        "vendor_6GxNmD",
+        "title_86mB78",
+        "price_DD74tK",
+        "variant_picker_YyzUgf",
+        "availability_7VUimK",
+        "quantity_BczbDL",
+        "buy_buttons_QXFB9L",
+        "trust_nqQMGp",
+        "description_JAGXJX",
+        "collapsible_row_h4KXNM",
+        "collapsible_row_jQdNfr",
+        "share_iGiPLP"
+      ],
+      "name": "Featured Product",
       "settings": {
-        "padding_top_desktop": 80,
-        "padding_bottom_desktop": 80,
-        "padding_top_mobile": 48,
-        "padding_bottom_mobile": 48,
+        "product": "",
+        "padding_top_desktop": 40,
+        "padding_bottom_desktop": 40,
+        "padding_top_mobile": 24,
+        "padding_bottom_mobile": 24,
+        "color_scheme": ""
+      }
+    },
+    "newsletter_hg4G9E": {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "settings": {
         "color_scheme": "",
-        "overlay_color": "#f7f4f0",
-        "overlay_opacity": 95,
-        "min_height": 460,
-        "heading": "One of A Kind,\nJust Like You",
-        "heading_size": 48,
-        "text": "We're here to empower women to feel confident and beautiful in their own skin",
-        "button_label": "Shop the Collection",
-        "button_url": ""
+        "eyebrow": "Stay connected",
+        "heading": "Join our newsletter",
+        "body_text": "<p>Sign up to receive exclusive access to new collections, limited releases, and member-only offers.</p>",
+        "email_placeholder": "Email",
+        "button_label": "Subscribe",
+        "consent_text": "By signing up, you agree to receive marketing emails.",
+        "success_message": "Thanks for signing up!",
+        "text_alignment": "center",
+        "content_width": 600,
+        "heading_size": 40,
+        "heading_size_mobile": 30,
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      }
+    },
+    "richtext_dL6wyX": {
+      "type": "richtext",
+      "blocks": {
+        "eyebrow_D7yBiE": {
+          "type": "eyebrow",
+          "settings": {
+            "text": "Our story"
+          }
+        },
+        "heading_adP4tt": {
+          "type": "heading",
+          "settings": {
+            "heading": "Designed for your everyday",
+            "heading_tag": "h2",
+            "size": "medium"
+          }
+        },
+        "text_Xhmb8H": {
+          "type": "text",
+          "settings": {
+            "content": "<p>Discover thoughtfully designed pieces created to make every day feel effortless. Explore our collection and find something made for you.</p>"
+          }
+        },
+        "button_jGQj4V": {
+          "type": "button",
+          "settings": {
+            "label": "Shop now",
+            "link": "",
+            "open_in_new_tab": false
+          }
+        }
+      },
+      "block_order": [
+        "eyebrow_D7yBiE",
+        "heading_adP4tt",
+        "text_Xhmb8H",
+        "button_jGQj4V"
+      ],
+      "name": "Rich text",
+      "settings": {
+        "color_scheme": "",
+        "text_alignment": "center",
+        "max_width": 1920,
+        "content_width": 1920,
+        "text_size": 16,
+        "text_size_mobile": 14,
+        "button_radius": 2,
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "padding_top_mobile": 45,
+        "padding_bottom_mobile": 45
       }
     }
   },
@@ -517,6 +703,9 @@
     "one_of_a_kind_fiJkdT",
     "instagram_carousel_E6wRtz",
     "testimonials_KBbzUQ",
-    "trust_badges_Xyi6PV"
+    "trust_badges_Xyi6PV",
+    "featured_product_T9jB7e",
+    "newsletter_hg4G9E",
+    "richtext_dL6wyX"
   ]
 }
