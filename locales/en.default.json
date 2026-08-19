@@ -234,6 +234,7 @@
     "unavailable_at": "Pickup unavailable at {{ location }}",
     "ready_in": "Ready in {{ time }}",
     "unavailable": "Currently unavailable",
+    "view_store_info": "View store information",
     "more_locations": {
       "one": "+{{ count }} more location",
       "other": "+{{ count }} more locations"

@@ -743,7 +743,13 @@
 
       updateGallery(variant);
       updateQuantityRules(variant);
-      loadPickupAvailability(variant.id);
+
+      if (variant.available) {
+        loadPickupAvailability(variant.id);
+      } else if (pickupEl) {
+        pickupEl.innerHTML = '';
+        pickupLoadedFor = null;
+      }
 
       var url = new URL(window.location.href);
       url.searchParams.set('variant', variant.id);
@@ -882,7 +888,7 @@
     // hidden input, so we must not run the "no variant" (disable) path.
     if (root.querySelector('.lv-pdp-opt-input')) {
       updateUI(findVariant(getSelectedOptions()));
-    } else if (pickupEl) {
+    } else if (pickupEl && !(atcBtn && atcBtn.disabled)) {
       loadPickupAvailability(pickupEl.dataset.variantId);
     }
   }

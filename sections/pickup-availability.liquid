@@ -30,6 +30,8 @@
       </span>
       {%- if lv_pickup_other_count > 0 -%}
         <span class="lv-pickup__more">{{ 'pickup_availability.more_locations' | t: count: lv_pickup_other_count }}</span>
+      {%- else -%}
+        <span class="lv-pickup__more">{{ 'pickup_availability.view_store_info' | t }}</span>
       {%- endif -%}
     </summary>
 
