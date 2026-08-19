@@ -244,7 +244,11 @@
     "card": "Gift card",
     "expired": "This gift card has expired",
     "expires_on": "Expires on {{ expires_on }}",
-    "use_at_checkout": "Use this gift card at checkout"
+    "use_at_checkout": "Use this gift card at checkout",
+    "print": "Print gift card",
+    "copy_code": "Copy code",
+    "code_copied": "Copied!",
+    "your_balance": "Your gift card balance"
   },
   "password": {
     "title": "This shop is private",

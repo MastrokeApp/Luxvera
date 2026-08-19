@@ -1,28 +1,53 @@
 {% doc %}
-  Global CSS custom properties (fonts, colors, layout) derived from theme
-  settings. Rendered once per page, outside of theme.liquid's own <style>
-  block (used by layout/password.liquid and templates/gift_card.liquid,
-  which don't extend theme.liquid).
+  Global CSS custom properties (fonts, colors) derived from theme settings.
+  Rendered once per page, outside of theme.liquid's own <style> block (used
+  by layout/password.liquid and templates/gift_card.liquid, which don't
+  extend theme.liquid). Mirrors the --lv-font-*/--lv-color-* variables set
+  up in layout/theme.liquid so standalone pages share the same brand tokens.
 
   @example
   {% render 'css-variables' %}
 {% enddoc %}
 
+{%- liquid
+  assign font_heading_family = settings.font_heading.family | default: 'Playfair Display'
+  assign font_heading_fallback = settings.font_heading.fallback_families | default: 'serif'
+  assign font_body_family = settings.font_body.family | default: 'Josefin Sans'
+  assign font_body_fallback = settings.font_body.fallback_families | default: 'sans-serif'
+
+  assign btn_radius = '0px'
+  if settings.button_style == 'soft'
+    assign btn_radius = '4px'
+  elsif settings.button_style == 'rounded'
+    assign btn_radius = '24px'
+  endif
+-%}
+
 {% style %}
-  {% # Loads all font variantions with display: swap %}
-  {{ settings.type_primary_font | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ settings.font_heading | font_face: font_display: 'swap' }}
+  {{ settings.font_body | font_face: font_display: 'swap' }}
 
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    --font-primary--style: {{ settings.type_primary_font.style }};
-    --font-primary--weight: {{ settings.type_primary_font.weight }};
-    --page-width: {{ settings.max_page_width }};
-    --page-margin: {{ settings.min_page_margin }}px;
-    --color-background: {{ settings.background_color }};
-    --color-foreground: {{ settings.foreground_color }};
-    --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+    --lv-color-primary: {{ settings.color_primary | default: '#2a1f16' }};
+    --lv-color-accent: {{ settings.color_accent | default: '#c9a96e' }};
+    --lv-color-text: {{ settings.color_text | default: '#1a1a1a' }};
+    --lv-color-bg: {{ settings.color_bg | default: '#ffffff' }};
+    --lv-color-bg-alt: {{ settings.color_bg_alt | default: '#f7f4f0' }};
+    --lv-color-border: {{ settings.color_border | default: '#e5e0d8' }};
+    --lv-font-heading: '{{ font_heading_family }}', {{ font_heading_fallback }};
+    --lv-font-body: '{{ font_body_family }}', {{ font_body_fallback }};
+    --lv-font-body-size: {{ settings.font_body_size | default: 15 }}px;
+    --lv-btn-radius: {{ btn_radius }};
+  }
+
+  body {
+    font-family: var(--lv-font-body);
+    font-size: var(--lv-font-body-size);
+    color: var(--lv-color-text);
+    background: var(--lv-color-bg);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--lv-font-heading);
   }
 {% endstyle %}

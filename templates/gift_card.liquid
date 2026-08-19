@@ -1,23 +1,228 @@
+{% comment %}
+  Template: Gift card
+
+  Standalone printable page shown at the gift card's permanent URL
+  (shop.example.com/pages/gift-card/{code}) and linked from gift card
+  confirmation emails. Rendered with `{% layout none %}` so it never
+  inherits the storefront header/footer chrome -- styling comes entirely
+  from snippets/css-variables (brand fonts/colors) plus the styles below.
+{% endcomment %}
 {% layout none %}
 
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
   <head>
-    {% # Inlined CSS Variables %}
     {% render 'css-variables' %}
-
-    {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
-
-    {% # Social, title, etc. %}
     {% render 'meta-tags' %}
 
     {% style %}
-      main {
-        text-align: center;
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 48px 20px;
+        box-sizing: border-box;
       }
-      main img {
-        display: unset;
+
+      .lv-gc-logo {
+        display: inline-block;
+        margin-bottom: 32px;
+      }
+
+      .lv-gc-logo img {
+        display: block;
+        height: auto;
+        max-width: 160px;
+      }
+
+      .lv-gc-logo span {
+        font-family: var(--lv-font-heading);
+        font-size: 22px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .lv-gc-card {
+        width: 100%;
+        max-width: 480px;
+        border: 1px solid var(--lv-color-border);
+        border-radius: 12px;
+        background: var(--lv-color-bg-alt);
+        padding: 48px 36px;
+        text-align: center;
+        box-sizing: border-box;
+      }
+
+      .lv-gc-eyebrow {
+        margin: 0 0 8px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        opacity: 0.65;
+      }
+
+      .lv-gc-balance {
+        margin: 0 0 24px;
+        font-size: 52px;
+        line-height: 1;
+      }
+
+      .lv-gc-notice {
+        margin: 0 0 24px;
+        padding: 12px 16px;
+        border-radius: 6px;
+        background: rgba(179, 38, 30, 0.08);
+        color: #b3261e;
+        font-size: 13px;
+      }
+
+      .lv-gc-art {
+        margin: 0 0 24px;
+      }
+
+      .lv-gc-art img {
+        display: inline-block;
+        max-width: 220px;
+        height: auto;
+      }
+
+      .lv-gc-shop-name {
+        margin: 0 0 4px;
+        font-size: 22px;
+      }
+
+      .lv-gc-usage {
+        margin: 0 0 20px;
+        font-size: 13px;
+        opacity: 0.7;
+      }
+
+      .lv-gc-code-row {
+        display: flex;
+        align-items: stretch;
+        gap: 8px;
+        margin: 0 0 12px;
+      }
+
+      .lv-gc-code {
+        flex: 1;
+        margin: 0;
+        padding: 12px 14px;
+        border: 1px dashed var(--lv-color-border);
+        border-radius: var(--lv-btn-radius, 6px);
+        background: var(--lv-color-bg);
+        font-family: var(--lv-font-body);
+        font-size: 16px;
+        letter-spacing: 0.06em;
+      }
+
+      .lv-gc-copy {
+        flex: 0 0 auto;
+        padding: 0 18px;
+        border: 1px solid var(--lv-color-primary);
+        border-radius: var(--lv-btn-radius, 6px);
+        background: transparent;
+        color: var(--lv-color-primary);
+        font-family: var(--lv-font-body);
+        font-size: 13px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      .lv-gc-copy:hover {
+        opacity: 0.7;
+      }
+
+      .lv-gc-expiry {
+        margin: 0 0 24px;
+        font-size: 13px;
+        opacity: 0.7;
+      }
+
+      .lv-gc-wallet {
+        display: inline-block;
+        margin-bottom: 8px;
+      }
+
+      .lv-gc-wallet img {
+        display: block;
+        height: 44px;
+        width: auto;
+      }
+
+      .lv-gc-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .lv-gc-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 160px;
+        min-height: 46px;
+        padding: 0 24px;
+        border-radius: var(--lv-btn-radius, 6px);
+        font-family: var(--lv-font-body);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-decoration: none;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      .lv-gc-btn:hover {
+        opacity: 0.85;
+      }
+
+      .lv-gc-btn--primary {
+        border: none;
+        background: var(--lv-color-primary);
+        color: var(--lv-color-bg);
+      }
+
+      .lv-gc-btn--secondary {
+        border: 1px solid var(--lv-color-border);
+        background: transparent;
+        color: var(--lv-color-text);
+      }
+
+      @media screen and (max-width: 480px) {
+        .lv-gc-card {
+          padding: 36px 22px;
+        }
+
+        .lv-gc-balance {
+          font-size: 40px;
+        }
+
+        .lv-gc-code-row {
+          flex-direction: column;
+        }
+      }
+
+      @media print {
+        body {
+          padding: 0;
+          background: #fff;
+        }
+
+        .lv-gc-actions,
+        .lv-gc-copy {
+          display: none;
+        }
+
+        .lv-gc-card {
+          border: 1px solid #ccc;
+        }
       }
     {% endstyle %}
 
@@ -25,49 +230,105 @@
   </head>
 
   <body>
-    <main>
-      <div class="shopify-section">
-        <h1>{{ gift_card.balance | money }}</h1>
+    <a href="{{ routes.root_url }}" class="lv-gc-logo" aria-label="{{ shop.name }}">
+      {%- if settings.logo != blank -%}
+        {%- assign logo_height = 48 -%}
+        {%- assign logo_width = logo_height | times: settings.logo.aspect_ratio | round -%}
+        <img
+          src="{{ settings.logo | image_url: width: logo_width }}"
+          alt="{{ shop.name }}"
+          width="{{ logo_width }}"
+          height="{{ logo_height }}"
+        >
+      {%- else -%}
+        <span>{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
 
-        {% if gift_card.enabled == false or gift_card.expired %}
-          <p>{{ 'gift_card.expired' | t }}</p>
-        {% endif %}
+    <main class="lv-gc-card">
+      <p class="lv-gc-eyebrow">{{ 'gift_card.card' | t }}</p>
+      <h1 class="lv-gc-balance">{{ gift_card.balance | money }}</h1>
 
-        {% if gift_card.expires_on %}
-          {% assign expires_on = gift_card.expires_on | date: '%B %e, %Y' %}
-          <p>
-            {{ 'gift_card.expires_on' | t: expires_on: expires_on }}
-          </p>
-        {% endif %}
+      {%- if gift_card.enabled == false or gift_card.expired -%}
+        <p class="lv-gc-notice">{{ 'gift_card.expired' | t }}</p>
+      {%- endif -%}
 
-        <p>
-          {% if settings.logo %}
-            {{ settings.logo | image_url: width: 300 | image_tag: alt: shop.name }}
-          {% else %}
-            <img
-              src="{{ 'gift-card/card.svg' | shopify_asset_url }}"
-              alt="{{ 'gift_card.card' | t }}"
-              width="300"
-              height="200"
-            >
-          {% endif %}
-        </p>
+      <div class="lv-gc-art">
+        <img
+          src="{{ 'gift-card/card.svg' | shopify_asset_url }}"
+          alt=""
+          width="220"
+          height="146"
+        >
+      </div>
 
-        <h2>{{ shop.name }}</h2>
-        <p>{{ 'gift_card.use_at_checkout' | t }}</p>
-        <p>{{ gift_card.code | format_code }}</p>
+      <p class="lv-gc-shop-name">{{ shop.name }}</p>
+      <p class="lv-gc-usage">{{ 'gift_card.use_at_checkout' | t }}</p>
 
-        {% if gift_card.pass_url %}
-          <a href="{{ gift_card.pass_url }}">
-            <img
-              src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}"
-              alt="{{ 'gift_card.add_to_apple_wallet' | t }}"
-              width="200"
-              height="60"
-            >
-          </a>
-        {% endif %}
+      <div class="lv-gc-code-row">
+        <code class="lv-gc-code" id="lv-gc-code">{{ gift_card.code | format_code }}</code>
+        <button
+          type="button"
+          class="lv-gc-copy"
+          id="lv-gc-copy-btn"
+          data-code="{{ gift_card.code }}"
+          data-label-copy="{{ 'gift_card.copy_code' | t }}"
+          data-label-copied="{{ 'gift_card.code_copied' | t }}"
+        >
+          {{ 'gift_card.copy_code' | t }}
+        </button>
+      </div>
+
+      {%- if gift_card.expires_on -%}
+        {%- assign expires_on = gift_card.expires_on | date: '%B %e, %Y' -%}
+        <p class="lv-gc-expiry">{{ 'gift_card.expires_on' | t: expires_on: expires_on }}</p>
+      {%- endif -%}
+
+      {%- if gift_card.pass_url -%}
+        <a class="lv-gc-wallet" href="{{ gift_card.pass_url }}">
+          <img
+            src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}"
+            alt="{{ 'gift_card.add_to_apple_wallet' | t }}"
+            height="44"
+          >
+        </a>
+      {%- endif -%}
+
+      <div class="lv-gc-actions">
+        <button type="button" class="lv-gc-btn lv-gc-btn--secondary" id="lv-gc-print-btn">
+          {{ 'gift_card.print' | t }}
+        </button>
+        <a class="lv-gc-btn lv-gc-btn--primary" href="{{ routes.root_url }}">
+          {{ 'cart.start_shopping' | t }}
+        </a>
       </div>
     </main>
+
+    <script>
+      (function () {
+        'use strict';
+
+        var printBtn = document.getElementById('lv-gc-print-btn');
+        if (printBtn) {
+          printBtn.addEventListener('click', function () {
+            window.print();
+          });
+        }
+
+        var copyBtn = document.getElementById('lv-gc-copy-btn');
+        if (copyBtn && navigator.clipboard) {
+          copyBtn.addEventListener('click', function () {
+            navigator.clipboard.writeText(copyBtn.dataset.code || '').then(function () {
+              copyBtn.textContent = copyBtn.dataset.labelCopied;
+              setTimeout(function () {
+                copyBtn.textContent = copyBtn.dataset.labelCopy;
+              }, 2000);
+            });
+          });
+        } else if (copyBtn) {
+          copyBtn.hidden = true;
+        }
+      })();
+    </script>
   </body>
 </html>
