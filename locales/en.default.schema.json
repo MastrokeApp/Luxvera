@@ -301,6 +301,7 @@
     "logo": "Logo",
     "logo_max_width": "Logo Max Width",
     "logo_overrides_text": "Logo (overrides text)",
+    "logo_position": "Logo position",
     "lower_faster_higher_slower": "Lower = faster. Higher = slower.",
     "map": "Map",
     "max_content_width": "Max Content Width",
@@ -570,6 +571,10 @@
     "layout": {
       "image_first": "Image left",
       "text_first": "Image right"
+    },
+    "logo_position": {
+      "left": "Left",
+      "center": "Center"
     },
     "mobile_content_alignment": {
       "center": "Center",

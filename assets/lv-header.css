@@ -66,6 +66,21 @@
   gap: 16px;
 }
 
+.lv-nav--logo-left {
+  grid-template-columns: auto 1fr auto;
+}
+
+.lv-nav--logo-left .lv-logo {
+  grid-column: 1;
+  justify-self: start;
+  order: -1;
+}
+
+.lv-nav--logo-left .lv-nav__left {
+  grid-column: 2;
+  justify-self: start;
+}
+
 .lv-nav__left {
   display: flex;
   align-items: flex-start;
@@ -363,6 +378,7 @@
 
 .lv-logo img {
   max-height: 48px;
+  max-width: var(--lv-logo-width, 140px);
   width: auto;
   display: block;
 }
@@ -521,6 +537,14 @@
   letter-spacing: .18em;
   text-transform: uppercase;
   color: rgb(var(--color-foreground));
+}
+
+img.lv-drawer-logo {
+  max-width: 160px;
+  max-height: 36px;
+  width: auto;
+  height: auto;
+  display: block;
 }
 
 .lv-drawer-close {

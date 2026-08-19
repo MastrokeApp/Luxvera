@@ -21,7 +21,7 @@
     id="lv-header-{{ section.id }}"
     style="--lv-hdr-height:{{ section.settings.header_height }}px;"
   >
-    <nav class="lv-nav" aria-label="{{ 'accessibility.main_navigation' | t }}">
+    <nav class="lv-nav lv-nav--logo-{{ section.settings.logo_position }}" aria-label="{{ 'accessibility.main_navigation' | t }}">
       <div class="lv-nav__left">
         <button class="lv-hamburger" id="lvHamburger" aria-label="{{ 'accessibility.open_menu' | t }}" aria-expanded="false" aria-controls="lvMobileMenu"><span></span><span></span><span></span></button>
         <div class="lv-nav__links">
@@ -144,7 +144,20 @@
 <div class="lv-mobile-menu" id="lvMobileMenu" aria-hidden="true">
   <div class="lv-mobile-drawer color-{{ section.settings.header_color_scheme }}">
     <div class="lv-drawer-head">
-      <span class="lv-drawer-logo">{{ section.settings.brand_name | default: shop.name | upcase }}</span>
+      {%- if settings.logo != blank -%}
+        {%- assign drawer_logo_height = 36 -%}
+        {%- assign drawer_logo_width = drawer_logo_height | times: settings.logo.aspect_ratio | round -%}
+        <img
+          class="lv-drawer-logo"
+          src="{{ settings.logo | image_url: width: drawer_logo_width }}"
+          alt="{{ shop.name }}"
+          width="{{ drawer_logo_width }}"
+          height="{{ drawer_logo_height }}"
+          loading="lazy"
+        >
+      {%- else -%}
+        <span class="lv-drawer-logo">{{ section.settings.brand_name | default: shop.name | upcase }}</span>
+      {%- endif -%}
       <button class="lv-drawer-close" id="lvDrawerClose" aria-label="{{ 'accessibility.close_menu' | t }}">✕</button>
     </div>
     <nav class="lv-drawer-nav">
@@ -247,6 +260,16 @@
       "id": "header_color_scheme",
       "label": "t:labels.header_color_scheme",
       "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "logo_position",
+      "label": "t:labels.logo_position",
+      "options": [
+        { "value": "center", "label": "t:options.logo_position.center" },
+        { "value": "left", "label": "t:options.logo_position.left" }
+      ],
+      "default": "center"
     },
     {
       "type": "range",
