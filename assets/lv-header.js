@@ -109,7 +109,7 @@
   function closeAllDropdowns() {
     document.querySelectorAll('[data-lv-dropdown].open').forEach(function (el) {
       el.classList.remove('open');
-      var b = el.querySelector('.lv-nav__link');
+      var b = el.querySelector('.lv-nav__caret');
       if (b) b.setAttribute('aria-expanded', 'false');
     });
     closeAllSubmenus();
@@ -119,7 +119,7 @@
   function closeAllSubmenus() {
     document.querySelectorAll('[data-lv-submenu].open').forEach(function (el) {
       el.classList.remove('open', 'lv-dropdown__item--flip');
-      var b = el.querySelector('.lv-dropdown__link--has-sub');
+      var b = el.querySelector('.lv-dropdown__caret');
       if (b) b.setAttribute('aria-expanded', 'false');
     });
   }
@@ -149,9 +149,10 @@
   // drawer accordion toggles, and click-outside-closes-dropdown — all
   // in one document-level listener instead of one per menu item.
   function handleDocumentClick(e) {
-    var dropdownBtn = e.target.closest('[data-lv-dropdown] > .lv-nav__link');
+    var dropdownBtn = e.target.closest('[data-lv-dropdown] .lv-nav__caret');
     if (dropdownBtn) {
       e.stopPropagation();
+      e.preventDefault();
       var item = dropdownBtn.closest('[data-lv-dropdown]');
       var isOpen = item.classList.contains('open');
       closeAllDropdowns();
@@ -162,9 +163,10 @@
       return;
     }
 
-    var submenuBtn = e.target.closest('[data-lv-submenu] > .lv-dropdown__link--has-sub');
+    var submenuBtn = e.target.closest('[data-lv-submenu] .lv-dropdown__caret');
     if (submenuBtn) {
       e.stopPropagation();
+      e.preventDefault();
       var submenuItem = submenuBtn.closest('[data-lv-submenu]');
       var submenuIsOpen = submenuItem.classList.contains('open');
       // Close sibling submenus within the same dropdown panel before
@@ -174,7 +176,7 @@
         panel.querySelectorAll('[data-lv-submenu].open').forEach(function (el) {
           if (el !== submenuItem) {
             el.classList.remove('open', 'lv-dropdown__item--flip');
-            var siblingBtn = el.querySelector('.lv-dropdown__link--has-sub');
+            var siblingBtn = el.querySelector('.lv-dropdown__caret');
             if (siblingBtn) siblingBtn.setAttribute('aria-expanded', 'false');
           }
         });
@@ -189,20 +191,33 @@
     }
 
     var drawerToggle = e.target.closest('[data-lv-drawer-toggle]');
-    if (drawerToggle) {
-      var drawerItem = drawerToggle.closest('.lv-drawer-item');
-      var drawerIsOpen = drawerItem.classList.contains('open');
-      document.querySelectorAll('.lv-drawer-item.open').forEach(function (el) {
-        el.classList.remove('open');
-        var b = el.querySelector('[data-lv-drawer-toggle]');
-        if (b) b.setAttribute('aria-expanded', 'false');
-      });
-      if (!drawerIsOpen) {
-        drawerItem.classList.add('open');
-        drawerToggle.setAttribute('aria-expanded', 'true');
+      if (drawerToggle) {
+        e.stopPropagation();
+        e.preventDefault();
+        var drawerItem = drawerToggle.closest('.lv-drawer-item');
+        var drawerIsOpen = drawerItem.classList.contains('open');
+
+        // Only close sibling items at the SAME nesting level -- never an
+        // ancestor, or opening a nested item (e.g. BOHO inside Best Seller)
+        // would immediately collapse its own parent and hide it.
+        var parentList = drawerItem.parentElement;
+        Array.prototype.forEach.call(parentList.children, function (sibling) {
+          if (
+            sibling !== drawerItem &&
+            sibling.classList &&
+            sibling.classList.contains('lv-drawer-item') &&
+            sibling.classList.contains('open')
+          ) {
+            sibling.classList.remove('open');
+            var siblingBtn = sibling.querySelector('[data-lv-drawer-toggle]');
+            if (siblingBtn) siblingBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        drawerItem.classList.toggle('open', !drawerIsOpen);
+        drawerToggle.setAttribute('aria-expanded', String(!drawerIsOpen));
+        return;
       }
-      return;
-    }
 
     // Any other click closes open desktop dropdowns (preserves the
     // original document-level "click closes dropdowns" behaviour).
@@ -231,8 +246,27 @@
     var el = els.stickyHeader;
     if (!el) return;
 
-    // Prevent page jump
-    document.body.style.paddingTop = el.offsetHeight + 'px';
+    function updateOffset() {
+      document.body.style.paddingTop = el.offsetHeight + 'px';
+    }
+
+    updateOffset();
+
+    // Keep the offset in sync whenever the header's actual rendered
+    // height changes -- e.g. a wrapped nav row makes the header taller,
+    // or the window is resized across a breakpoint.
+    if (!el.dataset.lvResizeBound) {
+      el.dataset.lvResizeBound = '1';
+
+      if ('ResizeObserver' in window) {
+        var ro = new ResizeObserver(function () {
+          updateOffset();
+        });
+        ro.observe(el);
+      } else {
+        window.addEventListener('resize', updateOffset);
+      }
+    }
 
     var ticking = false;
     function applyScrollState() {

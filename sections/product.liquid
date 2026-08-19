@@ -241,7 +241,13 @@
 
             {%- when 'description' -%}
               {%- if product.description != blank -%}
-                <div class="lv-pdp-block lv-pdp-description rte" {{ block.shopify_attributes }}>{{ product.description }}</div>
+                <details class="lv-pdp-block lv-pdp-collapsible" {% if block.settings.open_by_default %}open{% endif %} {{ block.shopify_attributes }}>
+                  <summary class="lv-pdp-collapsible__summary">
+                    {{ block.settings.heading | default: 'Description' }}
+                    <svg class="lv-pdp-collapsible__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </summary>
+                  <div class="lv-pdp-collapsible__body rte">{{ product.description }}</div>
+                </details>
               {%- endif -%}
 
             {%- when 'collapsible_row' -%}
@@ -384,7 +390,13 @@
           </div>
 
           {%- if product.description != blank -%}
-            <div class="lv-pdp-block lv-pdp-description rte">{{ product.description }}</div>
+            <details class="lv-pdp-block lv-pdp-collapsible">
+              <summary class="lv-pdp-collapsible__summary">
+                Description
+                <svg class="lv-pdp-collapsible__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </summary>
+              <div class="lv-pdp-collapsible__body rte">{{ product.description }}</div>
+            </details>
           {%- endif -%}
         {%- endif -%}
       {%- endform -%}
@@ -787,7 +799,21 @@
     {
       "type": "description",
       "name": "t:general.description",
-      "limit": 1
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:labels.heading",
+          "default": "Description"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_by_default",
+          "label": "t:labels.open_by_default",
+          "default": false
+        }
+      ]
     },
     {
       "type": "collapsible_row",

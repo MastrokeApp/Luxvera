@@ -170,7 +170,9 @@ display: none;
     text-align: center;
     padding-top: 50px;
     padding-bottom: 50px;
+    text-transform: capitalize;
 }
+
 .shopify-policy__container h2 {
     line-height: 1.8em;
 }

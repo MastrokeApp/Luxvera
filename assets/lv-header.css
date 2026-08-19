@@ -53,66 +53,90 @@
   border-bottom: 1px solid rgba(0, 0, 0, .08);
 }
 
+/* Nav is a 3-column grid so the logo is always dead-center, regardless
+   of how much content sits in the left/right columns. */
 .lv-nav {
   max-width: var(--lv-container-max, 1920px);
   margin: 0 auto;
-  padding: 0 56px;
-  height: var(--lv-hdr-height, 64px);
-  display: flex;
+  padding: 8px 56px;
+  min-height: var(--lv-hdr-height, 64px);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
 }
 
 .lv-nav__left {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  flex: 1;
+  min-width: 0;
 }
 
 .lv-nav__links {
   display: flex;
+  flex-wrap: wrap; /* long menus / overflowing items drop to a 2nd row, contained in this column */
   align-items: center;
-  gap: 4px;
+  gap: 4px 4px;
+  row-gap: 4px;
+  min-width: 0;
 }
 
 .lv-nav__item {
   position: relative;
 }
 
+/* ===== Top-level link + caret split ===== */
+/* Label is a real <a> (navigable); caret is a separate sibling button
+   that opens the dropdown/mega menu. */
+
+.lv-nav__link-group {
+  display: flex;
+  align-items: center;
+}
+
 .lv-nav__link {
   display: flex;
   align-items: center;
-  gap: 4px;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: .07em;
   text-transform: uppercase;
   color: rgb(var(--color-foreground));
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: none;
-  background: none;
-  white-space: nowrap;
+  padding: 8px 4px 8px 12px;
+  border-radius: 4px 0 0 4px;
+  white-space: normal;
   cursor: pointer;
   text-decoration: none;
   transition: color .2s;
 }
 
-.lv-nav__link svg {
+.lv-nav__caret {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px 8px 4px;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  background: none;
+  color: rgb(var(--color-foreground));
+  cursor: pointer;
+  transition: color .2s;
+}
+
+.lv-nav__caret svg {
   width: 12px;
   height: 12px;
   transition: transform .2s;
   flex-shrink: 0;
 }
 
-.lv-nav__link:hover,
-.lv-nav__item.open > .lv-nav__link {
+.lv-nav__caret:hover,
+.lv-nav__item.open .lv-nav__caret {
   color: rgba(var(--color-foreground), .75);
 }
 
-.lv-nav__item.open > .lv-nav__link svg {
+.lv-nav__item.open .lv-nav__caret svg {
   transform: rotate(180deg);
 }
 
@@ -193,8 +217,6 @@
   color: rgb(var(--color-foreground));
 }
 
-/* Level-2 items with no children of their own — heading doubles as
-   the only link in that column, so give it normal link weight. */
 .lv-mega-heading--link {
   font-size: 13px;
   font-weight: 500;
@@ -204,7 +226,6 @@
   padding: 10px 18px;
 }
 
-/* Level 3 — items listed under each mega column heading */
 .lv-mega-list {
   list-style: none;
   margin: 0;
@@ -225,43 +246,62 @@
   color: rgb(var(--color-foreground));
 }
 
-/* Standard dropdown — level 2 items ------------------------------------- */
+/* ===== Standard dropdown — level 2 link + caret split ===== */
 
 .lv-dropdown__item {
   position: relative;
 }
 
-.lv-dropdown__link {
+.lv-dropdown__link-group {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  padding: 10px 18px;
-  font-size: 13px;
-  color: rgba(var(--color-foreground), .8);
-  background: none;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-  transition: background .2s, color .2s;
-  text-decoration: none;
 }
 
-.lv-dropdown__link:hover,
-.lv-dropdown__item.open > .lv-dropdown__link {
+.lv-dropdown__link {
+  display: block;
+  flex: 1;
+  padding: 10px 6px 10px 18px;
+  font-size: 13px;
+  color: rgba(var(--color-foreground), .8);
+  text-decoration: none;
+  transition: background .2s, color .2s;
+}
+
+.lv-dropdown__link:not(.lv-dropdown__link--has-sub) {
+  padding: 10px 18px;
+}
+
+.lv-dropdown__link:hover {
   background: rgba(var(--color-foreground), .05);
   color: rgb(var(--color-foreground));
 }
 
-.lv-dropdown__link--has-sub svg {
+.lv-dropdown__caret {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px 10px 6px;
+  border: none;
+  background: none;
+  color: rgba(var(--color-foreground), .8);
+  cursor: pointer;
+  transition: color .2s;
+}
+
+.lv-dropdown__caret svg {
   width: 12px;
   height: 12px;
   flex-shrink: 0;
   transition: transform .2s;
 }
 
-.lv-dropdown__item.open > .lv-dropdown__link--has-sub svg {
+.lv-dropdown__caret:hover,
+.lv-dropdown__item.open .lv-dropdown__caret {
+  color: rgb(var(--color-foreground));
+}
+
+.lv-dropdown__item.open .lv-dropdown__caret svg {
   transform: rotate(90deg);
 }
 
@@ -303,9 +343,6 @@
   color: rgb(var(--color-foreground));
 }
 
-/* Flyouts that would overflow the viewport on the right open to the
-   left instead — toggled by JS adding this class when it detects
-   an overflow. */
 .lv-dropdown__item.lv-dropdown__item--flip .lv-dropdown__flyout {
   left: auto;
   right: calc(100% + 6px);
@@ -507,45 +544,63 @@
   border-bottom: 1px solid rgba(var(--color-foreground), .08);
 }
 
-.lv-drawer-link {
+/* ===== Mobile drawer — link + caret split (levels 1 & 2) ===== */
+
+.lv-drawer-link-group {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 100%;
-  padding: 14px 20px;
+  justify-content: space-between;
+}
+
+.lv-drawer-link {
+  display: block;
+  flex: 1;
+  padding: 14px 8px 14px 20px;
   font-size: 14px;
   font-weight: 500;
   color: rgb(var(--color-foreground));
-  background: none;
-  border: none;
-  text-align: left;
   text-decoration: none;
   transition: color .2s;
-  cursor: pointer;
+}
+
+/* Leaf items (no children, rendered outside .lv-drawer-link-group)
+   keep full padding on both sides. */
+.lv-drawer-item > .lv-drawer-link {
+  padding: 14px 20px;
 }
 
 .lv-drawer-link:hover {
   color: rgba(var(--color-foreground), .75);
 }
 
-.lv-drawer-link svg {
+.lv-drawer-caret {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px 14px 8px;
+  border: none;
+  background: none;
+  color: rgb(var(--color-foreground));
+  cursor: pointer;
+}
+
+.lv-drawer-caret svg {
   width: 14px;
   height: 14px;
   transition: transform .25s;
   flex-shrink: 0;
 }
 
-.lv-drawer-item.open .lv-drawer-link svg {
+.lv-drawer-item.open > .lv-drawer-link-group .lv-drawer-caret svg {
   transform: rotate(180deg);
 }
 
 .lv-drawer-sub {
   display: none;
   background: rgba(var(--color-foreground), .04);
-  padding: 6px 0 10px;
 }
 
-.lv-drawer-item.open .lv-drawer-sub {
+.lv-drawer-item.open > .lv-drawer-sub {
   display: block;
 }
 
@@ -560,6 +615,17 @@
 
 .lv-drawer-sub a:hover {
   color: rgb(var(--color-foreground));
+}
+
+/* Level 3 — nested indentation inside the mobile drawer */
+.lv-drawer-sub .lv-drawer-item .lv-drawer-link,
+.lv-drawer-sub .lv-drawer-item .lv-drawer-link-group .lv-drawer-link {
+  padding-left: 32px;
+  font-size: 13px;
+}
+
+.lv-drawer-sub .lv-drawer-item .lv-drawer-sub a {
+  padding-left: 44px;
 }
 
 .lv-drawer-footer {
@@ -776,6 +842,10 @@
   .lv-hamburger {
     display: flex;
   }
+
+  .lv-logo img {
+    max-height: 32px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -787,5 +857,9 @@
     padding-top: 70px;
     padding-left: 16px;
     padding-right: 16px;
+  }
+
+  .lv-logo img {
+    max-height: 32px;
   }
 }

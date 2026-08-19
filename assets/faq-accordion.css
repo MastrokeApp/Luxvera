@@ -7,6 +7,9 @@
 
    Loaded by: sections/faq-accordion.liquid (via asset_url)
    ============================================================ */
+.section-faq {
+  padding: 0 56px 48px;
+}
 
 .faq-accordion-section {
   padding: var(--lv-faq-pt, 40px) 0 var(--lv-faq-pb, 40px);
@@ -100,7 +103,7 @@
 
 /* Open state background highlight */
 .faq-accordion-section .faq-item--open {
-  background-color: rgba(var(--color-foreground), 0.04);
+  background: var(--lv-color-bg-pro-info, #F7FCD8);
   margin: 0 -20px;
   padding: 0 20px;
 }

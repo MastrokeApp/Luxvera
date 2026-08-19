@@ -13,6 +13,13 @@
       "type": "newsletter-popup",
       "settings": {
         "color_scheme": "scheme-1",
+        "eyebrow": "Welcome to",
+        "heading": "Luxvera",
+        "body_text": "<p>Sign up to receive <strong>15% off</strong> your first order, along with exclusive access to new collections, limited releases, and member-only offers.</p>",
+        "email_placeholder": "Email",
+        "button_label": "Unlock Now",
+        "consent_text": "By signing up, you agree to receive marketing emails. View our Privacy Policy and Terms of Service for more info.",
+        "success_message": "Thanks for signing up! Your 15% off code is on its way to your inbox.",
         "popup_delay": 2
       }
     },
@@ -89,7 +96,7 @@
       ],
       "name": "Announcement Ticker",
       "settings": {
-        "background_color": "#F7FCD8",
+        "background_color": "#f7fcd8",
         "text_color": "#1a1a1a",
         "separator_color": "#999999",
         "separator_char": "|",
@@ -228,28 +235,48 @@
         "tab2_collection": ""
       }
     },
-    "image_text_section_Li4Vfp": {
-      "type": "image-text-section",
-      "name": "Image with text",
+    "image_with_text_PParEA": {
+      "type": "image-with-text",
+      "name": "t:general.image_with_text_2",
       "settings": {
-        "image_height_desktop": 280,
-        "image_height_mobile": 220,
-        "desktop_image_width": "medium",
-        "layout": "image_first",
-        "desktop_content_position": "middle",
-        "desktop_content_alignment": "left",
-        "content_layout": "no-overlap",
         "color_scheme": "",
-        "section_color_scheme": "",
-        "image_behavior": "none",
-        "heading": "Image with text",
-        "heading_size": 48,
-        "text": "Pair text with an image to focus on your chosen product, collection, or blog post.",
-        "button_label": "Shop now",
-        "button_link": "",
-        "mobile_content_alignment": "left",
-        "padding_top": 36,
-        "padding_bottom": 36
+        "image_position": "left",
+        "mobile_image_position": "image_first",
+        "content_vertical_align": "center",
+        "image_width": 1,
+        "text_width": 1,
+        "column_gap": 80,
+        "mobile_gap": 32,
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "padding_top_mobile": 48,
+        "padding_bottom_mobile": 48,
+        "image_height": "portrait",
+        "image_custom_height": 500,
+        "image_border_radius": 8,
+        "text_alignment": "left",
+        "show_divider": true,
+        "eyebrow": "Our Story",
+        "eyebrow_size": 12,
+        "heading_tag": "h2",
+        "heading": "Welcome to Luxvera Fashion",
+        "heading_size": 36,
+        "heading_weight": "700",
+        "text": "<p>Hey there, beautiful soul. We built this space from a feeling — a desire to create something that celebrates you, exactly as you are.</p>",
+        "text_size": 16,
+        "text_box_padding": 0,
+        "text_box_border_width": 0,
+        "text_box_border_color": "rgba(0,0,0,0)",
+        "text_box_border_radius": 0,
+        "text_box_shadow": false,
+        "btn_label": "Shop Now",
+        "btn_url": "",
+        "btn_new_tab": false,
+        "btn_style": "solid",
+        "btn_font_size": 13,
+        "btn_padding_v": 14,
+        "btn_padding_h": 32,
+        "btn_border_radius": 4
       }
     },
     "brand_story_jEbFwR": {
@@ -456,6 +483,25 @@
         "padding_bottom": 48,
         "mobile_layout": "stack"
       }
+    },
+    "one_of_a_kind_fiJkdT": {
+      "type": "one-of-a-kind",
+      "name": "t:general.one_of_a_kind",
+      "settings": {
+        "padding_top_desktop": 80,
+        "padding_bottom_desktop": 80,
+        "padding_top_mobile": 48,
+        "padding_bottom_mobile": 48,
+        "color_scheme": "",
+        "overlay_color": "#f7f4f0",
+        "overlay_opacity": 95,
+        "min_height": 460,
+        "heading": "One of A Kind,\nJust Like You",
+        "heading_size": 48,
+        "text": "We're here to empower women to feel confident and beautiful in their own skin",
+        "button_label": "Shop the Collection",
+        "button_url": ""
+      }
     }
   },
   "order": [
@@ -465,9 +511,10 @@
     "category_grid_JzzWFE",
     "sale_countdown_7RBL9T",
     "product_tabs_rBNiA9",
-    "image_text_section_Li4Vfp",
+    "image_with_text_PParEA",
     "brand_story_jEbFwR",
     "dress_looks_hpWcBt",
+    "one_of_a_kind_fiJkdT",
     "instagram_carousel_E6wRtz",
     "testimonials_KBbzUQ",
     "trust_badges_Xyi6PV"

@@ -1,35 +1,256 @@
 {% comment %}
-  This section is used in the blog template to render the blog page listing all
-  articles within a blog.
+  Section: Main Blog (listing page)
+
+  Renders the grid of articles for a blog, matching the site's design
+  system (container width, color scheme, card grid conventions used
+  across collection/product/image-with-text sections).
+
+  Needs: main-blog.css
 
   https://shopify.dev/docs/storefronts/themes/architecture/templates/blog
 {% endcomment %}
 
-<h1>{{ blog.title }}</h1>
+{{ 'main-blog.css' | asset_url | stylesheet_tag }}
 
-{% paginate blog.articles by 5 %}
-  {% for article in blog.articles %}
-    <div>
-      {% if article.image %}
-        {{ article.image | image_url: width: 1000 | image_tag }}
-      {% endif %}
-      <h2>
-        {{ article.title | link_to: article.url }}
-      </h2>
-      {% assign date = article.published_at | time_tag: format: 'date' %}
-      <p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
-      <p>{{ article.excerpt }}</p>
+<div
+  class="lv-blog color-{{ section.settings.color_scheme }}"
+  style="
+    --lv-blog-pt: {{ section.settings.padding_top }}px;
+    --lv-blog-pb: {{ section.settings.padding_bottom }}px;
+    --lv-blog-cols-d: {{ section.settings.columns_desktop }};
+    --lv-blog-cols-t: {{ section.settings.columns_tablet }};
+    --lv-blog-cols-m: {{ section.settings.columns_mobile }};
+    --lv-blog-gap: {{ section.settings.grid_gap }}px;
+    --lv-blog-radius: {{ section.settings.card_radius }}px;
+  "
+>
+  <div class="lv-blog__inner">
+
+    <div class="lv-blog__header">
+      <h1 class="lv-blog__title">{{ blog.title }}</h1>
     </div>
-  {% endfor %}
 
-  {%- if paginate.pages > 1 -%}
-    {{- paginate | default_pagination -}}
-  {%- endif -%}
-{% endpaginate %}
+    {%- if section.settings.enable_tag_filter and blog.tags.size > 0 -%}
+      <nav class="lv-blog__tags" aria-label="Filter by tag">
+        <a href="{{ blog.url }}" class="lv-blog__tag{% unless current_tags %} is-active{% endunless %}">
+          All
+        </a>
+        {%- for tag in blog.all_tags -%}
+          
+            href="{{ blog.url }}/tagged/{{ tag | handle }}"
+            class="lv-blog__tag{% if current_tags contains tag %} is-active{% endif %}"
+          >
+            {{ tag }}
+          </a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+
+    {% paginate blog.articles by section.settings.articles_per_page %}
+      {%- if blog.articles.size > 0 -%}
+        <div class="lv-blog__grid">
+          {%- for article in blog.articles -%}
+            <article class="lv-blog-card">
+              <a href="{{ article.url }}" class="lv-blog-card__media" aria-hidden="true" tabindex="-1">
+                {%- if article.image -%}
+                  <img
+                    src="{{ article.image | image_url: width: 800 }}"
+                    alt="{{ article.image.alt | escape | default: article.title }}"
+                    width="{{ article.image.width }}"
+                    height="{{ article.image.height }}"
+                    loading="lazy"
+                  >
+                {%- else -%}
+                  {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </a>
+
+              <div class="lv-blog-card__content">
+                <h2 class="lv-blog-card__title">
+                  <a href="{{ article.url }}">{{ article.title }}</a>
+                </h2>
+
+                <div class="lv-blog-card__meta">
+                  {%- if section.settings.show_date -%}
+                    <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                      {{ article.published_at | time_tag: format: 'date' }}
+                    </time>
+                  {%- endif -%}
+                  {%- if section.settings.show_author and article.author != blank -%}
+                    <span class="lv-blog-card__author">By {{ article.author }}</span>
+                  {%- endif -%}
+                  {%- if section.settings.show_comment_count and article.comments_enabled? -%}
+                    <span class="lv-blog-card__comments">
+                      {{ article.comments_count }} Comment{% if article.comments_count != 1 %}s{% endif %}
+                    </span>
+                  {%- endif -%}
+                </div>
+
+                {%- if section.settings.show_excerpt and article.excerpt != blank -%}
+                  <div class="lv-blog-card__excerpt rte">{{ article.excerpt }}</div>
+                {%- elsif section.settings.show_excerpt -%}
+                  <div class="lv-blog-card__excerpt rte">{{ article.content | strip_html | truncatewords: 30 }}</div>
+                {%- endif -%}
+
+                <a href="{{ article.url }}" class="lv-blog-card__link">
+                  Read more
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+              </div>
+            </article>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <p class="lv-blog__empty">No articles found.</p>
+      {%- endif -%}
+
+      {%- if paginate.pages > 1 -%}
+        <div class="lv-blog__pagination">
+          {{- paginate | default_pagination -}}
+        </div>
+      {%- endif -%}
+    {% endpaginate %}
+
+  </div>
+</div>
 
 {% schema %}
 {
   "name": "t:general.blog",
-  "settings": []
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:labels.colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.layout"
+    },
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "Articles per page",
+      "min": 3,
+      "max": 24,
+      "step": 1,
+      "default": 9
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (desktop)",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Columns (tablet)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns (mobile)",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Grid gap",
+      "min": 12,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card image radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Card content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_comment_count",
+      "label": "Show comment count",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Filtering"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_tag_filter",
+      "label": "Enable tag filtering",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ]
 }
 {% endschema %}

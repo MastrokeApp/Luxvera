@@ -1,11 +1,61 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-contact",
-      "settings": {}
+      "settings": {
+        "color_scheme": "",
+        "support_heading": "Customer Support",
+        "support_text": "About our products or just want to say hello? We're here to help! Our dedicated support team is ready to assist you.",
+        "email_label": "Email Us",
+        "email_value": "support@luxvera.com",
+        "phone_label": "Call Us",
+        "phone_value": "+1 (415) 555-0172",
+        "location_label": "Our Location",
+        "location_line1": "123 Fashion Boulevard, Suite 200",
+        "location_line2": "Los Angeles, California 90210",
+        "response_label": "Response Time",
+        "response_text": "We aim to respond to all inquiries within 24-48 business hours. For urgent matters, please contact us by phone during business hours.",
+        "cta_heading": "We’re Here for You",
+        "cta_text": "Your experience at Luxvera is extremely important to us and we are committed to providing excellent service. Really, truly, we are!",
+        "form_heading": "Get in Touch",
+        "btn_label": "Send Message",
+        "show_map": true,
+        "map_embed": ""
+      }
+    },
+    "page_banner_with_breadcrumb": {
+      "type": "page-banner-with-breadcrumb",
+      "name": "t:general.page_banner_breadcrumb",
+      "settings": {
+        "color_scheme": "",
+        "overlay_color": "#100a04",
+        "overlay_opacity": 70,
+        "height_desktop": 420,
+        "height_tablet": 320,
+        "height_mobile": 260,
+        "content_alignment": "flex-start",
+        "show_breadcrumbs": true,
+        "breadcrumb_home_label": "Home",
+        "heading": "Page heading",
+        "heading_size": 42,
+        "subtext": "",
+        "button_label": "Explore now",
+        "button_url": "",
+        "button_open_new_tab": false
+      }
     }
   },
   "order": [
+    "page_banner_with_breadcrumb",
     "main"
   ]
 }

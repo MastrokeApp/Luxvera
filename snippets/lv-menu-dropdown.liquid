@@ -1,8 +1,10 @@
 {% doc %}
   3-level standard (non-mega) dropdown panel for a top-level nav link.
 
-  Level 1 — `link`      : the trigger, rendered by the caller (lv-nav__link button)
-  Level 2 — link.links  : primary dropdown items
+  Level 1 — `link`      : the trigger, rendered by the caller (lv-nav__link-group)
+  Level 2 — link.links  : primary dropdown items. Each item's label is a real
+                           link; if it has its own children, a separate caret
+                           button (not the label) toggles the level-3 flyout.
   Level 3 — child.links : rendered as a nested flyout submenu that opens to the
                            right of its parent item when that item is toggled
 
@@ -16,10 +18,12 @@
   {%- for child in link.links -%}
     {%- if child.links.size > 0 -%}
       <div class="lv-dropdown__item" data-lv-submenu>
-        <button class="lv-dropdown__link lv-dropdown__link--has-sub" aria-haspopup="true" aria-expanded="false">
-          <span>{{ child.title }}</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 6 15 12 9 18"/></svg>
-        </button>
+        <span class="lv-dropdown__link-group">
+          <a class="lv-dropdown__link lv-dropdown__link--has-sub" href="{{ child.url }}">{{ child.title }}</a>
+          <button type="button" class="lv-dropdown__caret" aria-haspopup="true" aria-expanded="false" aria-label="Toggle submenu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+        </span>
         <div class="lv-dropdown__flyout">
           {%- for grandchild in child.links -%}
             <a href="{{ grandchild.url }}">{{ grandchild.title }}</a>

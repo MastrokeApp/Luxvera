@@ -12,7 +12,7 @@
 {%- assign lv_popup_form_id = 'newsletter-popup-' | append: section.id -%}
 
 <div
-  class="lv-popup color-{{ section.settings.color_scheme }}"
+  class="lv-popup"
   id="lv-popup-{{ section.id }}"
   data-delay="{{ section.settings.popup_delay }}"
   role="dialog"
@@ -21,7 +21,7 @@
 >
   <div class="lv-popup__backdrop" data-lv-popup-close></div>
 
-  <div class="lv-popup__box{% if section.settings.image == blank %} lv-popup__box--no-image{% endif %}">
+  <div class="lv-popup__box color-{{ section.settings.color_scheme }}{% if section.settings.image == blank %} lv-popup__box--no-image{% endif %}">
     <button type="button" class="lv-popup__close" data-lv-popup-close aria-label="{{ 'accessibility.close' | t }}">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
@@ -93,7 +93,7 @@
 .lv-popup__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .lv-popup__box {
@@ -105,12 +105,11 @@
   max-height: 90vh;
   overflow-y: auto;
   background: rgb(var(--color-background));
-  border-radius: 6px;
 }
 
 .lv-popup__box--no-image {
   grid-template-columns: 1fr;
-  max-width: 480px;
+  max-width: 520px;
 }
 
 .lv-popup__close {

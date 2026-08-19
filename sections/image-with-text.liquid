@@ -15,6 +15,7 @@
   data-text-align="{{ section.settings.text_alignment }}"
   data-image-height="{{ section.settings.image_height }}"
   data-btn-style="{{ section.settings.btn_style }}"
+  data-text-shadow="{{ section.settings.text_box_shadow }}"
   style="
     --lv-iwt-pt: {{ section.settings.padding_top }}px;
     --lv-iwt-pb: {{ section.settings.padding_bottom }}px;
@@ -33,6 +34,10 @@
     --lv-iwt-heading-size-m: {{ section.settings.heading_size | times: 0.7 | round }}px;
     --lv-iwt-heading-weight: {{ section.settings.heading_weight }};
     --lv-iwt-text-size: {{ section.settings.text_size }}px;
+    --lv-iwt-text-border-width: {{ section.settings.text_box_border_width }}px;
+    --lv-iwt-text-border-color: {{ section.settings.text_box_border_color }};
+    --lv-iwt-text-radius: {{ section.settings.text_box_border_radius }}px;
+    --lv-iwt-text-pad: {{ section.settings.text_box_padding }}px;
     --lv-iwt-btn-size: {{ section.settings.btn_font_size }}px;
     --lv-iwt-btn-pv: {{ section.settings.btn_padding_v }}px;
     --lv-iwt-btn-ph: {{ section.settings.btn_padding_h }}px;
@@ -77,8 +82,8 @@
       {%- endif -%}
 
       {%- if section.settings.btn_label != blank and section.settings.btn_url != blank -%}
-        <a
-          href="{{ section.settings.btn_url }}"
+        
+         <a href="{{ section.settings.btn_url }}"
           class="lv-iwt-btn"
           {% if section.settings.btn_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
         >
@@ -92,8 +97,8 @@
 
 {% stylesheet %}
 .lv-iwt {
-  padding-top: var(--lv-iwt-pt, 80px);
-  padding-bottom: var(--lv-iwt-pb, 80px);
+  padding-top: var(--lv-iwt-pt, 40px);
+  padding-bottom: var(--lv-iwt-pb, 40px);
   background: rgb(var(--color-background));
   color: rgb(var(--color-foreground));
 }
@@ -105,7 +110,7 @@
   display: grid;
   grid-template-columns: var(--lv-iwt-img-w, 1fr) var(--lv-iwt-text-w, 1fr);
   gap: var(--lv-iwt-gap, 80px);
-  align-items: var(--lv-iwt-valign, center);
+  align-items: stretch;
 }
 
 .lv-iwt[data-image-position="right"] .lv-iwt-inner {
@@ -158,6 +163,17 @@
   justify-content: var(--lv-iwt-valign, center);
   align-items: flex-start;
   text-align: left;
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--lv-iwt-text-pad, 0px);
+  border-width: var(--lv-iwt-text-border-width, 0px);
+  border-style: solid;
+  border-color: var(--lv-iwt-text-border-color, transparent);
+  border-radius: var(--lv-iwt-text-radius, 0px);
+}
+
+.lv-iwt[data-text-shadow="true"] .lv-iwt-text {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
 
 .lv-iwt[data-text-align="center"] .lv-iwt-text {
@@ -313,6 +329,7 @@
   .lv-iwt .lv-iwt-text {
     align-items: flex-start;
     text-align: left;
+    height: auto;
   }
 
   .lv-iwt .lv-iwt-divider {
@@ -352,14 +369,8 @@
       "id": "image_position",
       "label": "t:labels.image_position_desktop",
       "options": [
-        {
-          "value": "left",
-          "label": "t:options.image_position.left"
-        },
-        {
-          "value": "right",
-          "label": "t:options.image_position.right"
-        }
+        { "value": "left", "label": "t:options.image_position.left" },
+        { "value": "right", "label": "t:options.image_position.right" }
       ],
       "default": "left"
     },
@@ -368,14 +379,8 @@
       "id": "mobile_image_position",
       "label": "t:labels.image_position_mobile",
       "options": [
-        {
-          "value": "image_first",
-          "label": "t:options.mobile_image_position.image_first"
-        },
-        {
-          "value": "text_first",
-          "label": "t:options.mobile_image_position.text_first"
-        }
+        { "value": "image_first", "label": "t:options.mobile_image_position.image_first" },
+        { "value": "text_first", "label": "t:options.mobile_image_position.text_first" }
       ],
       "default": "image_first"
     },
@@ -384,18 +389,9 @@
       "id": "content_vertical_align",
       "label": "t:labels.vertical_alignment",
       "options": [
-        {
-          "value": "start",
-          "label": "t:options.content_vertical_align.start"
-        },
-        {
-          "value": "center",
-          "label": "t:options.content_vertical_align.center"
-        },
-        {
-          "value": "end",
-          "label": "t:options.content_vertical_align.end"
-        }
+        { "value": "start", "label": "t:options.content_vertical_align.start" },
+        { "value": "center", "label": "t:options.content_vertical_align.center" },
+        { "value": "end", "label": "t:options.content_vertical_align.end" }
       ],
       "default": "center"
     },
@@ -450,7 +446,7 @@
       "max": 160,
       "step": 4,
       "unit": "px",
-      "default": 80
+      "default": 40
     },
     {
       "type": "range",
@@ -460,7 +456,7 @@
       "max": 160,
       "step": 4,
       "unit": "px",
-      "default": 80
+      "default": 40
     },
     {
       "type": "range",
@@ -496,26 +492,11 @@
       "id": "image_height",
       "label": "t:labels.image_height",
       "options": [
-        {
-          "value": "natural",
-          "label": "t:options.image_height.natural"
-        },
-        {
-          "value": "square",
-          "label": "t:options.image_height.square"
-        },
-        {
-          "value": "portrait",
-          "label": "t:options.image_height.portrait"
-        },
-        {
-          "value": "landscape",
-          "label": "t:options.image_height.landscape"
-        },
-        {
-          "value": "custom",
-          "label": "t:options.image_height.custom"
-        }
+        { "value": "natural", "label": "t:options.image_height.natural" },
+        { "value": "square", "label": "t:options.image_height.square" },
+        { "value": "portrait", "label": "t:options.image_height.portrait" },
+        { "value": "landscape", "label": "t:options.image_height.landscape" },
+        { "value": "custom", "label": "t:options.image_height.custom" }
       ],
       "default": "portrait"
     },
@@ -549,18 +530,9 @@
       "id": "text_alignment",
       "label": "t:labels.text_alignment",
       "options": [
-        {
-          "value": "left",
-          "label": "t:options.text_alignment.left"
-        },
-        {
-          "value": "center",
-          "label": "t:options.text_alignment.center"
-        },
-        {
-          "value": "right",
-          "label": "t:options.text_alignment.right"
-        }
+        { "value": "left", "label": "t:options.text_alignment.left" },
+        { "value": "center", "label": "t:options.text_alignment.center" },
+        { "value": "right", "label": "t:options.text_alignment.right" }
       ],
       "default": "left"
     },
@@ -591,18 +563,9 @@
       "id": "heading_tag",
       "label": "t:labels.heading_tag",
       "options": [
-        {
-          "value": "h1",
-          "label": "t:options.heading_tag.h1"
-        },
-        {
-          "value": "h2",
-          "label": "t:options.heading_tag.h2"
-        },
-        {
-          "value": "h3",
-          "label": "t:options.heading_tag.h3"
-        }
+        { "value": "h1", "label": "t:options.heading_tag.h1" },
+        { "value": "h2", "label": "t:options.heading_tag.h2" },
+        { "value": "h3", "label": "t:options.heading_tag.h3" }
       ],
       "default": "h2"
     },
@@ -627,22 +590,10 @@
       "id": "heading_weight",
       "label": "t:labels.heading_weight",
       "options": [
-        {
-          "value": "400",
-          "label": "t:options.heading_weight.400"
-        },
-        {
-          "value": "500",
-          "label": "t:options.heading_weight.500"
-        },
-        {
-          "value": "600",
-          "label": "t:options.heading_weight.600"
-        },
-        {
-          "value": "700",
-          "label": "t:options.heading_weight.700"
-        }
+        { "value": "400", "label": "t:options.heading_weight.400" },
+        { "value": "500", "label": "t:options.heading_weight.500" },
+        { "value": "600", "label": "t:options.heading_weight.600" },
+        { "value": "700", "label": "t:options.heading_weight.700" }
       ],
       "default": "700"
     },
@@ -661,6 +612,52 @@
       "step": 1,
       "unit": "px",
       "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Text Box Style"
+    },
+    {
+      "type": "range",
+      "id": "text_box_padding",
+      "label": "Text box padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "text_box_border_width",
+      "label": "Text box border width",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "text_box_border_color",
+      "label": "Text box border color",
+      "default": "#00000000"
+    },
+    {
+      "type": "range",
+      "id": "text_box_border_radius",
+      "label": "Text box border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "text_box_shadow",
+      "label": "Add soft shadow to text box",
+      "default": false
     },
     {
       "type": "header",
@@ -688,18 +685,9 @@
       "id": "btn_style",
       "label": "t:labels.button_style",
       "options": [
-        {
-          "value": "solid",
-          "label": "t:options.btn_style.solid"
-        },
-        {
-          "value": "outline",
-          "label": "t:options.btn_style.outline"
-        },
-        {
-          "value": "text",
-          "label": "t:options.btn_style.text"
-        }
+        { "value": "solid", "label": "t:options.btn_style.solid" },
+        { "value": "outline", "label": "t:options.btn_style.outline" },
+        { "value": "text", "label": "t:options.btn_style.text" }
       ],
       "default": "solid"
     },

@@ -11,10 +11,48 @@
   "sections": {
     "main": {
       "type": "collections",
-      "settings": {}
+      "settings": {
+        "color_scheme": "",
+        "heading": "Collections For You To Explore",
+        "heading_size": 32,
+        "subtitle": "Everything you need to make your look fantastic",
+        "subtitle_size": 15,
+        "columns_desktop": 4,
+        "columns_tablet": 3,
+        "columns_mobile": "2",
+        "grid_gap": 12,
+        "image_ratio": "square",
+        "card_radius": 8,
+        "per_page": 12,
+        "show_count": false,
+        "hide_empty": true,
+        "show_placeholders": true,
+        "padding_top": 56,
+        "padding_bottom": 64
+      }
+    },
+    "one_of_a_kind": {
+      "type": "one-of-a-kind",
+      "name": "t:general.one_of_a_kind",
+      "settings": {
+        "padding_top_desktop": 80,
+        "padding_bottom_desktop": 80,
+        "padding_top_mobile": 48,
+        "padding_bottom_mobile": 48,
+        "color_scheme": "",
+        "overlay_color": "#f7f4f0",
+        "overlay_opacity": 95,
+        "min_height": 460,
+        "heading": "One of A Kind,\nJust Like You",
+        "heading_size": 48,
+        "text": "We're here to empower women to feel confident and beautiful in their own skin",
+        "button_label": "Shop the Collection",
+        "button_url": ""
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "one_of_a_kind"
   ]
 }
