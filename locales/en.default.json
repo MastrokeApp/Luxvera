@@ -253,8 +253,10 @@
   },
   "password": {
     "title": "This shop is private",
+    "opening_soon": "Opening soon",
     "password": "Password",
-    "enter": "Enter"
+    "enter": "Enter",
+    "admin_link": "Are you the store owner? Log in here"
   },
   "search": {
     "title": "Search",
