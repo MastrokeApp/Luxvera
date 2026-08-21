@@ -224,6 +224,7 @@
     "unavailable": "Unavailable",
     "home": "Home",
     "tax_included": "Tax included.",
+    "percent_off": "{{ percent }}% off",
     "count": {
       "one": "{{ count }} item",
       "other": "{{ count }} items"
