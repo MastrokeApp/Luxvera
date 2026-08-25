@@ -94,8 +94,14 @@
       <div class="lv-nav__right">
         <button class="lv-icon-btn" id="lvSearchBtn" aria-label="{{ 'accessibility.search' | t }}">
            {{ 'icon-search.svg' | inline_asset_content }} </button>
-        <a href="{{ routes.account_url }}" class="lv-icon-btn" aria-label="{{ 'accessibility.account' | t }}">
-          {{ 'icon-account.svg' | inline_asset_content }}</a>
+        {%- if shop.customer_accounts_enabled -%}
+          <shopify-account menu="customer-account-main-menu" class="lv-icon-btn">
+            <div slot="signed-out-avatar" aria-label="{{ 'accessibility.account' | t }}">{{ 'icon-account.svg' | inline_asset_content }}</div>
+          </shopify-account>
+        {%- else -%}
+          <a href="{{ routes.account_url }}" class="lv-icon-btn" aria-label="{{ 'accessibility.account' | t }}">
+            {{ 'icon-account.svg' | inline_asset_content }}</a>
+        {%- endif -%}
 
 {% if settings.cart_type == 'page' %}
 
@@ -199,7 +205,16 @@
     </nav>
     <div class="lv-drawer-footer">
       {% render 'currency-switcher', position: 'mobile' %}
-      <a href="{{ routes.account_url }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>{{ 'header.my_account' | t }}</a>
+      {%- if shop.customer_accounts_enabled -%}
+        <shopify-account menu="customer-account-main-menu" class="lv-drawer-account">
+          <div slot="signed-out-avatar" class="lv-drawer-account__signed-out">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            {{ 'header.my_account' | t }}
+          </div>
+        </shopify-account>
+      {%- else -%}
+        <a href="{{ routes.account_url }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>{{ 'header.my_account' | t }}</a>
+      {%- endif -%}
     </div>
   </div>
 </div>
