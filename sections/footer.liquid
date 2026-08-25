@@ -170,6 +170,9 @@
       {% endfor %}
       {{ footer_brand_name }} {{ section.settings.bottom_tagline | default: 'Fashion. All rights reserved.' }}
     </p>
+     <p class="footer__powered-by">
+    {{ powered_by_link }}
+  </p>
 
     <div class="lv-footer-bottom-right">
       {%- if section.settings.show_follow_on_shop and shop -%}
@@ -259,7 +262,7 @@
       "type": "color_scheme",
       "id": "color_scheme",
       "label": "t:labels.color_scheme",
-      "default": "scheme-3"
+      "default": "scheme-2"
     },
     {
       "type": "text",
@@ -377,7 +380,8 @@
         {
           "type": "link_list",
           "id": "menu",
-          "label": "t:labels.menu"
+          "label": "t:labels.menu",   
+          "default": "footer"
         }
       ]
     },
@@ -418,25 +422,7 @@
       ]
     }
   ],
-  "max_blocks": 8,
-  "presets": [
-    {
-      "name": "t:general.footer",
-      "blocks": [
-        {
-          "type": "brand"
-        },
-        {
-          "type": "menu"
-        },
-        {
-          "type": "menu"
-        },
-        {
-          "type": "newsletter"
-        }
-      ]
-    }
-  ]
+  "max_blocks": 8
+
 }
 {% endschema %}

@@ -113,7 +113,7 @@
 
         {%- if current_variant.compare_at_price > current_variant.price -%}
           {%- assign pct = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round -%}
-          <span class="lv-pdp-badge" data-sale-badge>{{ 'products.percent_off' | t: percent: pct }}</span>
+          <span class="lv-pdp-badge" data-sale-badge>{{ pct }}% Off</span>
         {%- endif -%}
       </div>
     </div>
@@ -829,7 +829,7 @@
           "type": "text",
           "id": "heading",
           "label": "t:labels.heading",
-          "default": "Shipping and returns"
+          "default": "Shipping & Returns"
         },
         {
           "type": "richtext",
@@ -936,7 +936,7 @@
         {
           "type": "collapsible_row",
           "settings": {
-            "heading": "Shipping and returns"
+            "heading": "Shipping & Returns"
           }
         },
         {

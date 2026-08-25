@@ -272,7 +272,7 @@
       {
         "type": "image_picker",
         "id": "share_image",
-        "label": "Default social sharing image"
+       "label": "t:labels.share_image"
       }
     ]
   },

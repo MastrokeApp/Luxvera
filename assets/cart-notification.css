@@ -246,3 +246,27 @@
 body.cart-notif--open {
   overflow: hidden;
 }
+
+.cart-notif__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: right;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.2;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.cart-notif__remove:hover {
+  color: #000;
+}
+
+.cart-notif__remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
