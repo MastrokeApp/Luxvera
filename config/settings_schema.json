@@ -256,7 +256,7 @@
     ]
   },
   {
-    "name": "t:general.favicon_and_seo",
+    "name": "t:general.branding",
     "settings": [
       {
         "type": "image_picker",
