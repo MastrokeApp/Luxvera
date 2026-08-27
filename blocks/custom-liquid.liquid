@@ -1,0 +1,28 @@
+{% doc %}
+  Renders raw Liquid/HTML entered by the merchant.
+
+  @example
+  {% content_for 'block', type: 'custom-liquid', id: 'custom-liquid' %}
+{% enddoc %}
+
+<div class="custom-liquid" {{ block.shopify_attributes }}>
+  {{ block.settings.custom_liquid }}
+</div>
+
+{% schema %}
+{
+  "name": "t:general.custom_liquid",
+  "settings": [
+    {
+      "type": "liquid",
+      "id": "custom_liquid",
+      "label": "t:labels.custom_liquid"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.custom_liquid"
+    }
+  ]
+}
+{% endschema %}
