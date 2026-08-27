@@ -3,13 +3,22 @@
   z-index: 200;
 }
 
-.lv-header-wrap--sticky {
-  position: fixed;
+/* position:sticky on .lv-header-wrap itself doesn't work: Shopify wraps
+   every section in its own .shopify-section div sized to exactly that
+   section's height, and a sticky element can never stay pinned beyond
+   its own parent's box -- with zero spare height in that wrapper it
+   would unstick after ~0px of scroll. Instead, stick the *wrapper*
+   Shopify generates (its parent is <body>, which spans the whole page,
+   giving genuine room to stay pinned). Any section added above header
+   in the header group is a separate .shopify-section sibling that
+   precedes this one in normal flow, so it's never covered. */
+.shopify-section:has(> .lv-header-wrap--sticky) {
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
   z-index: 999;
+}
+
+.lv-header-wrap--sticky {
   background: rgb(var(--color-background));
   transition: box-shadow .3s ease;
 }

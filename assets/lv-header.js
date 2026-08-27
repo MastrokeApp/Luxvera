@@ -246,67 +246,12 @@
     var el = els.stickyHeader;
     if (!el) return;
 
-    // The header is position:fixed (not CSS position:sticky) because
-    // Shopify auto-wraps every section in a .shopify-section div sized
-    // to exactly that section's own height -- sticky can only stay
-    // "stuck" within the bounds of its parent, so with zero spare room
-    // in that wrapper it would never actually stay pinned while
-    // scrolling. Fixed positioning sidesteps that, but then we have to
-    // reimplement sticky's behavior by hand: track the header's natural
-    // (in-flow) offset -- however tall any header-group content
-    // rendered above it is -- and slide its `top` from that offset down
-    // to 0 as the page scrolls, clamping there. That reproduces native
-    // sticky: content above the header stays visible until scrolled
-    // past, then the header sticks to the very top for the rest of the
-    // page.
-    var naturalTop = 0;
-
-    function measureNaturalTop() {
-      var prevPosition = el.style.position;
-      var prevTop = el.style.top;
-      el.style.position = 'static';
-      el.style.top = 'auto';
-      var value = el.getBoundingClientRect().top + window.scrollY;
-      el.style.position = prevPosition;
-      el.style.top = prevTop;
-      return value;
-    }
-
-    function positionHeader() {
-      var top = naturalTop - window.scrollY;
-      if (top < 0) top = 0;
-      el.style.top = top + 'px';
-    }
-
-    function updateOffset() {
-      naturalTop = measureNaturalTop();
-      positionHeader();
-      document.body.style.paddingTop = (naturalTop + el.offsetHeight) + 'px';
-    }
-
-    updateOffset();
-
-    // Keep the offset in sync whenever the header's actual rendered
-    // height (or the height of anything rendered above it) changes --
-    // e.g. a wrapped nav row makes the header taller, or the window is
-    // resized across a breakpoint.
-    if (!el.dataset.lvResizeBound) {
-      el.dataset.lvResizeBound = '1';
-
-      if ('ResizeObserver' in window) {
-        var ro = new ResizeObserver(function () {
-          updateOffset();
-        });
-        ro.observe(el);
-      } else {
-        window.addEventListener('resize', updateOffset);
-      }
-    }
-
+    // Positioning itself is handled entirely by CSS now (position:sticky
+    // on the .shopify-section wrapper Shopify generates around this
+    // section -- see lv-header.css). This just toggles a class for the
+    // "scrolled" box-shadow styling.
     var ticking = false;
     function applyScrollState() {
-      positionHeader();
-
       if (window.scrollY > 10) {
         el.classList.add('is-scrolled');
       } else {
