@@ -9,6 +9,7 @@
   {%- if section.settings.show_top_bar -%}
   <div class="lv-top-bar color-{{ section.settings.top_bar_color_scheme }}">
     <div class="lv-top-bar__inner">
+      {% render 'social-media-link' %}
       {% render 'currency-switcher', position: 'topbar' %}
     </div>
   </div>
