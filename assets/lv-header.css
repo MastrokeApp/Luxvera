@@ -25,7 +25,7 @@
   margin: 0 auto;
   padding: 0 56px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: 16px;
   border-bottom: 1px solid rgba(0, 0, 0, .08);
