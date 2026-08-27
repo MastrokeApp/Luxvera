@@ -319,6 +319,7 @@
     "mobile_layout": "Mobile layout",
     "mobile_spacing": "Mobile spacing",
     "mobile_top_padding": "Mobile top padding",
+    "nav_alignment": "Navigation alignment",
     "navigation": "Navigation",
     "newsletter_email_placeholder": "Newsletter email placeholder",
     "newsletter_form": "Newsletter form",
@@ -591,6 +592,11 @@
     "mobile_layout": {
       "slide": "Slide (swipe carousel)",
       "stack": "Stack (vertical)"
+    },
+    "nav_alignment": {
+      "left": "Left",
+      "center": "Center",
+      "right": "Right"
     },
     "page_width": {
       "narrow": "Narrow",

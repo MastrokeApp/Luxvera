@@ -348,6 +348,117 @@
         "products_limit": 8
       }
     },
+    "featured_product_NE6BjJ": {
+      "type": "featured-product",
+      "blocks": {
+        "heading_ymnnic": {
+          "type": "heading",
+          "settings": {
+            "heading": "Featured Product"
+          }
+        },
+        "vendor_XWnQqr": {
+          "type": "vendor",
+          "settings": {}
+        },
+        "title_GWe3Nw": {
+          "type": "title",
+          "settings": {
+            "placeholder_title": "Featured Product"
+          }
+        },
+        "price_wXBLeb": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant_picker_LdEHDV": {
+          "type": "variant_picker",
+          "settings": {
+            "show_placeholder": true,
+            "placeholder_label": "Size"
+          }
+        },
+        "availability_BFGwM8": {
+          "type": "availability",
+          "settings": {}
+        },
+        "quantity_q6GLng": {
+          "type": "quantity",
+          "settings": {}
+        },
+        "buy_buttons_y4jnQw": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "add_to_cart_text": "Add to cart",
+            "buy_now_text": "Buy it now"
+          }
+        },
+        "trust_F7XLwh": {
+          "type": "trust",
+          "settings": {
+            "line_1": "Free shipping over $75",
+            "line_2": "Easy 30-day returns",
+            "line_3": "Secure checkout"
+          }
+        },
+        "description_UAbN73": {
+          "type": "description",
+          "settings": {
+            "heading": "Description",
+            "open_by_default": false
+          }
+        },
+        "collapsible_row_cjA3Tt": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Shipping & Returns",
+            "content": "",
+            "page": "",
+            "open_by_default": false
+          }
+        },
+        "collapsible_row_ym9hbX": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Care Instructions",
+            "content": "",
+            "page": "",
+            "open_by_default": false
+          }
+        },
+        "share_9VpBJG": {
+          "type": "share",
+          "settings": {
+            "label": "Share"
+          }
+        }
+      },
+      "block_order": [
+        "heading_ymnnic",
+        "vendor_XWnQqr",
+        "title_GWe3Nw",
+        "price_wXBLeb",
+        "variant_picker_LdEHDV",
+        "availability_BFGwM8",
+        "quantity_q6GLng",
+        "buy_buttons_y4jnQw",
+        "trust_F7XLwh",
+        "description_UAbN73",
+        "collapsible_row_cjA3Tt",
+        "collapsible_row_ym9hbX",
+        "share_9VpBJG"
+      ],
+      "name": "Featured Product",
+      "settings": {
+        "product": "",
+        "padding_top_desktop": 40,
+        "padding_bottom_desktop": 40,
+        "padding_top_mobile": 24,
+        "padding_bottom_mobile": 24,
+        "color_scheme": ""
+      }
+    },
     "one_of_a_kind_fiJkdT": {
       "type": "one-of-a-kind",
       "name": "t:general.one_of_a_kind",
@@ -577,117 +688,6 @@
         "padding_top_mobile": 45,
         "padding_bottom_mobile": 45
       }
-    },
-    "featured_product_NE6BjJ": {
-      "type": "featured-product",
-      "blocks": {
-        "heading_ymnnic": {
-          "type": "heading",
-          "settings": {
-            "heading": "Featured Product"
-          }
-        },
-        "vendor_XWnQqr": {
-          "type": "vendor",
-          "settings": {}
-        },
-        "title_GWe3Nw": {
-          "type": "title",
-          "settings": {
-            "placeholder_title": "Featured Product"
-          }
-        },
-        "price_wXBLeb": {
-          "type": "price",
-          "settings": {}
-        },
-        "variant_picker_LdEHDV": {
-          "type": "variant_picker",
-          "settings": {
-            "show_placeholder": true,
-            "placeholder_label": "Size"
-          }
-        },
-        "availability_BFGwM8": {
-          "type": "availability",
-          "settings": {}
-        },
-        "quantity_q6GLng": {
-          "type": "quantity",
-          "settings": {}
-        },
-        "buy_buttons_y4jnQw": {
-          "type": "buy_buttons",
-          "settings": {
-            "show_dynamic_checkout": true,
-            "add_to_cart_text": "Add to cart",
-            "buy_now_text": "Buy it now"
-          }
-        },
-        "trust_F7XLwh": {
-          "type": "trust",
-          "settings": {
-            "line_1": "Free shipping over $75",
-            "line_2": "Easy 30-day returns",
-            "line_3": "Secure checkout"
-          }
-        },
-        "description_UAbN73": {
-          "type": "description",
-          "settings": {
-            "heading": "Description",
-            "open_by_default": false
-          }
-        },
-        "collapsible_row_cjA3Tt": {
-          "type": "collapsible_row",
-          "settings": {
-            "heading": "Shipping & Returns",
-            "content": "",
-            "page": "",
-            "open_by_default": false
-          }
-        },
-        "collapsible_row_ym9hbX": {
-          "type": "collapsible_row",
-          "settings": {
-            "heading": "Care Instructions",
-            "content": "",
-            "page": "",
-            "open_by_default": false
-          }
-        },
-        "share_9VpBJG": {
-          "type": "share",
-          "settings": {
-            "label": "Share"
-          }
-        }
-      },
-      "block_order": [
-        "heading_ymnnic",
-        "vendor_XWnQqr",
-        "title_GWe3Nw",
-        "price_wXBLeb",
-        "variant_picker_LdEHDV",
-        "availability_BFGwM8",
-        "quantity_q6GLng",
-        "buy_buttons_y4jnQw",
-        "trust_F7XLwh",
-        "description_UAbN73",
-        "collapsible_row_cjA3Tt",
-        "collapsible_row_ym9hbX",
-        "share_9VpBJG"
-      ],
-      "name": "Featured Product",
-      "settings": {
-        "product": "",
-        "padding_top_desktop": 40,
-        "padding_bottom_desktop": 40,
-        "padding_top_mobile": 24,
-        "padding_bottom_mobile": 24,
-        "color_scheme": ""
-      }
     }
   },
   "order": [
@@ -700,12 +700,12 @@
     "image_with_text_PParEA",
     "brand_story_jEbFwR",
     "dress_looks_hpWcBt",
+    "featured_product_NE6BjJ",
     "one_of_a_kind_fiJkdT",
     "instagram_carousel_E6wRtz",
     "testimonials_KBbzUQ",
     "trust_badges_Xyi6PV",
     "newsletter_hg4G9E",
-    "richtext_dL6wyX",
-    "featured_product_NE6BjJ"
+    "richtext_dL6wyX"
   ]
 }

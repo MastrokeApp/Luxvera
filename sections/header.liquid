@@ -22,7 +22,7 @@
     style="--lv-hdr-height:{{ section.settings.header_height }}px;"
   >
     <nav class="lv-nav lv-nav--logo-{{ section.settings.logo_position }}" aria-label="{{ 'accessibility.main_navigation' | t }}">
-      <div class="lv-nav__left">
+      <div class="lv-nav__left{% if section.settings.logo_position == 'left' %} lv-nav__left--{{ section.settings.nav_alignment }}{% endif %}">
         <button class="lv-hamburger" id="lvHamburger" aria-label="{{ 'accessibility.open_menu' | t }}" aria-expanded="false" aria-controls="lvMobileMenu"><span></span><span></span><span></span></button>
         <div class="lv-nav__links">
           {%- for link in linklists[section.settings.menu].links -%}
@@ -285,6 +285,17 @@
         { "value": "left", "label": "t:options.logo_position.left" }
       ],
       "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "nav_alignment",
+      "label": "t:labels.nav_alignment",
+      "options": [
+        { "value": "left", "label": "t:options.nav_alignment.left" },
+        { "value": "center", "label": "t:options.nav_alignment.center" },
+        { "value": "right", "label": "t:options.nav_alignment.right" }
+      ],
+      "default": "left"
     },
     {
       "type": "range",

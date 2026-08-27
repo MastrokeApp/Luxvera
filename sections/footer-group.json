@@ -14,7 +14,17 @@
     "footer": {
       "type": "footer",
       "settings": {
-        "show_payment_icons": true
+        "enable_accordion": false,
+        "color_scheme": "",
+        "brand_sub": "Fashion",
+        "bottom_tagline": "Fashion. All rights reserved.",
+        "show_social_icons": true,
+        "show_follow_on_shop": true,
+        "show_currency_switcher": false,
+        "show_payment_icons": true,
+        "newsletter_placeholder": "Enter your email",
+        "body_font_size": 13,
+        "col_heading_size": 12
       }
     }
   },
