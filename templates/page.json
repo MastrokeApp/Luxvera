@@ -11,7 +11,15 @@
   "sections": {
     "main": {
       "type": "page",
-      "settings": {}
+      "settings": {
+        "color_scheme": "",
+        "default_content": "<p>Content for this page is coming soon.</p>",
+        "content_width": 900,
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      }
     }
   },
   "order": [

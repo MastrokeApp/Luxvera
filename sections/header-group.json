@@ -13,7 +13,36 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "blocks": {
+        "mega_menu_image_YhzHPr": {
+          "type": "mega_menu_image",
+          "settings": {
+            "menu_item": "Catalog",
+            "title": "Discover the collection",
+            "text": "",
+            "image_link": "",
+            "button_label": "Shop now",
+            "button_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "mega_menu_image_YhzHPr"
+      ],
+      "settings": {
+        "show_top_bar": true,
+        "top_bar_color_scheme": "",
+        "brand_name": "LUXVERA",
+        "brand_tagline": "Fashion",
+        "header_color_scheme": "",
+        "logo_position": "center",
+        "nav_alignment": "left",
+        "header_height": 64,
+        "sticky": true,
+        "enable_mega_menu": true,
+        "menu": "main-menu",
+        "search_placeholder": "Search products, styles, collections…"
+      }
     }
   },
   "order": [

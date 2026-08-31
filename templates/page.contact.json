@@ -9,6 +9,27 @@
  */
 {
   "sections": {
+    "page_banner_with_breadcrumb": {
+      "type": "page-banner-with-breadcrumb",
+      "name": "t:general.page_banner_breadcrumb",
+      "settings": {
+        "color_scheme": "",
+        "overlay_color": "#100a04",
+        "overlay_opacity": 70,
+        "height_desktop": 420,
+        "height_tablet": 320,
+        "height_mobile": 260,
+        "content_alignment": "flex-start",
+        "show_breadcrumbs": true,
+        "breadcrumb_home_label": "Home",
+        "heading": "Page heading",
+        "heading_size": 42,
+        "subtext": "",
+        "button_label": "Explore now",
+        "button_url": "",
+        "button_open_new_tab": false
+      }
+    },
     "main": {
       "type": "main-contact",
       "settings": {
@@ -30,27 +51,6 @@
         "btn_label": "Send Message",
         "show_map": true,
         "map_embed": ""
-      }
-    },
-    "page_banner_with_breadcrumb": {
-      "type": "page-banner-with-breadcrumb",
-      "name": "t:general.page_banner_breadcrumb",
-      "settings": {
-        "color_scheme": "",
-        "overlay_color": "#100a04",
-        "overlay_opacity": 70,
-        "height_desktop": 420,
-        "height_tablet": 320,
-        "height_mobile": 260,
-        "content_alignment": "flex-start",
-        "show_breadcrumbs": true,
-        "breadcrumb_home_label": "Home",
-        "heading": "Page heading",
-        "heading_size": 42,
-        "subtext": "",
-        "button_label": "Explore now",
-        "button_url": "",
-        "button_open_new_tab": false
       }
     }
   },

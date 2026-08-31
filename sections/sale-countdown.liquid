@@ -26,11 +26,67 @@
         <h2>{{ section.settings.heading | escape }}</h2>
       {%- endif -%}
 
-      {%- if section.settings.button_label != blank -%}
+      {% comment %} {%- if section.settings.button_label != blank -%}
         <a href="{{ section.settings.button_url | default: '#' }}" class="sale-btn">
           {{ section.settings.button_label | escape }} →
         </a>
-      {%- endif -%}
+      {%- endif -%} {% endcomment %}
+       {%- if section.settings.button_label != blank -%}
+  {%- if section.settings.button_url != blank -%}
+    <a
+      href="{{ section.settings.button_url }}"
+      class="sale-btn"
+    >
+      {{ section.settings.button_label | escape }}
+      <span class="icon-wrap">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M3 8H13M9 4L13 8L9 12"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </span>
+    </a>
+  {%- else -%}
+    <button
+      type="button"
+      class="sale-btn"
+      disabled
+      aria-disabled="true"
+      style="opacity: 0.5; cursor: not-allowed; pointer-events: none;"
+    >
+      {{ section.settings.button_label | escape }}
+      <span class="icon-wrap">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M3 8H13M9 4L13 8L9 12"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </span>
+    </button>
+  {%- endif -%}
+{%- endif -%}
     </div>
 
     <div class="sale-divider" aria-hidden="true"></div>

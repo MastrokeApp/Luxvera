@@ -1052,50 +1052,102 @@
       }
     }
 
-    function doATC(vid, btn, origHTML) {
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({ id: parseInt(vid, 10), quantity: 1 })
-      })
-      .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
-      .then(function () {
-        if (btn) {
-          btn.classList.remove('adding');
-          btn.classList.add('added');
-          btn.innerHTML = 'Added &#10003;<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
-          setTimeout(function () {
-            if (btn) {
-              btn.innerHTML = origHTML;
-              btn.classList.remove('added');
-            }
-          }, 2000);
-        }
+ function doATC(vid, btn, origHTML) {
+  fetch('/cart/add.js', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: JSON.stringify({
+      id: parseInt(vid, 10),
+      quantity: 1
+    })
+  })
+  .then(function (r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function () {
 
-        document.dispatchEvent(new CustomEvent('cart:updated', {
-          bubbles: true,
-          detail: { variantId: vid }
-        }));
-        document.dispatchEvent(new CustomEvent('cart:open'));
+    if (btn) {
+      btn.classList.remove('adding');
+      btn.classList.add('added');
 
-        closeModal();
-      })
-      .catch(function (err) {
-        console.warn('[Collection ATC]', err);
-        if (btn) {
-          btn.classList.remove('adding');
-          btn.innerHTML = origHTML;
-        }
-        closeModal();
-      });
+      btn.innerHTML =
+        'Added &#10003;' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">' +
+        '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>' +
+        '<line x1="3" y1="6" x2="21" y2="6"/>' +
+        '<path d="M16 10a4 4 0 01-8 0"/>' +
+        '</svg>';
+
+      setTimeout(function () {
+        btn.innerHTML = origHTML;
+        btn.classList.remove('added');
+      }, 2000);
     }
 
+    /*
+     * Tell Shopify/Dawn that the cart changed.
+     */
+    document.dispatchEvent(
+      new CustomEvent('cart:updated', {
+        bubbles: true,
+        detail: {
+          variantId: vid
+        }
+      })
+    );
+
+    /*
+     * Open the GLOBAL cart drawer.
+     * Do not depend only on cart:open because this section
+     * can exist multiple times.
+     */
+    setTimeout(function () {
+
+      var cartDrawer = document.querySelector('cart-drawer');
+
+      if (cartDrawer) {
+
+        if (typeof cartDrawer.open === 'function') {
+          cartDrawer.open();
+        } else {
+          cartDrawer.classList.add('active');
+          cartDrawer.setAttribute('open', '');
+        }
+
+      } else {
+
+        /*
+         * Fallback for themes/apps using cart:open.
+         */
+        document.dispatchEvent(
+          new CustomEvent('cart:open', {
+            bubbles: true
+          })
+        );
+
+      }
+
+    }, 100);
+
+    closeModal();
+
+  })
+  .catch(function (err) {
+
+    console.warn('[Collection ATC]', err);
+
+    if (btn) {
+      btn.classList.remove('adding');
+      btn.innerHTML = origHTML;
+    }
+
+    closeModal();
+  });
+}
     root.addEventListener('click', function (e) {
       var viewBtn = e.target.closest('.lv-view-btn');
       if (viewBtn) {
@@ -1197,9 +1249,15 @@
     initView();
   }
 
-  function initAll(scope) {
-    (scope || document).querySelectorAll('.lv-col-page').forEach(initCollection);
-  }
+ function initAll(scope) {
+  var container = scope || document;
+
+  container.querySelectorAll('.lv-col-page').forEach(function (root) {
+    if (root.dataset.lvColInit === '1') return;
+
+    initCollection(root);
+  });
+}
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () { initAll(); });

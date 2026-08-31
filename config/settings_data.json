@@ -12,6 +12,11 @@
     "font_heading": "sans_serif_n4",
     "font_body": "inter_n4",
     "cart_gift_notes": true,
+    "subtotal_label": "Subtotal",
+    "enable_shipping_link": true,
+    "shipping_url": "",
+    "enable_order_note": true,
+    "checkout_button_text": "s",
     "content_for_index": [],
     "color_schemes": {
       "scheme-1": {

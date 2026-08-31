@@ -13,7 +13,7 @@
   @example
   {% render 'lv-menu-mega', link: link %}
 {% enddoc %}
-
+{% comment %} 
 <div class="lv-dropdown lv-dropdown--mega" style="--lv-mega-cols: {{ link.links.size }};">
   {%- for column in link.links -%}
     <div class="lv-mega-col">
@@ -29,4 +29,148 @@
       {%- endif -%}
     </div>
   {%- endfor -%}
+</div> {% endcomment %}
+<div
+  class="lv-dropdown lv-dropdown--mega"
+  style="--lv-mega-cols: {{ link.links.size }};"
+>
+  <div class="lv-mega-menu__content">
+
+    {%- comment -%}
+      EXISTING MENU COLUMNS
+    {%- endcomment -%}
+
+    <div class="lv-mega-menu__columns">
+
+      {%- for column in link.links -%}
+
+        <div class="lv-mega-col">
+
+          <div class="lv-mega-heading{% if column.links.size == 0 %} lv-mega-heading--link{% endif %}">
+            <a href="{{ column.url }}">
+              {{ column.title }}
+            </a>
+          </div>
+
+          {%- if column.links.size > 0 -%}
+
+            <ul class="lv-mega-list">
+              {%- for grandchild in column.links -%}
+                <li>
+                  <a href="{{ grandchild.url }}">
+                    {{ grandchild.title }}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+
+          {%- endif -%}
+
+        </div>
+
+      {%- endfor -%}
+
+    </div>
+
+
+    <div class="lv-mega-menu__images">
+
+      {%- for block in blocks -%}
+
+  {%- if block.type == 'mega_menu_image' -%}
+
+    {%- assign block_menu = block.settings.menu_item | handleize -%}
+    {%- assign current_menu = link.title | handleize -%}
+
+    {%- if block_menu == blank or block_menu == current_menu -%}
+
+      <div
+        class="lv-mega-image-card"
+        {{ block.shopify_attributes }}
+      >
+
+        {%- if block.settings.image_link != blank -%}
+          <a href="{{ block.settings.image_link }}">
+        {%- endif -%}
+
+          <div class="lv-mega-image-card__image">
+
+            {%- if block.settings.image != blank -%}
+
+              {{
+                block.settings.image
+                | image_url: width: 600
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '300, 400, 500, 600',
+                  sizes: '(min-width: 990px) 250px, 100vw',
+                  alt: block.settings.title
+              }}
+
+            {%- else -%}
+
+              {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+
+            {%- endif -%}
+
+          </div>
+
+        {%- if block.settings.image_link != blank -%}
+          </a>
+        {%- endif -%}
+
+
+        {%- if block.settings.title != blank -%}
+
+          <h3 class="lv-mega-image-card__title">
+            {{ block.settings.title }}
+          </h3>
+
+        {%- endif -%}
+
+
+        {%- if block.settings.text != blank -%}
+
+          <div class="lv-mega-image-card__text">
+            {{ block.settings.text }}
+          </div>
+
+        {%- endif -%}
+
+
+        {%- if block.settings.button_label != blank
+          and block.settings.button_link != blank -%}
+
+          <a
+            href="{{ block.settings.button_link }}"
+            class="lv-mega-image-card__button"
+          >
+            {{ block.settings.button_label }}
+
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M5 12h14"/>
+              <path d="m13 6 6 6-6 6"/>
+            </svg>
+
+          </a>
+
+        {%- endif -%}
+
+      </div>
+
+    {%- endif -%}
+
+  {%- endif -%}
+
+{%- endfor -%}
+    </div>
+
+  </div>
 </div>

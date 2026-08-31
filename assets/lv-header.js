@@ -321,3 +321,119 @@
     initHeader();
   });
 })();
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+
+  const dropdownItems = document.querySelectorAll(
+    '.lv-nav__item[data-lv-dropdown]'
+  );
+
+  dropdownItems.forEach(function (item) {
+
+    const toggle = item.querySelector('.lv-nav__caret');
+    const dropdown = item.querySelector('.lv-dropdown');
+    const parentLink = item.querySelector('.lv-nav__link');
+
+    if (!toggle || !dropdown) return;
+
+
+    /*
+      CARET CLICK
+      Only toggle the menu.
+    */
+
+    toggle.addEventListener('click', function (event) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const isOpen = item.classList.contains('is-open');
+
+      /*
+        Close other dropdowns
+      */
+
+      dropdownItems.forEach(function (otherItem) {
+
+        if (otherItem !== item) {
+
+          otherItem.classList.remove('is-open');
+
+          const otherToggle =
+            otherItem.querySelector('.lv-nav__caret');
+
+          if (otherToggle) {
+            otherToggle.setAttribute(
+              'aria-expanded',
+              'false'
+            );
+          }
+        }
+
+      });
+
+
+      /*
+        Toggle current dropdown
+      */
+
+      item.classList.toggle('is-open', !isOpen);
+
+      toggle.setAttribute(
+        'aria-expanded',
+        String(!isOpen)
+      );
+
+    });
+
+    if (parentLink) {
+
+      parentLink.addEventListener('click', function () {
+
+        item.classList.remove('is-open');
+
+        toggle.setAttribute(
+          'aria-expanded',
+          'false'
+        );
+
+      });
+
+    }
+
+  });
+
+
+  /*
+    CLICK OUTSIDE
+    Close open menus.
+  */
+
+  document.addEventListener('click', function (event) {
+
+    dropdownItems.forEach(function (item) {
+
+      if (!item.contains(event.target)) {
+
+        item.classList.remove('is-open');
+
+        const toggle =
+          item.querySelector('.lv-nav__caret');
+
+        if (toggle) {
+          toggle.setAttribute(
+            'aria-expanded',
+            'false'
+          );
+        }
+
+      }
+
+    });
+
+  });
+
+});

@@ -11,6 +11,28 @@
   "type": "footer",
   "name": "t:general.footer",
   "sections": {
+    "newsletter_Cmt7Me": {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "settings": {
+        "color_scheme": "",
+        "eyebrow": "Stay connected",
+        "heading": "Join our newsletter",
+        "body_text": "<p>Sign up to receive exclusive access to new collections, limited releases, and member-only offers.</p>",
+        "email_placeholder": "Email",
+        "button_label": "Subscribe",
+        "consent_text": "By signing up, you agree to receive marketing emails.",
+        "success_message": "Thanks for signing up!",
+        "text_alignment": "center",
+        "content_width": 600,
+        "heading_size": 40,
+        "heading_size_mobile": 30,
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      }
+    },
     "footer": {
       "type": "footer",
       "settings": {
@@ -29,6 +51,7 @@
     }
   },
   "order": [
+    "newsletter_Cmt7Me",
     "footer"
   ]
 }

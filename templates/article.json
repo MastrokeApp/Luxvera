@@ -11,7 +11,15 @@
   "sections": {
     "main": {
       "type": "article",
-      "settings": {}
+      "settings": {
+        "color_scheme": "",
+        "content_width": 1920,
+        "image_radius": 8,
+        "show_breadcrumb": true,
+        "show_share": true,
+        "padding_top": 48,
+        "padding_bottom": 64
+      }
     }
   },
   "order": [
