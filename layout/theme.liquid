@@ -163,7 +163,7 @@
   <a class="skip-to-content-link" href="#main-content">{{ 'accessibility.skip_to_content' | t }}</a>
 
   {%- sections 'header-group' -%}
-
+  {% render 'breadcrumb' %}
   {%- comment -%} Global cart mini-drawer {%- endcomment -%}
   {%- render 'cart-notification' -%}
 

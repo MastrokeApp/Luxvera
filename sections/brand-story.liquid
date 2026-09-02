@@ -1,67 +1,244 @@
 {% comment %}
   Section: Brand Story
 
-  Two-column brand intro: copy + selectable tabs on the left that swap
-  layered images on the right. Colours come from Theme Settings → Colors.
+  Two-column brand intro: copy and a selectable tab list on the left that
+  swap layered images on the right. Each tab can link to a collection or
+  page, with an optional call to action on the image. Colours come from
+  the selected colour scheme.
 {% endcomment %}
 
-<section
-  class="brand-section"
+{%- liquid
+  assign tabs = section.blocks | where: 'type', 'brand_tab'
+  assign icon = section.settings.icon
+  assign icon_image = section.settings.icon_image
+-%}
+
+<div
+  class="brand-section color-{{ section.settings.color_scheme }}"
   id="brand-story-{{ section.id }}"
   style="
-    --bs-pt: {{ section.settings.padding_top | default: 72 }}px;
-    --bs-pb: {{ section.settings.padding_bottom | default: 72 }}px;
-    --bs-pt-m: {{ section.settings.padding_top | default: 0 | times: 0.6 | round }}px;
-    --bs-pb-m: {{ section.settings.padding_bottom | default: 0 | times: 0.6 | round }}px;
+    --bs-pt: {{ section.settings.padding_top }}px;
+    --bs-pb: {{ section.settings.padding_bottom }}px;
+    --bs-pt-m: {{ section.settings.padding_top | times: 0.6 | round }}px;
+    --bs-pb-m: {{ section.settings.padding_bottom | times: 0.6 | round }}px;
+    --bs-col: {{ section.settings.content_width }}px;
+    --bs-h-d: {{ section.settings.image_height_desktop }}px;
+    --bs-h-t: {{ section.settings.image_height_tablet }}px;
+    --bs-h-m: {{ section.settings.image_height_mobile }}px;
+    --bs-icon-size: {{ section.settings.icon_size }}px;
+    --bs-heading-size: {{ section.settings.heading_size }}px;
+    --bs-body-size: {{ section.settings.body_size }}px;
   "
 >
   <div class="brand-inner">
     <div class="brand-left">
-      <div class="brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg></div>
-      <div>
-        <div class="brand-logo-name">{{ section.settings.brand_name | default: 'LUXVERA' | escape }}</div>
-        <div class="logo-sub-row"><span class="logo-line"></span><span class="logo-sub">{{ section.settings.brand_tagline | default: 'Fashion' | escape }}</span><span class="logo-line"></span></div>
-      </div>
-      {%- if section.settings.heading != blank -%}<h3>{{ section.settings.heading | escape }}</h3>{%- endif -%}
-      {%- if section.settings.body_text != blank -%}<p>{{ section.settings.body_text | escape }}</p>{%- endif -%}
-      {%- if section.settings.explore_label != blank -%}<span class="brand-label">{{ section.settings.explore_label | escape }}</span>{%- endif -%}
-      <div class="brand-links">
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'brand_tab' -%}
-            <div
-              class="brand-link-row{% if forloop.first %} active{% endif %}"
-              data-lv-brand-tab="{{ section.id }}-{{ forloop.index0 }}"
-              role="button"
-              tabindex="0"
-              aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
-              {{ block.shopify_attributes }}
-            >
-              <span>{{ block.settings.label | default: 'Collection' | escape }}</span>
-              <span class="bl-chevron" aria-hidden="true">›</span>
+      {%- if icon_image != blank -%}
+        <div class="brand-icon brand-icon--image">
+          <img
+            src="{{ icon_image | image_url: width: 96 }}"
+            srcset="{{ icon_image | image_url: width: 48 }} 48w, {{ icon_image | image_url: width: 96 }} 96w, {{ icon_image | image_url: width: 144 }} 144w"
+            sizes="{{ section.settings.icon_size }}px"
+            alt=""
+            width="{{ icon_image.width }}"
+            height="{{ icon_image.height }}"
+            loading="lazy"
+          >
+        </div>
+      {%- elsif icon != 'none' -%}
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            {%- case icon -%}
+              {%- when 'gift' -%}
+                <path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/>
+              {%- when 'star' -%}
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              {%- when 'sparkle' -%}
+                <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>
+                <path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/>
+              {%- when 'heart' -%}
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+              {%- when 'crown' -%}
+                <path d="M3 6l3.5 5L12 4l5.5 7L21 6v11a1 1 0 01-1 1H4a1 1 0 01-1-1z"/>
+              {%- when 'leaf' -%}
+                <path d="M11 20A7 7 0 019.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6"/>
+              {%- when 'gem' -%}
+                <path d="M6 3h12l4 6-10 12L2 9z"/>
+                <path d="M11 3L8 9l4 12 4-12-3-6"/>
+                <path d="M2 9h20"/>
+              {%- when 'bag' -%}
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                <path d="M3 6h18"/>
+                <path d="M16 10a4 4 0 01-8 0"/>
+              {%- when 'truck' -%}
+                <path d="M1 3h15v13H1z"/>
+                <path d="M16 8h4l3 3v5h-7z"/>
+                <circle cx="5.5" cy="18.5" r="2.5"/>
+                <circle cx="18.5" cy="18.5" r="2.5"/>
+              {%- when 'shield' -%}
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              {%- when 'award' -%}
+                <circle cx="12" cy="9" r="6"/>
+                <path d="M8.2 13.9L7 22l5-3 5 3-1.2-8.1"/>
+              {%- when 'globe' -%}
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M2 12h20"/>
+                <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+            {%- endcase -%}
+          </svg>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.brand_name != blank or section.settings.brand_tagline != blank -%}
+        <div class="brand-identity">
+          {%- if section.settings.brand_name != blank -%}
+            <div class="brand-logo-name">{{ section.settings.brand_name | escape }}</div>
+          {%- endif -%}
+          {%- if section.settings.brand_tagline != blank -%}
+            <div class="logo-sub-row">
+              <span class="logo-line" aria-hidden="true"></span>
+              <span class="logo-sub">{{ section.settings.brand_tagline | escape }}</span>
+              <span class="logo-line" aria-hidden="true"></span>
             </div>
           {%- endif -%}
-        {%- endfor -%}
-      </div>
-      {%- if section.settings.cta_label != blank -%}
-        <a href="{{ section.settings.cta_url | default: '/collections/all' }}" class="btn-outline" {% if section.settings.cta_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}>{{ section.settings.cta_label | escape }} →</a>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <{{ section.settings.heading_tag }} class="brand-heading">{{ section.settings.heading | escape }}</{{ section.settings.heading_tag }}>
+      {%- endif -%}
+
+      {%- if section.settings.body_text != blank -%}
+        <p class="brand-body">{{ section.settings.body_text | escape | newline_to_br }}</p>
+      {%- endif -%}
+
+      {%- if tabs.size > 0 -%}
+        {%- if section.settings.explore_label != blank -%}
+          <span class="brand-label" id="brand-label-{{ section.id }}">{{ section.settings.explore_label | escape }}</span>
+        {%- endif -%}
+
+        <div
+          class="brand-links"
+          role="tablist"
+          {% if section.settings.explore_label != blank %}
+            aria-labelledby="brand-label-{{ section.id }}"
+          {% else %}
+            aria-label="{{ section.settings.heading | default: shop.name | escape }}"
+          {% endif %}
+        >
+          {%- for block in tabs -%}
+            <button
+              type="button"
+              class="brand-link-row{% if forloop.first %} active{% endif %}"
+              role="tab"
+              id="brand-tab-{{ section.id }}-{{ forloop.index0 }}"
+              aria-controls="brand-panel-{{ section.id }}-{{ forloop.index0 }}"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+              data-lv-brand-tab="{{ forloop.index0 }}"
+              {{ block.shopify_attributes }}
+            >
+              <span class="bl-label">{{ block.settings.label | escape }}</span>
+              <span class="bl-chevron" aria-hidden="true">&rsaquo;</span>
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.cta_label != blank and section.settings.cta_url != blank -%}
+        <a
+          href="{{ section.settings.cta_url }}"
+          class="btn-outline"
+          {% if section.settings.cta_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+        >
+          <span>{{ section.settings.cta_label | escape }}</span>
+          <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+        </a>
       {%- endif -%}
     </div>
+
     <div class="brand-right">
-      {%- for block in section.blocks -%}
-        {%- if block.type == 'brand_tab' -%}
-          <div class="brand-img-panel{% if forloop.first %} active{% endif %}" data-lv-brand-panel="{{ section.id }}-{{ forloop.index0 }}">
-            <div class="brand-img-back">{%- if block.settings.image_back != blank -%}<img src="{{ block.settings.image_back | image_url: width: 500, height: 700, crop: 'center' }}" alt="" width="500" height="700" loading="lazy">{%- else -%}{{ 'collection-1' | placeholder_svg_tag: 'brand-placeholder' }}{%- endif -%}</div>
-            <div class="brand-img-front">{%- if block.settings.image_front != blank -%}<img src="{{ block.settings.image_front | image_url: width: 600, height: 800, crop: 'center' }}" alt="{{ block.settings.label | escape }}" width="600" height="800" loading="lazy">{%- else -%}{{ 'collection-2' | placeholder_svg_tag: 'brand-placeholder' }}{%- endif -%}</div>
-          </div>
-        {%- endif -%}
+      {%- for block in tabs -%}
+        {%- liquid
+          assign back = block.settings.image_back
+          assign front = block.settings.image_front
+          assign has_link = false
+          if block.settings.link != blank
+            assign has_link = true
+          endif
+        -%}
+        <div
+          class="brand-img-panel{% if forloop.first %} active{% endif %}"
+          id="brand-panel-{{ section.id }}-{{ forloop.index0 }}"
+          role="tabpanel"
+          aria-labelledby="brand-tab-{{ section.id }}-{{ forloop.index0 }}"
+          data-lv-brand-panel="{{ forloop.index0 }}"
+        >
+          {%- if has_link -%}
+            <a
+              class="brand-img-link"
+              href="{{ block.settings.link }}"
+              {% if block.settings.link_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+              {% if block.settings.cta_label == blank %}aria-label="{{ block.settings.label | escape }}"{% endif %}
+            >
+          {%- else -%}
+            <div class="brand-img-link brand-img-link--static">
+          {%- endif -%}
+
+            <div class="brand-img-back">
+              {%- if back != blank -%}
+                <img
+                  src="{{ back | image_url: width: 500 }}"
+                  srcset="{{ back | image_url: width: 300 }} 300w, {{ back | image_url: width: 500 }} 500w, {{ back | image_url: width: 750 }} 750w"
+                  sizes="(min-width: 1025px) 25vw, 45vw"
+                  alt=""
+                  width="{{ back.width }}"
+                  height="{{ back.height }}"
+                  loading="lazy"
+                >
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'brand-placeholder' }}
+              {%- endif -%}
+            </div>
+
+            <div class="brand-img-front">
+              {%- if front != blank -%}
+                <img
+                  src="{{ front | image_url: width: 600 }}"
+                  srcset="{{ front | image_url: width: 400 }} 400w, {{ front | image_url: width: 600 }} 600w, {{ front | image_url: width: 900 }} 900w, {{ front | image_url: width: 1200 }} 1200w"
+                  sizes="(min-width: 1025px) 40vw, (min-width: 769px) 60vw, 100vw"
+                  alt="{{ front.alt | default: block.settings.label | escape }}"
+                  width="{{ front.width }}"
+                  height="{{ front.height }}"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                >
+              {%- else -%}
+                {{ 'collection-2' | placeholder_svg_tag: 'brand-placeholder' }}
+              {%- endif -%}
+
+              {%- if has_link and block.settings.cta_label != blank -%}
+                <span class="brand-img-cta">
+                  <span class="brand-img-cta__text">{{ block.settings.cta_label | escape }}</span>
+                  <span class="brand-img-cta__arrow" aria-hidden="true">&rarr;</span>
+                </span>
+              {%- endif -%}
+            </div>
+
+          {%- if has_link -%}
+            </a>
+          {%- else -%}
+            </div>
+          {%- endif -%}
+        </div>
       {%- endfor -%}
     </div>
   </div>
-</section>
+</div>
 
 {% stylesheet %}
 .brand-section {
-  background: var(--lv-color-bg, #ffffff);
+  background: var(--gradient-background, rgb(var(--color-background)));
+  color: rgb(var(--color-foreground));
   overflow: hidden;
   width: 100%;
 }
@@ -71,36 +248,51 @@
   margin: 0 auto;
   padding: var(--bs-pt, 72px) 56px var(--bs-pb, 72px);
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: var(--bs-col, 340px) 1fr;
   gap: 80px;
   align-items: center;
   box-sizing: border-box;
 }
 
+/* ─ ICON ─ */
 .brand-section .brand-icon {
-  width: 48px;
-  height: 48px;
-  background: var(--lv-color-bg-pro-info, #F7FCD8);
+  width: calc(var(--bs-icon-size, 24px) * 2);
+  height: calc(var(--bs-icon-size, 24px) * 2);
+  background: rgba(var(--color-foreground), 0.06);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;
-  color: var(--lv-color-text, #1a1a1a);
-  opacity: 0.5;
+  color: rgb(var(--color-foreground));
+  overflow: hidden;
 }
 
 .brand-section .brand-icon svg {
-  width: 24px;
-  height: 24px;
+  width: var(--bs-icon-size, 24px);
+  height: var(--bs-icon-size, 24px);
+  opacity: 0.65;
 }
 
+.brand-section .brand-icon--image {
+  background: none;
+  border-radius: 0;
+}
+
+.brand-section .brand-icon--image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ─ IDENTITY ─ */
 .brand-section .brand-logo-name {
   font-size: 17px;
   font-weight: 800;
   letter-spacing: .22em;
   text-transform: uppercase;
-  color: var(--lv-color-text, #1a1a1a);
+  color: rgb(var(--color-foreground));
 }
 
 .brand-section .logo-sub-row {
@@ -112,9 +304,8 @@
 
 .brand-section .logo-line {
   height: 1px;
-  background: var(--lv-color-text, #1a1a1a);
+  background: rgba(var(--color-foreground), 0.4);
   width: 20px;
-  opacity: 0.4;
 }
 
 .brand-section .logo-sub {
@@ -122,23 +313,21 @@
   font-weight: 500;
   letter-spacing: .32em;
   text-transform: uppercase;
-  color: var(--lv-color-text, #1a1a1a);
-  opacity: 0.6;
+  color: rgba(var(--color-foreground), 0.6);
   white-space: nowrap;
 }
 
-.brand-section .brand-left h3 {
-  font-size: 26px;
+.brand-section .brand-heading {
+  font-size: var(--bs-heading-size, 26px);
   font-weight: 700;
   margin: 22px 0 12px;
   line-height: 1.3;
-  color: var(--lv-color-text, #1a1a1a);
+  color: rgb(var(--color-foreground));
 }
 
-.brand-section .brand-left > p {
-  font-size: 13px;
-  color: var(--lv-color-text, #1a1a1a);
-  opacity: 0.6;
+.brand-section .brand-body {
+  font-size: var(--bs-body-size, 13px);
+  color: rgba(var(--color-foreground), 0.6);
   line-height: 1.9;
   margin-bottom: 28px;
 }
@@ -148,54 +337,62 @@
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--lv-color-text, #1a1a1a);
+  color: rgb(var(--color-foreground));
   margin-bottom: 6px;
   display: block;
 }
 
+/* ─ TABS ─ */
 .brand-section .brand-links {
   margin-bottom: 28px;
-  border-top: 1px solid var(--lv-color-border, #e5e0d8);
+  border-top: 1px solid rgba(var(--color-foreground), 0.15);
 }
 
 .brand-section .brand-link-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--lv-color-border, #e5e0d8);
+  border: 0;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.15);
   padding: 13px 4px 13px 12px;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 500;
-  color: var(--lv-color-text, #1a1a1a);
-  opacity: 0.7;
+  color: rgba(var(--color-foreground), 0.7);
   cursor: pointer;
-  transition: color .2s, opacity .2s;
-  border-radius: 4px;
+  transition: color .2s, background-color .2s;
+  border-radius: 4px 4px 0 0;
   position: relative;
   width: 100%;
   background: none;
   text-align: left;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .brand-section .bl-chevron {
   font-size: 16px;
-  transition: color .2s, transform .2s;
+  transition: transform .2s;
 }
 
 .brand-section .brand-link-row:hover {
-  opacity: 1;
+  color: rgb(var(--color-foreground));
+}
+
+.brand-section .brand-link-row:hover .bl-chevron {
+  transform: translateX(2px);
 }
 
 .brand-section .brand-link-row:focus-visible {
-  outline: 2px solid var(--lv-color-primary, #2a1f16);
-  outline-offset: 2px;
-  opacity: 1;
+  outline: 2px solid rgb(var(--color-foreground));
+  outline-offset: -2px;
+  color: rgb(var(--color-foreground));
 }
 
 .brand-section .brand-link-row.active {
-  opacity: 1;
+  color: rgb(var(--color-foreground));
   font-weight: 700;
-  background: var(--lv-color-bg-alt, #f7f4f0);
+  background: rgba(var(--color-foreground), 0.05);
 }
 
 .brand-section .brand-link-row.active::before {
@@ -206,36 +403,51 @@
   transform: translateY(-50%);
   width: 3px;
   height: 22px;
-  background: var(--lv-color-primary, #2a1f16);
+  background: rgb(var(--color-button));
   border-radius: 0 2px 2px 0;
 }
 
+/* ─ CTA ─ */
 .brand-section .btn-outline {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   background: transparent;
-  color: var(--lv-color-primary, #2a1f16);
+  color: rgb(var(--color-foreground));
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
   padding: 11px 24px;
-  border: 1.5px solid var(--lv-color-primary, #2a1f16);
+  border: 1.5px solid rgb(var(--color-foreground));
   text-decoration: none;
-  transition: background .25s, color .25s;
+  transition: background-color .25s, color .25s, border-color .25s;
   border-radius: var(--lv-btn-radius, 0px);
 }
 
 .brand-section .btn-outline:hover {
-  background: var(--lv-color-primary, #2a1f16);
-  color: #ffffff;
+  background: rgb(var(--color-button));
+  border-color: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+}
+
+.brand-section .btn-outline:focus-visible {
+  outline: 2px solid rgb(var(--color-foreground));
+  outline-offset: 2px;
+}
+
+.brand-section .btn-arrow {
+  transition: transform .2s;
+}
+
+.brand-section .btn-outline:hover .btn-arrow {
+  transform: translateX(3px);
 }
 
 /* ─ RIGHT IMAGE AREA ─ */
 .brand-section .brand-right {
   position: relative;
-  height: 500px;
+  height: var(--bs-h-d, 500px);
   overflow: hidden;
 }
 
@@ -243,21 +455,37 @@
   position: absolute;
   inset: 0;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity .45s ease;
+  transition: opacity .45s ease, visibility 0s linear .45s;
 }
 
 .brand-section .brand-img-panel.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
+  transition: opacity .45s ease, visibility 0s;
+}
+
+.brand-section .brand-img-link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-section a.brand-img-link:focus-visible {
+  outline: 2px solid rgb(var(--color-foreground));
+  outline-offset: 3px;
 }
 
 .brand-section .brand-img-back {
   position: absolute;
   left: 0;
-  top: 40px;
+  top: 8%;
   width: 48%;
-  height: 420px;
+  height: 84%;
   border-radius: 10px;
   overflow: hidden;
   z-index: 1;
@@ -276,11 +504,11 @@
   right: 0;
   top: 0;
   width: 60%;
-  height: 500px;
+  height: 100%;
   border-radius: 10px;
   overflow: hidden;
   z-index: 2;
-  box-shadow: -6px 6px 24px rgba(0,0,0,.10);
+  box-shadow: -6px 6px 24px rgba(var(--color-shadow), .10);
 }
 
 .brand-section .brand-img-front img,
@@ -289,6 +517,63 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform .5s ease;
+}
+
+.brand-section a.brand-img-link:hover .brand-img-front img {
+  transform: scale(1.04);
+}
+
+/* ─ HOVER CTA PILL ─ */
+.brand-section .brand-img-cta {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 12px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 32px);
+  padding: 11px 22px;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border-radius: var(--lv-btn-radius, 0px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+  z-index: 3;
+}
+
+.brand-section .brand-img-cta__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brand-section .brand-img-cta__arrow {
+  transition: transform .2s;
+}
+
+.brand-section a.brand-img-link:hover .brand-img-cta,
+.brand-section a.brand-img-link:focus-visible .brand-img-cta {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.brand-section a.brand-img-link:hover .brand-img-cta__arrow {
+  transform: translateX(3px);
+}
+
+/* Touch devices have no hover state - keep the CTA visible. */
+@media (hover: none) {
+  .brand-section .brand-img-cta {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 /* ─ TABLET ─ */
@@ -301,16 +586,7 @@
   }
 
   .brand-section .brand-right {
-    height: 380px;
-  }
-
-  .brand-section .brand-img-back {
-    height: 320px;
-    top: 30px;
-  }
-
-  .brand-section .brand-img-front {
-    height: 380px;
+    height: var(--bs-h-t, 380px);
   }
 }
 
@@ -321,31 +597,27 @@
     gap: 32px;
   }
 
-  /* On mobile switch from absolute positioning to normal flow with a single image */
   .brand-section .brand-right {
-    position: relative;
-    height: 260px;
-    overflow: hidden;
+    height: var(--bs-h-m, 260px);
     border-radius: 10px;
   }
 
-  .brand-section .brand-img-panel {
-    position: absolute;
-    inset: 0;
-  }
-
-  /* On mobile show only the front image, full width */
+  /* Single full-width image on mobile. */
   .brand-section .brand-img-back {
     display: none;
   }
 
   .brand-section .brand-img-front {
-    position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    border-radius: 10px;
     box-shadow: none;
+  }
+
+  .brand-section .brand-img-cta {
+    bottom: 16px;
+    padding: 9px 18px;
+    font-size: 10px;
   }
 }
 
@@ -354,9 +626,19 @@
     padding-left: 16px;
     padding-right: 16px;
   }
+}
 
-  .brand-section .brand-right {
-    height: 220px;
+@media (prefers-reduced-motion: reduce) {
+  .brand-section .brand-img-panel,
+  .brand-section .brand-img-front img,
+  .brand-section .brand-img-cta,
+  .brand-section .btn-arrow,
+  .brand-section .bl-chevron {
+    transition: none !important;
+  }
+
+  .brand-section a.brand-img-link:hover .brand-img-front img {
+    transform: none;
   }
 }
 {% endstylesheet %}
@@ -365,19 +647,21 @@
 (function () {
   'use strict';
 
-  function activate(root, tab, tabs, panels) {
-    var key = tab.getAttribute('data-lv-brand-tab');
+  var SELECTOR = '.brand-section';
 
-    tabs.forEach(function (t) {
-      t.classList.remove('active');
-      t.setAttribute('aria-pressed', 'false');
+  function activate(root, tabs, panels, index, focusTab) {
+    tabs.forEach(function (tab, i) {
+      var isActive = i === index;
+      tab.classList.toggle('active', isActive);
+      tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      tab.setAttribute('tabindex', isActive ? '0' : '-1');
     });
-    tab.classList.add('active');
-    tab.setAttribute('aria-pressed', 'true');
 
-    panels.forEach(function (p) { p.classList.remove('active'); });
-    var target = root.querySelector('[data-lv-brand-panel="' + key + '"]');
-    if (target) target.classList.add('active');
+    panels.forEach(function (panel, i) {
+      panel.classList.toggle('active', i === index);
+    });
+
+    if (focusTab && tabs[index]) tabs[index].focus();
   }
 
   function initBrandStory(root) {
@@ -388,21 +672,43 @@
     var panels = Array.prototype.slice.call(root.querySelectorAll('[data-lv-brand-panel]'));
     if (!tabs.length) return;
 
-    tabs.forEach(function (tab) {
+    tabs.forEach(function (tab, index) {
       tab.addEventListener('click', function () {
-        activate(root, tab, tabs, panels);
+        activate(root, tabs, panels, index, false);
       });
+
       tab.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-          e.preventDefault();
-          activate(root, tab, tabs, panels);
+        var next = null;
+
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'ArrowDown':
+            next = (index + 1) % tabs.length;
+            break;
+          case 'ArrowLeft':
+          case 'ArrowUp':
+            next = (index - 1 + tabs.length) % tabs.length;
+            break;
+          case 'Home':
+            next = 0;
+            break;
+          case 'End':
+            next = tabs.length - 1;
+            break;
+          default:
+            return;
         }
+
+        e.preventDefault();
+        activate(root, tabs, panels, next, true);
       });
     });
   }
 
   function initAll(scope) {
-    (scope || document).querySelectorAll('.brand-section').forEach(initBrandStory);
+    var node = scope || document;
+    node.querySelectorAll(SELECTOR).forEach(initBrandStory);
+    if (node.matches && node.matches(SELECTOR)) initBrandStory(node);
   }
 
   if (document.readyState === 'loading') {
@@ -413,6 +719,24 @@
 
   document.addEventListener('shopify:section:load', function (e) {
     initAll(e.target);
+  });
+
+  // Theme editor: reveal the panel whose block the merchant just selected.
+  document.addEventListener('shopify:block:select', function (e) {
+    var root = e.target.closest ? e.target.closest(SELECTOR) : null;
+    if (!root) return;
+
+    var tabs = Array.prototype.slice.call(root.querySelectorAll('[data-lv-brand-tab]'));
+    var panels = Array.prototype.slice.call(root.querySelectorAll('[data-lv-brand-panel]'));
+    var index = tabs.indexOf(e.target);
+
+    if (index === -1) {
+      tabs.forEach(function (tab, i) {
+        if (e.target.contains(tab)) index = i;
+      });
+    }
+
+    if (index > -1) activate(root, tabs, panels, index, false);
   });
 })();
 {% endjavascript %}
@@ -425,32 +749,54 @@
   "settings": [
     {
       "type": "header",
-      "content": "t:labels.section_padding"
+      "content": "t:labels.appearance"
     },
     {
-      "type": "range",
-      "id": "padding_top",
-      "label": "t:labels.padding_top",
-      "min": 0,
-      "max": 160,
-      "step": 4,
-      "unit": "px",
-      "default": 72
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "label": "t:labels.padding_bottom",
-      "min": 0,
-      "max": 160,
-      "step": 4,
-      "unit": "px",
-      "default": 72
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
     },
     {
       "type": "header",
-      "content": "t:labels.brand_identity",
-      "info": "Colors are controlled by Theme Settings → Colors"
+      "content": "t:labels.brand_identity"
+    },
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "t:labels.icon",
+      "default": "gift",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "gift", "label": "Gift" },
+        { "value": "star", "label": "Star" },
+        { "value": "sparkle", "label": "Sparkle" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "crown", "label": "Crown" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "gem", "label": "Gem" },
+        { "value": "bag", "label": "Shopping bag" },
+        { "value": "truck", "label": "Delivery truck" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "award", "label": "Award" },
+        { "value": "globe", "label": "Globe" }
+      ]
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_image",
+      "label": "t:labels.custom_image",
+      "info": "Overrides the icon above. Use a square, transparent PNG or SVG."
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "t:labels.font_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
     },
     {
       "type": "text",
@@ -475,10 +821,41 @@
       "default": "More Than Style"
     },
     {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "t:labels.heading_tag",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "t:options.heading_tag.h1" },
+        { "value": "h2", "label": "t:options.heading_tag.h2" },
+        { "value": "h3", "label": "t:options.heading_tag.h3" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "t:labels.heading_font_size",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
       "type": "textarea",
       "id": "body_text",
       "label": "t:labels.body_text",
       "default": "This is more than a boutique, it's a space where confidence feels natural and being yourself is enough."
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "t:labels.body_text_size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
     },
     {
       "type": "text",
@@ -499,13 +876,82 @@
     {
       "type": "url",
       "id": "cta_url",
-      "label": "t:labels.button_url"
+      "label": "t:labels.button_url",
+      "info": "The button is hidden until a link is set."
     },
     {
       "type": "checkbox",
       "id": "cta_new_tab",
       "label": "t:labels.open_in_new_tab",
       "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:labels.layout"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "t:labels.content_width",
+      "min": 260,
+      "max": 520,
+      "step": 10,
+      "unit": "px",
+      "default": 340
+    },
+    {
+      "type": "range",
+      "id": "image_height_desktop",
+      "label": "t:labels.desktop_height",
+      "min": 300,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "image_height_tablet",
+      "label": "t:labels.tablet_height",
+      "min": 240,
+      "max": 700,
+      "step": 20,
+      "unit": "px",
+      "default": 380
+    },
+    {
+      "type": "range",
+      "id": "image_height_mobile",
+      "label": "t:labels.mobile_height",
+      "min": 180,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "default": 260
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
     }
   ],
   "blocks": [
@@ -530,6 +976,29 @@
           "id": "image_front",
           "label": "t:labels.foreground_image",
           "info": "t:labels.600_800px_recommended"
+        },
+        {
+          "type": "header",
+          "content": "t:labels.link"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:labels.link",
+          "info": "Makes both images one clickable link."
+        },
+        {
+          "type": "text",
+          "id": "cta_label",
+          "label": "t:labels.button_label",
+          "default": "Shop now",
+          "info": "Shown on the image on hover. Always visible on touch devices."
+        },
+        {
+          "type": "checkbox",
+          "id": "link_new_tab",
+          "label": "t:labels.open_in_new_tab",
+          "default": false
         }
       ]
     }
@@ -539,30 +1008,10 @@
       "name": "t:general.brand_story",
       "category": "t:general.brand",
       "blocks": [
-        {
-          "type": "brand_tab",
-          "settings": {
-            "label": "Best Sellers"
-          }
-        },
-        {
-          "type": "brand_tab",
-          "settings": {
-            "label": "New Season Edit"
-          }
-        },
-        {
-          "type": "brand_tab",
-          "settings": {
-            "label": "Vacation Looks"
-          }
-        },
-        {
-          "type": "brand_tab",
-          "settings": {
-            "label": "Winter Luxe"
-          }
-        }
+        { "type": "brand_tab", "settings": { "label": "Best Sellers" } },
+        { "type": "brand_tab", "settings": { "label": "New Season Edit" } },
+        { "type": "brand_tab", "settings": { "label": "Vacation Looks" } },
+        { "type": "brand_tab", "settings": { "label": "Winter Luxe" } }
       ]
     }
   ]

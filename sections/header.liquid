@@ -1,22 +1,101 @@
+{% comment %}
+  Section: Header
+
+  Optional top bar, main navigation with dropdown and mega-menu support,
+  logo, account, search and cart controls, plus the mobile drawer and
+  search overlay. Colours come from the selected colour schemes.
+{% endcomment %}
+
 {{ 'lv-currency.css' | asset_url | stylesheet_tag }}
 {{ 'lv-header.css' | asset_url | stylesheet_tag }}
 
 <script src="{{ 'lv-currency.js' | asset_url }}" defer></script>
 <script src="{{ 'lv-header.js' | asset_url }}" defer></script>
 
+{%- liquid
+  assign main_menu = linklists[section.settings.menu]
+  assign logo_h = section.settings.logo_height
+  assign logo_h_mobile = section.settings.logo_height_mobile
+-%}
+
+{%- comment -%}
+  Inline SVG assets, with a built-in fallback so a missing or renamed
+  asset never renders an empty, unlabelled control.
+{%- endcomment -%}
+{%- capture icon_home -%}{{ 'icon-home.svg' | inline_asset_content }}{%- endcapture -%}
+{%- unless icon_home contains '<svg' -%}
+  {%- capture icon_home -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>{%- endcapture -%}
+{%- endunless -%}
+
+{%- capture icon_search -%}{{ 'icon-search.svg' | inline_asset_content }}{%- endcapture -%}
+{%- unless icon_search contains '<svg' -%}
+  {%- capture icon_search -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>{%- endcapture -%}
+{%- endunless -%}
+
+{%- capture icon_account -%}{{ 'icon-account.svg' | inline_asset_content }}{%- endcapture -%}
+{%- unless icon_account contains '<svg' -%}
+  {%- capture icon_account -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>{%- endcapture -%}
+{%- endunless -%}
+
+{%- capture icon_cart -%}{{ 'icon-cart.svg' | inline_asset_content }}{%- endcapture -%}
+{%- unless icon_cart contains '<svg' -%}
+  {%- capture icon_cart -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>{%- endcapture -%}
+{%- endunless -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .lv-header {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  #shopify-section-{{ section.id }} .lv-logo img {
+    max-height: {{ logo_h_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} img.lv-drawer-logo {
+    max-height: {{ logo_h_mobile }}px;
+  }
+
+  {%- comment -%}
+    The stylesheet hardcodes rgba(0,0,0,…) for these borders, which
+    disappears on dark colour schemes. Tie them to the scheme instead.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} .lv-header,
+  #shopify-section-{{ section.id }} .lv-top-bar__inner {
+    border-color: rgba(var(--color-foreground), 0.08);
+  }
+
+  #shopify-section-{{ section.id }} .lv-top-bar .social-btn {
+    border-color: rgba(var(--color-foreground), 0.18);
+  }
+
+  @media screen and (min-width: 769px) {
+    #shopify-section-{{ section.id }} .lv-header {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+
+    #shopify-section-{{ section.id }} .lv-logo img {
+      max-height: {{ logo_h }}px;
+    }
+  }
+{%- endstyle -%}
+
 <div class="lv-header-wrap{% if section.settings.sticky %} lv-header-wrap--sticky{% endif %}">
 
   {%- if section.settings.show_top_bar -%}
-  <div class="lv-top-bar color-{{ section.settings.top_bar_color_scheme }}">
-    <div class="lv-top-bar__inner">
-      {% render 'social-media-link' %}
-      {% render 'currency-switcher', position: 'topbar' %}
+    <div class="lv-top-bar color-{{ section.settings.top_bar_color_scheme }}">
+      <div class="lv-top-bar__inner">
+        {%- if section.settings.show_social_icons -%}
+          {% render 'social-media-link' %}
+        {%- endif -%}
+        {%- if section.settings.show_currency_switcher -%}
+          {% render 'currency-switcher', position: 'topbar' %}
+        {%- endif -%}
+      </div>
     </div>
-  </div>
-
   {%- endif -%}
 
-  <!-- HEADER -->
   <header
     class="lv-header color-{{ section.settings.header_color_scheme }}"
     id="lv-header-{{ section.id }}"
@@ -24,107 +103,89 @@
   >
     <nav class="lv-nav lv-nav--logo-{{ section.settings.logo_position }}" aria-label="{{ 'accessibility.main_navigation' | t }}">
       <div class="lv-nav__left{% if section.settings.logo_position == 'left' %} lv-nav__left--{{ section.settings.nav_alignment }}{% endif %}">
-        <button class="lv-hamburger" id="lvHamburger" aria-label="{{ 'accessibility.open_menu' | t }}" aria-expanded="false" aria-controls="lvMobileMenu"><span></span><span></span><span></span></button>
+        <button
+          type="button"
+          class="lv-hamburger"
+          id="lvHamburger"
+          aria-label="{{ 'accessibility.open_menu' | t }}"
+          aria-expanded="false"
+          aria-controls="lvMobileMenu"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+
         <div class="lv-nav__links">
-          {%- for link in linklists[section.settings.menu].links -%}
-            {%- if forloop.first -%}
+          {%- for link in main_menu.links -%}
+            {%- liquid
+              assign use_home_icon = false
+              if section.settings.show_home_icon and forloop.first and link.links.size == 0
+                assign use_home_icon = true
+              endif
+
+              assign is_mega = false
+              if section.settings.enable_mega_menu and link.links.size > 0
+                assign current_menu_handle = link.title | handleize
+                for block in section.blocks
+                  if block.type == 'mega_menu_image'
+                    assign block_menu_handle = block.settings.menu_item | handleize
+                    if block_menu_handle == blank or block_menu_handle == current_menu_handle
+                      assign is_mega = true
+                      break
+                    endif
+                  endif
+                endfor
+              endif
+            -%}
+
+            {%- if use_home_icon -%}
               <div class="lv-nav__item lv-nav__item--home">
-                <a class="lv-nav__link lv-nav__link--icon" href="{{ link.url | default: routes.root_url }}" aria-label="{% if link.title != blank %}{{ link.title }}{% else %}{{ 'accessibility.home' | t }}{% endif %}">
-                  {{ 'icon-home.svg' | inline_asset_content }}
+                <a
+                  class="lv-nav__link lv-nav__link--icon"
+                  href="{{ link.url | default: routes.root_url }}"
+                  aria-label="{% if link.title != blank %}{{ link.title | escape }}{% else %}{{ 'accessibility.home' | t }}{% endif %}"
+                >
+                  {{ icon_home }}
                 </a>
               </div>
-       {%- elsif link.links.size > 0 -%}
 
-  {%- assign is_mega = false -%}
+            {%- elsif link.links.size > 0 -%}
+              <div class="lv-nav__item{% if is_mega %} lv-nav__item--mega{% endif %}" data-lv-dropdown>
+                <span class="lv-nav__link-group">
+                  <a class="lv-nav__link" href="{{ link.url }}">{{ link.title | escape }}</a>
+                  <button
+                    type="button"
+                    class="lv-nav__caret"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    aria-label="{{ link.title | escape }}"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true" focusable="false">
+                      <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                  </button>
+                </span>
 
-  {%- if section.settings.enable_mega_menu -%}
+                {%- if is_mega -%}
+                  {% render 'lv-menu-mega', link: link, blocks: section.blocks %}
+                {%- else -%}
+                  {% render 'lv-menu-dropdown', link: link %}
+                {%- endif -%}
+              </div>
 
-    {%- assign current_menu_handle = link.title | handleize -%}
-
-    {%- for block in section.blocks -%}
-
-      {%- if block.type == 'mega_menu_image' -%}
-
-        {%- assign block_menu_handle = block.settings.menu_item | handleize -%}
-
-        {%- if block_menu_handle != blank
-          and block_menu_handle == current_menu_handle -%}
-
-          {%- assign is_mega = true -%}
-          {%- break -%}
-
-        {%- endif -%}
-
-      {%- endif -%}
-
-    {%- endfor -%}
-
-  {%- endif -%}
-
-
-  <div
-    class="lv-nav__item{% if is_mega %} lv-nav__item--mega{% endif %}"
-    data-lv-dropdown
-  >
-
-    <span class="lv-nav__link-group">
-
-      <a
-        class="lv-nav__link"
-        href="{{ link.url }}"
-      >
-        {{ link.title }}
-      </a>
-
-      <button
-        type="button"
-        class="lv-nav__caret"
-        aria-haspopup="true"
-        aria-expanded="false"
-        aria-label="Toggle submenu"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.2"
-        >
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
-      </button>
-
-    </span>
-
-
-    {%- if is_mega -%}
-
-      {% render 'lv-menu-mega',
-        link: link,
-        blocks: section.blocks
-      %}
-
-    {%- else -%}
-
-      {% render 'lv-menu-dropdown',
-        link: link
-      %}
-
-    {%- endif -%}
-
-  </div>
             {%- else -%}
               <div class="lv-nav__item">
-                <a class="lv-nav__link" href="{{ link.url }}">{{ link.title }}</a>
+                <a class="lv-nav__link" href="{{ link.url }}">{{ link.title | escape }}</a>
               </div>
             {%- endif -%}
           {%- endfor -%}
         </div>
       </div>
 
-      <a href="{{ routes.root_url }}" class="lv-logo" aria-label="{{ shop.name }} home">
+      <a href="{{ routes.root_url }}" class="lv-logo" aria-label="{{ shop.name | escape }} — {{ 'accessibility.home' | t }}">
         {%- if settings.logo != blank -%}
-          {%- assign logo_display_height = 48 -%}
-          {%- assign logo_display_width = logo_display_height | times: settings.logo.aspect_ratio | round -%}
+          {%- assign logo_display_width = logo_h | times: settings.logo.aspect_ratio | round -%}
           {%- assign logo_width_2x = logo_display_width | times: 2 -%}
           {%- assign logo_width_3x = logo_display_width | times: 3 -%}
           <img
@@ -134,100 +195,117 @@
               {{ settings.logo | image_url: width: logo_width_2x }} 2x,
               {{ settings.logo | image_url: width: logo_width_3x }} 3x
             "
-            alt="{{ shop.name }}"
+            alt="{{ shop.name | escape }}"
             width="{{ logo_display_width }}"
-            height="{{ logo_display_height }}"
+            height="{{ logo_h }}"
             loading="eager"
+            fetchpriority="high"
           >
         {%- else -%}
-          <span class="lv-logo__name">{{ section.settings.brand_name | default: shop.name | upcase }}</span>
-          <div class="lv-logo__sub-row"><span class="lv-logo__line"></span><span class="lv-logo__sub">{{ section.settings.brand_tagline | default: 'Fashion' }}</span><span class="lv-logo__line"></span></div>
+          <span class="lv-logo__name">{{ section.settings.brand_name | default: shop.name | escape | upcase }}</span>
+          {%- if section.settings.brand_tagline != blank -%}
+            <span class="lv-logo__sub-row">
+              <span class="lv-logo__line" aria-hidden="true"></span>
+              <span class="lv-logo__sub">{{ section.settings.brand_tagline | escape }}</span>
+              <span class="lv-logo__line" aria-hidden="true"></span>
+            </span>
+          {%- endif -%}
         {%- endif -%}
       </a>
 
       <div class="lv-nav__right">
-        <button class="lv-icon-btn" id="lvSearchBtn" aria-label="{{ 'accessibility.search' | t }}">
-           {{ 'icon-search.svg' | inline_asset_content }} </button>
+        {%- if section.settings.show_search -%}
+          <button type="button" class="lv-icon-btn" id="lvSearchBtn" aria-label="{{ 'accessibility.search' | t }}">
+            {{ icon_search }}
+          </button>
+        {%- endif -%}
+
         {%- if shop.customer_accounts_enabled -%}
           <shopify-account menu="customer-account-main-menu" class="lv-icon-btn">
-            <div slot="signed-out-avatar" aria-label="{{ 'accessibility.account' | t }}">{{ 'icon-account.svg' | inline_asset_content }}</div>
+            <div slot="signed-out-avatar" aria-label="{{ 'accessibility.account' | t }}">{{ icon_account }}</div>
           </shopify-account>
         {%- else -%}
           <a href="{{ routes.account_url }}" class="lv-icon-btn" aria-label="{{ 'accessibility.account' | t }}">
-            {{ 'icon-account.svg' | inline_asset_content }}</a>
+            {{ icon_account }}
+          </a>
         {%- endif -%}
 
-{% if settings.cart_type == 'page' %}
+        {%- liquid
+          capture cart_aria
+            echo 'accessibility.cart' | t
+            if cart.item_count > 0
+              echo ', '
+              echo 'products.count' | t: count: cart.item_count
+            endif
+          endcapture
+        -%}
+        {%- capture cart_contents -%}
+          <span class="svg-wrapper">{{ icon_cart }}</span>
+          <span class="lv-cart-badge"{% if cart.item_count == 0 %} style="display:none"{% endif %}>{{ cart.item_count }}</span>
+        {%- endcapture -%}
 
-  <a href="{{ routes.cart_url }}"
-     class="lv-icon-btn lv-icon-btn--cart"
-     aria-label="{{ 'accessibility.cart' | t }}">
-
-      {% if cart == empty %}
-          <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
-        {% else %}
-          <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
-        {% endif %}
-
-    {% if cart.item_count > 0 %}
-      <span class="lv-cart-badge">{{ cart.item_count }}</span>
-    {% endif %}
-
-  </a>
-
-{% else %}
-
-  <button
-    type="button"
-    class="lv-icon-btn lv-icon-btn--cart js-cart-drawer-open"
-    aria-label="{{ 'accessibility.cart' | t }}">
-
-      {% if cart == empty %}
-           <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
-        {% else %}
-          <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
-        {% endif %}
-
-    {% if cart.item_count > 0 %}
-      <span class="lv-cart-badge">{{ cart.item_count }}</span>
-    {% endif %}
-
-  </button>
-
-{% endif %}
+        {%- if settings.cart_type == 'page' -%}
+          <a href="{{ routes.cart_url }}" class="lv-icon-btn lv-icon-btn--cart" aria-label="{{ cart_aria | strip }}">
+            {{ cart_contents }}
+          </a>
+        {%- else -%}
+          <button type="button" class="lv-icon-btn lv-icon-btn--cart js-cart-drawer-open" aria-label="{{ cart_aria | strip }}">
+            {{ cart_contents }}
+          </button>
+        {%- endif -%}
       </div>
     </nav>
   </header>
 </div>
 
-<!-- MOBILE DRAWER -->
+{%- comment -%} Mobile drawer {%- endcomment -%}
 <div class="lv-mobile-menu" id="lvMobileMenu" aria-hidden="true">
-  <div class="lv-mobile-drawer color-{{ section.settings.header_color_scheme }}">
+  <div
+    class="lv-mobile-drawer color-{{ section.settings.header_color_scheme }}"
+    role="dialog"
+    aria-modal="true"
+    aria-label="{{ 'accessibility.main_navigation' | t }}"
+  >
     <div class="lv-drawer-head">
       {%- if settings.logo != blank -%}
-        {%- assign drawer_logo_height = 36 -%}
-        {%- assign drawer_logo_width = drawer_logo_height | times: settings.logo.aspect_ratio | round -%}
+        {%- assign drawer_logo_width = logo_h_mobile | times: settings.logo.aspect_ratio | round -%}
         <img
           class="lv-drawer-logo"
           src="{{ settings.logo | image_url: width: drawer_logo_width }}"
-          alt="{{ shop.name }}"
+          srcset="
+            {{ settings.logo | image_url: width: drawer_logo_width }} 1x,
+            {{ settings.logo | image_url: width: drawer_logo_width | times: 2 }} 2x
+          "
+          alt="{{ shop.name | escape }}"
           width="{{ drawer_logo_width }}"
-          height="{{ drawer_logo_height }}"
+          height="{{ logo_h_mobile }}"
           loading="lazy"
         >
       {%- else -%}
-        <span class="lv-drawer-logo">{{ section.settings.brand_name | default: shop.name | upcase }}</span>
+        <span class="lv-drawer-logo">{{ section.settings.brand_name | default: shop.name | escape | upcase }}</span>
       {%- endif -%}
-      <button class="lv-drawer-close" id="lvDrawerClose" aria-label="{{ 'accessibility.close_menu' | t }}">✕</button>
+
+      <button type="button" class="lv-drawer-close" id="lvDrawerClose" aria-label="{{ 'accessibility.close_menu' | t }}">
+        <span aria-hidden="true">&#10005;</span>
+      </button>
     </div>
-    <nav class="lv-drawer-nav">
-      {%- for link in linklists[section.settings.menu].links -%}
+
+    <nav class="lv-drawer-nav" aria-label="{{ 'accessibility.main_navigation' | t }}">
+      {%- for link in main_menu.links -%}
         <div class="lv-drawer-item">
           {%- if link.links.size > 0 -%}
             <span class="lv-drawer-link-group">
-              <a class="lv-drawer-link" href="{{ link.url }}">{{ link.title }}</a>
-              <button type="button" class="lv-drawer-caret" data-lv-drawer-toggle aria-expanded="false" aria-label="Toggle submenu">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+              <a class="lv-drawer-link" href="{{ link.url }}">{{ link.title | escape }}</a>
+              <button
+                type="button"
+                class="lv-drawer-caret"
+                data-lv-drawer-toggle
+                aria-expanded="false"
+                aria-label="{{ link.title | escape }}"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true" focusable="false">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
               </button>
             </span>
             <div class="lv-drawer-sub">
@@ -235,62 +313,95 @@
                 {%- if child.links.size > 0 -%}
                   <div class="lv-drawer-item">
                     <span class="lv-drawer-link-group">
-                      <a class="lv-drawer-link" href="{{ child.url }}">{{ child.title }}</a>
-                      <button type="button" class="lv-drawer-caret" data-lv-drawer-toggle aria-expanded="false" aria-label="Toggle submenu">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+                      <a class="lv-drawer-link" href="{{ child.url }}">{{ child.title | escape }}</a>
+                      <button
+                        type="button"
+                        class="lv-drawer-caret"
+                        data-lv-drawer-toggle
+                        aria-expanded="false"
+                        aria-label="{{ child.title | escape }}"
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true" focusable="false">
+                          <polyline points="6 9 12 15 18 9"/>
+                        </svg>
                       </button>
                     </span>
                     <div class="lv-drawer-sub">
                       {%- for grandchild in child.links -%}
-                        <a href="{{ grandchild.url }}">{{ grandchild.title }}</a>
+                        <a href="{{ grandchild.url }}">{{ grandchild.title | escape }}</a>
                       {%- endfor -%}
                     </div>
                   </div>
                 {%- else -%}
-                  <a href="{{ child.url }}">{{ child.title }}</a>
+                  <a href="{{ child.url }}">{{ child.title | escape }}</a>
                 {%- endif -%}
               {%- endfor -%}
             </div>
           {%- else -%}
-            <a class="lv-drawer-link" href="{{ link.url }}">{{ link.title }}</a>
+            <a class="lv-drawer-link" href="{{ link.url }}">{{ link.title | escape }}</a>
           {%- endif -%}
         </div>
       {%- endfor -%}
     </nav>
+
     <div class="lv-drawer-footer">
-      {% render 'currency-switcher', position: 'mobile' %}
+      {%- if section.settings.show_currency_switcher -%}
+        {% render 'currency-switcher', position: 'mobile' %}
+      {%- endif -%}
+
       {%- if shop.customer_accounts_enabled -%}
         <shopify-account menu="customer-account-main-menu" class="lv-drawer-account">
           <div slot="signed-out-avatar" class="lv-drawer-account__signed-out">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            {{ icon_account }}
             {{ 'header.my_account' | t }}
           </div>
         </shopify-account>
       {%- else -%}
-        <a href="{{ routes.account_url }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>{{ 'header.my_account' | t }}</a>
+        <a href="{{ routes.account_url }}">
+          {{ icon_account }}
+          {{ 'header.my_account' | t }}
+        </a>
       {%- endif -%}
     </div>
   </div>
 </div>
 
-<!-- SEARCH OVERLAY -->
-<div class="lv-search-overlay" id="lvSearchOverlay" role="dialog" aria-modal="true" aria-label="{{ 'accessibility.search' | t }}">
-  <div class="lv-search-panel">
-    <div class="lv-search-box color-{{ section.settings.header_color_scheme }}">
-      <form action="{{ routes.search_url }}" method="get" role="search">
-        <input type="search" name="q" placeholder="{{ section.settings.search_placeholder | default: 'Search products, styles, collections…' }}" id="lvSearchInput" autocomplete="off" aria-label="{{ 'accessibility.search' | t }}">
-      </form>
-      <button class="lv-search-close" id="lvSearchClose" aria-label="{{ 'accessibility.close_search' | t }}">✕</button>
+{%- if section.settings.show_search -%}
+  {%- comment -%} Search overlay {%- endcomment -%}
+  <div class="lv-search-overlay" id="lvSearchOverlay" role="dialog" aria-modal="true" aria-label="{{ 'accessibility.search' | t }}">
+    <div class="lv-search-panel">
+      <div class="lv-search-box color-{{ section.settings.header_color_scheme }}">
+        <form action="{{ routes.search_url }}" method="get" role="search">
+          <input
+            type="search"
+            name="q"
+            placeholder="{{ section.settings.search_placeholder | escape }}"
+            id="lvSearchInput"
+            autocomplete="off"
+            aria-label="{{ 'accessibility.search' | t }}"
+          >
+          <button
+            type="submit"
+            class="lv-search-submit"
+            style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;"
+          >{{ 'search.submit' | t }}</button>
+        </form>
+        <button type="button" class="lv-search-close" id="lvSearchClose" aria-label="{{ 'accessibility.close_search' | t }}">
+          <span aria-hidden="true">&#10005;</span>
+        </button>
+      </div>
+      <div class="lv-predictive color-{{ section.settings.header_color_scheme }}" id="lvPredictiveResults" hidden></div>
     </div>
-    <div class="lv-predictive color-{{ section.settings.header_color_scheme }}" id="lvPredictiveResults" hidden></div>
   </div>
-</div>
-
-
+{%- endif -%}
 
 {% schema %}
 {
   "name": "t:general.header",
+  "limit": 1,
+  "enabled_on": {
+    "groups": ["header"]
+  },
   "settings": [
     {
       "type": "header",
@@ -303,20 +414,41 @@
       "default": true
     },
     {
+      "type": "checkbox",
+      "id": "show_social_icons",
+      "label": "t:labels.show_social_icons",
+      "default": true,
+      "visible_if": "{{ section.settings.show_top_bar }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency_switcher",
+      "label": "t:labels.show_currency_switcher",
+      "default": true
+    },
+    {
       "type": "color_scheme",
       "id": "top_bar_color_scheme",
       "label": "t:labels.top_bar_color_scheme",
-      "default": "scheme-1"
+      "default": "scheme-1",
+      "visible_if": "{{ section.settings.show_top_bar }}"
     },
     {
       "type": "header",
       "content": "t:labels.appearance"
     },
     {
+      "type": "color_scheme",
+      "id": "header_color_scheme",
+      "label": "t:labels.header_color_scheme",
+      "default": "scheme-1"
+    },
+    {
       "type": "text",
       "id": "brand_name",
       "label": "t:labels.brand_name",
-      "default": "LUXVERA"
+      "default": "LUXVERA",
+      "info": "Used only when no logo image is set in Theme settings → Branding."
     },
     {
       "type": "text",
@@ -325,10 +457,25 @@
       "default": "Fashion"
     },
     {
-      "type": "color_scheme",
-      "id": "header_color_scheme",
-      "label": "t:labels.header_color_scheme",
-      "default": "scheme-1"
+      "type": "range",
+      "id": "logo_height",
+      "label": "t:labels.logo_max_width",
+      "min": 24,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48,
+      "info": "Logo height on desktop. Width is capped by Theme settings → Layout → Logo max width."
+    },
+    {
+      "type": "range",
+      "id": "logo_height_mobile",
+      "label": "t:labels.mobile_height",
+      "min": 20,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 32
     },
     {
       "type": "select",
@@ -349,7 +496,9 @@
         { "value": "center", "label": "t:options.nav_alignment.center" },
         { "value": "right", "label": "t:options.nav_alignment.right" }
       ],
-      "default": "left"
+      "default": "left",
+      "visible_if": "{{ section.settings.logo_position == 'left' }}",
+      "info": "Applies only when the logo is positioned left."
     },
     {
       "type": "range",
@@ -368,12 +517,6 @@
       "default": true
     },
     {
-      "type": "checkbox",
-      "id": "enable_mega_menu",
-      "label": "t:labels.enable_mega_menu",
-      "default": false
-    },
-    {
       "type": "header",
       "content": "t:labels.navigation"
     },
@@ -384,17 +527,61 @@
       "default": "main-menu"
     },
     {
+      "type": "checkbox",
+      "id": "show_home_icon",
+      "label": "Show first menu item as a home icon",
+      "default": true,
+      "info": "Only applies when the first menu item has no sub-items."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mega_menu",
+      "label": "t:labels.enable_mega_menu",
+      "default": false,
+      "info": "Menu items become mega menus when a Mega menu image block targets them."
+    },
+    {
       "type": "header",
       "content": "t:labels.search"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "t:labels.show_search_box",
+      "default": true
     },
     {
       "type": "text",
       "id": "search_placeholder",
       "label": "t:labels.search_placeholder",
-      "default": "Search products, styles, collections…"
+      "default": "Search products, styles, collections…",
+      "visible_if": "{{ section.settings.show_search }}"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
     }
   ],
-
   "blocks": [
     {
       "type": "mega_menu_image",
@@ -410,7 +597,7 @@
           "type": "image_picker",
           "id": "image",
           "label": "Image",
-           "info": "For Best Result please upload 350*300 Dimension"
+          "info": "For best results upload a 350×300 image."
         },
         {
           "type": "text",

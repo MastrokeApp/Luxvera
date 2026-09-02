@@ -208,6 +208,47 @@
     ]
   },
   {
+  "name": "Breadcrumbs",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "breadcrumb_all_pages",
+      "label": "Show breadcrumbs on whole store",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "breadcrumb_product",
+      "label": "Show on product pages",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "breadcrumb_policy",
+      "label": "Show on policy pages",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "breadcrumb_page",
+      "label": "Show on pages",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "breadcrumb_collection",
+      "label": "Show on collection pages",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "breadcrumb_search",
+      "label": "Show on search pages",
+      "default": true
+    }
+  ]
+},
+  {
     "name": "t:general.social_media",
     "settings": [
       {

@@ -96,13 +96,13 @@
       ],
       "name": "Announcement Ticker",
       "settings": {
-        "background_color": "#f7fcd8",
-        "text_color": "#1a1a1a",
+        "color_scheme": "scheme-4",
         "separator_color": "#999999",
         "separator_char": "|",
-        "font_size": 13,
-        "vertical_padding": 12,
-        "scroll_speed": 25
+        "font_size": 12,
+        "scroll_speed": 25,
+        "padding_top": 12,
+        "padding_bottom": 12
       }
     },
     "category_grid_JzzWFE": {
@@ -213,28 +213,6 @@
         "color_scheme": ""
       }
     },
-    "product_tabs_rBNiA9": {
-      "type": "product-tabs",
-      "name": "Product Tabs",
-      "settings": {
-        "padding_top_desktop": 56,
-        "padding_bottom_desktop": 56,
-        "padding_top_tablet": 40,
-        "padding_bottom_tablet": 40,
-        "padding_top_mobile": 28,
-        "padding_bottom_mobile": 28,
-        "heading": "Our Products You’ll Love",
-        "heading_size": 32,
-        "heading_alignment": "center",
-        "atc_label": "Add To Cart",
-        "products_limit": 8,
-        "image_ratio": "portrait",
-        "tab1_label": "New Arrivals",
-        "tab1_collection": "",
-        "tab2_label": "Trending Now",
-        "tab2_collection": ""
-      }
-    },
     "image_with_text_PParEA": {
       "type": "image-with-text",
       "name": "t:general.image_with_text_2",
@@ -256,8 +234,8 @@
         "image_border_radius": 8,
         "text_alignment": "left",
         "show_divider": true,
-        "eyebrow": "Our Story",
-        "eyebrow_size": 12,
+        "subtitle": "Our Story",
+        "subtitle_size": 12,
         "heading_tag": "h2",
         "heading": "Welcome to Luxvera Fashion",
         "heading_size": 36,
@@ -285,25 +263,37 @@
         "brand_tab_PeCPNn": {
           "type": "brand_tab",
           "settings": {
-            "label": "Best Sellers"
+            "label": "Best Sellers",
+            "link": "#",
+            "cta_label": "Shop now",
+            "link_new_tab": false
           }
         },
         "brand_tab_6ABh9P": {
           "type": "brand_tab",
           "settings": {
-            "label": "New Season Edit"
+            "label": "New Season Edit",
+            "link": "",
+            "cta_label": "Shop now",
+            "link_new_tab": false
           }
         },
         "brand_tab_9VGrxM": {
           "type": "brand_tab",
           "settings": {
-            "label": "Vacation Looks"
+            "label": "Vacation Looks",
+            "link": "",
+            "cta_label": "Shop now",
+            "link_new_tab": false
           }
         },
         "brand_tab_WFEmkT": {
           "type": "brand_tab",
           "settings": {
-            "label": "Winter Luxe"
+            "label": "Winter Luxe",
+            "link": "",
+            "cta_label": "Shop now",
+            "link_new_tab": false
           }
         }
       },
@@ -315,16 +305,27 @@
       ],
       "name": "Brand Story",
       "settings": {
-        "padding_top": 72,
-        "padding_bottom": 72,
+        "color_scheme": "scheme-1",
+        "icon": "gift",
+        "icon_image": "shopify://shop_images/favicon.png",
+        "icon_size": 24,
         "brand_name": "LUXVERA",
         "brand_tagline": "Fashion",
         "heading": "More Than Style",
+        "heading_tag": "h2",
+        "heading_size": 26,
         "body_text": "This is more than a boutique, it's a space where confidence feels natural and being yourself is enough.",
+        "body_size": 13,
         "explore_label": "Explore",
         "cta_label": "Explore Collections",
         "cta_url": "",
-        "cta_new_tab": false
+        "cta_new_tab": false,
+        "content_width": 340,
+        "image_height_desktop": 500,
+        "image_height_tablet": 380,
+        "image_height_mobile": 260,
+        "padding_top": 72,
+        "padding_bottom": 72
       }
     },
     "dress_looks_hpWcBt": {
@@ -344,7 +345,7 @@
         "subtitle": "Some of our new looks you will love",
         "subtitle_size": 13,
         "atc_label": "Add To Cart",
-        "collection": "",
+        "collection": "designer",
         "products_limit": 8
       }
     },
@@ -688,6 +689,132 @@
         "padding_top_mobile": 45,
         "padding_bottom_mobile": 45
       }
+    },
+    "collections_gLyUHm": {
+      "type": "collections",
+      "blocks": {
+        "collection_hiaGTi": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": ""
+          }
+        },
+        "collection_9rQmJA": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": ""
+          }
+        },
+        "collection_NijxBg": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": ""
+          }
+        },
+        "collection_bE97RB": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": ""
+          }
+        }
+      },
+      "block_order": [
+        "collection_hiaGTi",
+        "collection_9rQmJA",
+        "collection_NijxBg",
+        "collection_bE97RB"
+      ],
+      "name": "Collections List",
+      "settings": {
+        "color_scheme": "",
+        "heading": "Collections For You To Explore",
+        "heading_size": 32,
+        "subtitle": "Everything you need to make your look fantastic",
+        "subtitle_size": 15,
+        "columns_desktop": 4,
+        "columns_tablet": 3,
+        "columns_mobile": "2",
+        "grid_gap": 12,
+        "image_ratio": "square",
+        "card_radius": 8,
+        "enable_slider": true,
+        "show_count": false,
+        "padding_top": 56,
+        "padding_bottom": 64
+      }
+    },
+    "product_tabs_fPhtgz": {
+      "type": "product-tabs",
+      "name": "t:general.product_tabs",
+      "settings": {
+        "padding_top_desktop": 56,
+        "padding_bottom_desktop": 56,
+        "padding_top_tablet": 40,
+        "padding_bottom_tablet": 40,
+        "padding_top_mobile": 28,
+        "padding_bottom_mobile": 28,
+        "heading": "Our Products You’ll Love",
+        "heading_size": 32,
+        "heading_alignment": "center",
+        "atc_label": "Add To Cart",
+        "products_limit": 8,
+        "image_ratio": "portrait",
+        "tab1_label": "New Arrivals",
+        "tab1_collection": "",
+        "tab2_label": "Trending Now",
+        "tab2_collection": ""
+      }
+    },
+    "image_text_section_TbVzTt": {
+      "type": "image-text-section",
+      "blocks": {
+        "heading_MFmbmN": {
+          "type": "heading",
+          "settings": {
+            "heading": "Image with text"
+          }
+        },
+        "subheading_qiDhK3": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "Pair text with an image to focus on your chosen product, collection, or blog post."
+          }
+        },
+        "button_LLUfW3": {
+          "type": "button",
+          "settings": {
+            "button_label": "Shop now",
+            "button_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "heading_MFmbmN",
+        "subheading_qiDhK3",
+        "button_LLUfW3"
+      ],
+      "name": "t:general.image_with_text",
+      "settings": {
+        "image": "shopify://shop_images/Image_Luxury_boutique.png",
+        "image_height_desktop": 500,
+        "image_height_mobile": 220,
+        "desktop_image_width": "small",
+        "layout": "image_first",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "content_layout": "overlap",
+        "color_scheme": "",
+        "section_color_scheme": "",
+        "image_behavior": "none",
+        "heading_size": 48,
+        "mobile_content_alignment": "left",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": [
@@ -696,7 +823,6 @@
     "announcement_ticker_qd9XG3",
     "category_grid_JzzWFE",
     "sale_countdown_7RBL9T",
-    "product_tabs_rBNiA9",
     "image_with_text_PParEA",
     "brand_story_jEbFwR",
     "dress_looks_hpWcBt",
@@ -706,6 +832,9 @@
     "testimonials_KBbzUQ",
     "trust_badges_Xyi6PV",
     "newsletter_hg4G9E",
-    "richtext_dL6wyX"
+    "richtext_dL6wyX",
+    "collections_gLyUHm",
+    "product_tabs_fPhtgz",
+    "image_text_section_TbVzTt"
   ]
 }

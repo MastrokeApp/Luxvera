@@ -9,30 +9,37 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "collections",
+    "main_collection_list_mPY8rD": {
+      "type": "main-collection-list",
+      "name": "Collections List",
       "settings": {
-        "color_scheme": "",
-        "heading": "Collections For You To Explore",
-        "heading_size": 32,
-        "subtitle": "Everything you need to make your look fantastic",
-        "subtitle_size": 15,
+        "heading": "Collections",
+        "heading_font_size": 34,
+        "heading_font_size_mobile": 27,
+        "subtitle": "Explore our collections",
+        "subtitle_font_size": 15,
+        "subtitle_font_size_mobile": 14,
+        "collections_per_page": 24,
+        "image_ratio": "square",
         "columns_desktop": 4,
         "columns_tablet": 3,
-        "columns_mobile": "2",
-        "grid_gap": 12,
-        "image_ratio": "square",
-        "card_radius": 8,
-        "per_page": 12,
-        "show_count": false,
-        "hide_empty": true,
-        "show_placeholders": true,
-        "padding_top": 56,
-        "padding_bottom": 64
+        "columns_mobile": "1",
+        "column_gap": 21,
+        "row_gap": 31,
+        "card_radius": 10,
+        "card_title_font_size": 20,
+        "card_title_font_size_mobile": 17,
+        "show_product_count": true,
+        "show_overlay": true,
+        "enable_slider": true,
+        "color_scheme": "",
+        "padding_top": 60,
+        "padding_bottom": 60
       }
     },
     "one_of_a_kind": {
       "type": "one-of-a-kind",
+      "disabled": true,
       "name": "t:general.one_of_a_kind",
       "settings": {
         "padding_top_desktop": 80,
@@ -52,7 +59,7 @@
     }
   },
   "order": [
-    "main",
+    "main_collection_list_mPY8rD",
     "one_of_a_kind"
   ]
 }

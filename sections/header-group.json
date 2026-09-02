@@ -11,6 +11,15 @@
   "type": "header",
   "name": "t:general.header",
   "sections": {
+    "announcement_bar_yxaWdm": {
+      "type": "announcement-bar",
+      "name": "t:general.announcement_bar",
+      "settings": {
+        "text": "Free shipping on all orders over $75",
+        "link": "",
+        "color_scheme": "scheme-3"
+      }
+    },
     "header": {
       "type": "header",
       "blocks": {
@@ -31,21 +40,30 @@
       ],
       "settings": {
         "show_top_bar": true,
-        "top_bar_color_scheme": "",
+        "show_social_icons": true,
+        "show_currency_switcher": true,
+        "top_bar_color_scheme": "scheme-1",
+        "header_color_scheme": "scheme-1",
         "brand_name": "LUXVERA",
         "brand_tagline": "Fashion",
-        "header_color_scheme": "",
+        "logo_height": 48,
+        "logo_height_mobile": 32,
         "logo_position": "center",
-        "nav_alignment": "left",
+        "nav_alignment": "center",
         "header_height": 64,
         "sticky": true,
-        "enable_mega_menu": true,
         "menu": "main-menu",
-        "search_placeholder": "Search products, styles, collections…"
+        "show_home_icon": true,
+        "enable_mega_menu": true,
+        "show_search": true,
+        "search_placeholder": "Search products, styles, collections…",
+        "padding_top": 0,
+        "padding_bottom": 0
       }
     }
   },
   "order": [
+    "announcement_bar_yxaWdm",
     "header"
   ]
 }

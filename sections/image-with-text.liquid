@@ -29,7 +29,7 @@
     --lv-iwt-valign: {{ section.settings.content_vertical_align }};
     --lv-iwt-img-radius: {{ section.settings.image_border_radius }}px;
     --lv-iwt-img-height: {{ section.settings.image_custom_height }}px;
-    --lv-iwt-eyebrow-size: {{ section.settings.eyebrow_size }}px;
+    --lv-iwt-eyebrow-size: {{ section.settings.subtitle_size }}px;
     --lv-iwt-heading-size: {{ section.settings.heading_size }}px;
     --lv-iwt-heading-size-m: {{ section.settings.heading_size | times: 0.7 | round }}px;
     --lv-iwt-heading-weight: {{ section.settings.heading_weight }};
@@ -67,8 +67,8 @@
         <div class="lv-iwt-divider"></div>
       {%- endif -%}
 
-      {%- if section.settings.eyebrow != blank -%}
-        <span class="lv-iwt-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+      {%- if section.settings.subtitle != blank -%}
+        <span class="lv-iwt-eyebrow">{{ section.settings.subtitle | escape }}</span>
       {%- endif -%}
 
       {%- if section.settings.heading != blank -%}
@@ -80,16 +80,19 @@
       {%- if section.settings.text != blank -%}
         <div class="lv-iwt-text-body rte">{{ section.settings.text }}</div>
       {%- endif -%}
-
-      {%- if section.settings.btn_label != blank and section.settings.btn_url != blank -%}
-        
-         <a href="{{ section.settings.btn_url }}"
-          class="lv-iwt-btn"
-          {% if section.settings.btn_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
-        >
-          {{- section.settings.btn_label | escape -}}
-        </a>
-      {%- endif -%}
+{%- if section.settings.btn_label != blank -%}
+  <a
+    class="lv-iwt-btn{% if section.settings.btn_url == blank %} lv-iwt-btn--disabled{% endif %}"
+    {% if section.settings.btn_url != blank %}
+      href="{{ section.settings.btn_url }}"
+    {% endif %}
+    {% if section.settings.btn_new_tab and section.settings.btn_url != blank %}
+      target="_blank" rel="noopener noreferrer"
+    {% endif %}
+  >
+    {{- section.settings.btn_label | escape -}}
+  </a>
+{%- endif -%}
     </div>
 
   </div>
@@ -544,14 +547,14 @@
     },
     {
       "type": "text",
-      "id": "eyebrow",
-      "label": "t:labels.eyebrow_text",
+      "id": "subtitle",
+      "label": "t:labels.subtitle_text",
       "default": "Our Story"
     },
     {
       "type": "range",
-      "id": "eyebrow_size",
-      "label": "t:labels.eyebrow_size",
+      "id": "subtitle_size",
+      "label": "t:labels.subtitle_size",
       "min": 10,
       "max": 20,
       "step": 1,
@@ -740,7 +743,7 @@
         "image_position": "left",
         "mobile_image_position": "image_first",
         "heading": "Welcome to Luxvera Fashion",
-        "eyebrow": "Our Story",
+        "subtitle": "Our Story",
         "btn_label": "Shop Now"
       }
     }

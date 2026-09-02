@@ -11,6 +11,12 @@
   "current": {
     "font_heading": "sans_serif_n4",
     "font_body": "inter_n4",
+    "breadcrumb_all_pages": true,
+    "breadcrumb_product": true,
+    "breadcrumb_policy": false,
+    "breadcrumb_page": false,
+    "breadcrumb_collection": false,
+    "breadcrumb_search": false,
     "cart_gift_notes": true,
     "subtotal_label": "Subtotal",
     "enable_shipping_link": true,

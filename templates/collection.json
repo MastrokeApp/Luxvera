@@ -55,9 +55,45 @@
         "empty_text": "No products found in this collection."
       }
     },
-    "collections": {
+    "collections_NCfhgr": {
       "type": "collections",
-      "name": "t:general.collections_list",
+      "blocks": {
+        "collection_ffJFjW": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": ""
+          }
+        },
+        "collection_CfPXpN": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": ""
+          }
+        },
+        "collection_R3mDnK": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": ""
+          }
+        },
+        "collection_MmNg6p": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": ""
+          }
+        }
+      },
+      "block_order": [
+        "collection_ffJFjW",
+        "collection_CfPXpN",
+        "collection_R3mDnK",
+        "collection_MmNg6p"
+      ],
+      "name": "Collections List",
       "settings": {
         "color_scheme": "",
         "heading": "Collections For You To Explore",
@@ -70,10 +106,8 @@
         "grid_gap": 12,
         "image_ratio": "square",
         "card_radius": 8,
-        "per_page": 12,
+        "enable_slider": false,
         "show_count": false,
-        "hide_empty": true,
-        "show_placeholders": true,
         "padding_top": 56,
         "padding_bottom": 64
       }
@@ -82,6 +116,6 @@
   "order": [
     "collection_banner",
     "main",
-    "collections"
+    "collections_NCfhgr"
   ]
 }

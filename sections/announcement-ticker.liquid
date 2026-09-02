@@ -1,55 +1,76 @@
 {% comment %}
-  Section: Announcement Ticker
+  Section: Announcement Ticker (Marquee)
 
-  Seamless scrolling ticker bar with configurable messages, speed,
-  background colour, text colour and separator. The row is duplicated
-  by JS until it fills the viewport, so the loop never shows a blank gap.
+  Seamless scrolling ticker bar.
+
+  - Background and text colour come from the theme colour schemes
+    (settings_schema.json -> color_schemes), applied via the
+    `color-{scheme}` class, the same way sections/announcement-bar.liquid
+    does it. No hard-coded background or text colour settings.
+  - Vertical spacing is split into Padding top / Padding bottom and is
+    scaled to 75% on mobile, matching Dawn's section padding convention.
+  - The row is duplicated by JS until it overflows the viewport, so the
+    loop never shows a blank gap.
+  - If the visitor prefers reduced motion, the ticker renders as a single
+    static, horizontally centred row instead of scrolling.
 {% endcomment %}
 
 {%- assign items = section.blocks | where: "type", "ticker_item" -%}
 
-{% if items.size > 0 %}
-<div
-  class="ticker"
-  id="ticker-{{ section.id }}"
-  aria-label="{{ 'accessibility.announcements' | t }}"
-  style="
-    --ticker-bg:        {{ section.settings.background_color }};
-    --ticker-color:     {{ section.settings.text_color }};
-    --ticker-sep-color: {{ section.settings.separator_color }};
-    --ticker-speed:     {{ section.settings.scroll_speed }}s;
-    --ticker-size:      {{ section.settings.font_size }}px;
-    --ticker-padding:   {{ section.settings.vertical_padding }}px;
-  "
->
-  <div class="ticker-track">
-    <div class="ticker-group">
-      {%- for block in items -%}
-        <span class="ticker-item" {{ block.shopify_attributes }}>
-          {{- block.settings.text | escape -}}
-        </span>
-        <span class="ticker-sep" aria-hidden="true">
-          {{ section.settings.separator_char }}
-        </span>
-      {%- endfor -%}
+{%- if items.size > 0 -%}
+  <div
+    class="ticker color-{{ section.settings.color_scheme }}"
+    id="ticker-{{ section.id }}"
+    role="region"
+    aria-label="{{ 'accessibility.announcements' | t }}"
+    style="
+      --ticker-sep-color: {{ section.settings.separator_color }};
+      --ticker-speed: {{ section.settings.scroll_speed }}s;
+      --ticker-size: {{ section.settings.font_size }}px;
+      --ticker-padding-top: {{ section.settings.padding_top }}px;
+      --ticker-padding-bottom: {{ section.settings.padding_bottom }}px;
+      --ticker-padding-top-mobile: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+      --ticker-padding-bottom-mobile: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    "
+  >
+    <div class="ticker-track">
+      <div class="ticker-group">
+        {%- for block in items -%}
+          <span class="ticker-item" {{ block.shopify_attributes }}>
+            {{- block.settings.text | escape -}}
+          </span>
+          {%- if section.settings.separator_char != blank -%}
+            <span class="ticker-sep" aria-hidden="true">{{- section.settings.separator_char | escape -}}</span>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
     </div>
   </div>
-</div>
-{% endif %}
+{%- endif -%}
 
 {% stylesheet %}
 .luxvera-announcement-ticker .ticker {
-  background: var(--ticker-bg, #F7FCD8);
+  position: relative;
+  width: 100%;
   overflow: hidden;
   white-space: nowrap;
-  padding: var(--ticker-padding, 12px) 0;
-  width: 100%;
-  position: relative;
+  background: var(--gradient-background, rgb(var(--color-background)));
+  color: rgb(var(--color-foreground));
+  padding-top: var(--ticker-padding-top-mobile, 9px);
+  padding-bottom: var(--ticker-padding-bottom-mobile, 9px);
+}
+
+@media screen and (min-width: 750px) {
+  .luxvera-announcement-ticker .ticker {
+    padding-top: var(--ticker-padding-top, 12px);
+    padding-bottom: var(--ticker-padding-bottom, 12px);
+  }
 }
 
 .luxvera-announcement-ticker .ticker-track {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  width: max-content;
 }
 
 .luxvera-announcement-ticker .ticker.is-loaded .ticker-track {
@@ -57,28 +78,46 @@
   will-change: transform;
 }
 
-/* Pause on hover for accessibility */
-.luxvera-announcement-ticker .ticker.is-loaded:hover .ticker-track {
+/* Pause on hover and on keyboard focus. */
+.luxvera-announcement-ticker .ticker.is-loaded:hover .ticker-track,
+.luxvera-announcement-ticker .ticker.is-loaded:focus-within .ticker-track {
   animation-play-state: paused;
 }
 
+/* Static mode: one row, no animation, content centred in the bar. */
+.luxvera-announcement-ticker .ticker.is-static .ticker-track {
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: none;
+}
+
+.luxvera-announcement-ticker .ticker.is-static .ticker-sep:last-child {
+  display: none;
+}
+
 .luxvera-announcement-ticker .ticker-group {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   flex-shrink: 0;
+}
+
+.luxvera-announcement-ticker .ticker.is-static .ticker-group {
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .luxvera-announcement-ticker .ticker-item {
   font-size: var(--ticker-size, 13px);
   font-weight: 400;
   letter-spacing: 0.02em;
-  color: var(--ticker-color, #1a1a1a);
+  color: inherit;
   padding: 0 28px;
   flex-shrink: 0;
 }
 
 .luxvera-announcement-ticker .ticker-sep {
-  color: var(--ticker-sep-color, #999999);
+  color: var(--ticker-sep-color, currentColor);
   font-size: calc(var(--ticker-size, 13px) + 1px);
   flex-shrink: 0;
   padding: 0 4px;
@@ -97,6 +136,8 @@
 @media (prefers-reduced-motion: reduce) {
   .luxvera-announcement-ticker .ticker-track {
     animation: none !important;
+    width: 100%;
+    justify-content: center;
   }
 }
 {% endstylesheet %}
@@ -105,8 +146,14 @@
 (function () {
   'use strict';
 
+  var SELECTOR = '.luxvera-announcement-ticker .ticker';
+
   // Remember each ticker's pristine single-group markup so rebuilds are clean.
   var originals = new WeakMap();
+
+  function prefersReducedMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
 
   function buildTicker(root) {
     var track = root.querySelector('.ticker-track');
@@ -114,6 +161,13 @@
 
     // Reset to one pristine group before measuring.
     track.innerHTML = originals.get(root);
+    root.classList.remove('is-loaded', 'is-static');
+
+    // Reduced motion: leave a single centred, non-scrolling row.
+    if (prefersReducedMotion()) {
+      root.classList.add('is-static');
+      return;
+    }
 
     var group = track.querySelector('.ticker-group');
     if (!group) return;
@@ -122,7 +176,7 @@
     var containerWidth = root.getBoundingClientRect().width;
     if (groupWidth === 0 || containerWidth === 0) return;
 
-    // Enough copies that the row always overflows the viewport — no blank gap.
+    // Enough copies that the row always overflows the viewport - no blank gap.
     // Needs (copies - 1) * groupWidth >= containerWidth.
     var copies = Math.ceil(containerWidth / groupWidth) + 1;
     if (copies < 2) copies = 2;
@@ -133,8 +187,8 @@
       track.appendChild(clone);
     }
 
-    // Scroll exactly one group width → the next identical group lands in place,
-    // so the reset is invisible (seamless loop).
+    // Scroll exactly one group width -> the next identical group lands in
+    // place, so the reset is invisible (seamless loop).
     root.style.setProperty('--ticker-shift', groupWidth + 'px');
     root.classList.add('is-loaded');
   }
@@ -149,7 +203,10 @@
   }
 
   function initAll(scope) {
-    (scope || document).querySelectorAll('.ticker').forEach(initTicker);
+    var node = scope || document;
+    node.querySelectorAll(SELECTOR).forEach(initTicker);
+    // shopify:section:load hands us the section element itself.
+    if (node.matches && node.matches(SELECTOR)) initTicker(node);
   }
 
   if (document.readyState === 'loading') {
@@ -158,7 +215,7 @@
     initAll();
   }
 
-  // Web fonts change text width after load — re-measure once they're ready.
+  // Web fonts change text width after load - re-measure once they're ready.
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(function () { initAll(); });
   }
@@ -169,6 +226,17 @@
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () { initAll(); }, 200);
   });
+
+  // Rebuild if the visitor's motion preference changes.
+  if (window.matchMedia) {
+    var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var onMotionChange = function () { initAll(); };
+    if (motionQuery.addEventListener) {
+      motionQuery.addEventListener('change', onMotionChange);
+    } else if (motionQuery.addListener) {
+      motionQuery.addListener(onMotionChange);
+    }
+  }
 
   // Theme editor: rebuild when the section is re-rendered.
   document.addEventListener('shopify:section:load', function (e) {
@@ -189,16 +257,10 @@
       "content": "t:labels.appearance"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:labels.background_colour",
-      "default": "#F7FCD8"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:labels.text_colour",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
     },
     {
       "type": "color",
@@ -224,16 +286,6 @@
       "default": 13
     },
     {
-      "type": "range",
-      "id": "vertical_padding",
-      "label": "t:labels.vertical_padding",
-      "min": 4,
-      "max": 32,
-      "step": 2,
-      "unit": "px",
-      "default": 12
-    },
-    {
       "type": "header",
       "content": "t:labels.animation"
     },
@@ -247,6 +299,30 @@
       "unit": "s",
       "default": 25,
       "info": "t:labels.lower_faster_higher_slower"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 12
     }
   ],
   "blocks": [
@@ -283,7 +359,7 @@
         {
           "type": "ticker_item",
           "settings": {
-            "text": "New arrivals every week — shop now"
+            "text": "New arrivals every week - shop now"
           }
         }
       ]

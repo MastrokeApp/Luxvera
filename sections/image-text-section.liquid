@@ -1,10 +1,21 @@
+
 {% comment %}
   Section: Image with Text
 
-  Two-column image + text with configurable image width, placement, content
-  position/alignment (desktop & mobile), optional content overlap, and an
-  optional ambient zoom on hover. Container uses the selected color scheme.
+  IMAGE
+  - Image remains a section-level setting.
+  - One image is used for the complete section.
+
+  BLOCKS
+  - Heading
+  - Subheading
+  - Button
+
+  Heading, subheading and button are separate blocks
+  so they can be independently added, removed and reordered
+  from the Shopify Theme Editor.
 {% endcomment %}
+{{ 'image-with-text.css' | asset_url | stylesheet_tag }}
 
 {%- liquid
   assign layout = section.settings.layout
@@ -15,7 +26,7 @@
       assign iwt_cols = '0.8fr 1.2fr'
     when 'medium'
       assign iwt_cols = '1fr 1fr'
-    else
+    when 'large'
       assign iwt_cols = '1.2fr 0.8fr'
   endcase
 
@@ -24,7 +35,7 @@
       assign iwt_content_align = 'flex-start'
     when 'middle'
       assign iwt_content_align = 'center'
-    else
+    when 'bottom'
       assign iwt_content_align = 'flex-end'
   endcase
 
@@ -78,252 +89,90 @@
     --iwt-heading-size: {{ section.settings.heading_size }}px;
   "
 >
-  <div class="image-text-wrapper">
-    <div class="image-text-inner">
+  <div class="image-with-text-page-width">
+    <div class="image-text-wrapper">
+      <div class="image-text-inner">
 
-      <div class="image-text-media">
-        {%- if section.settings.image != blank -%}
-          <img
-            src="{{ section.settings.image | image_url: width: 1600 }}"
-            alt="{{ section.settings.image.alt | default: section.settings.heading | strip_html | default: shop.name | escape }}"
-            loading="lazy"
-            width="{{ section.settings.image.width }}"
-            height="{{ section.settings.image.height }}"
-          >
-        {%- else -%}
-          {{ 'image' | placeholder_svg_tag: 'placeholder-svg image-text-placeholder' }}
-        {%- endif -%}
-      </div>
+        <div class="image-text-media">
+          {%- if section.settings.image != blank -%}
+            <img
+              src="{{ section.settings.image | image_url: width: 1600 }}"
+              alt="{{ section.settings.image.alt | default: shop.name | escape }}"
+              loading="lazy"
+              width="{{ section.settings.image.width }}"
+              height="{{ section.settings.image.height }}"
+            >
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg image-text-placeholder' }}
+          {%- endif -%}
+        </div>
 
-      <div class="image-text-content-wrap">
-        <div class="image-text-content color-{{ section.settings.color_scheme }}">
-          <div class="image-text-content-inner">
+        <div class="image-text-content-wrap">
+          <div class="image-text-content color-{{ section.settings.color_scheme }}">
+            <div class="image-text-content-inner">
 
-            {%- if section.settings.heading != blank -%}
-              <h2 class="image-text-heading">{{ section.settings.heading }}</h2>
-            {%- endif -%}
+              {%- for block in section.blocks -%}
+                {%- case block.type -%}
 
-            {%- if section.settings.text != blank -%}
-              <div class="image-text-text">
-                <p>{{ section.settings.text | escape }}</p>
-              </div>
-            {%- endif -%}
+                  {%- when 'heading' -%}
+                    {%- if block.settings.heading != blank -%}
+                      <div
+                        class="image-text-block image-text-block--heading"
+                        {{ block.shopify_attributes }}
+                      >
+                        <h2 class="image-text-heading">
+                          {{ block.settings.heading }}
+                        </h2>
+                      </div>
+                    {%- endif -%}
 
-            {%- if section.settings.button_label != blank -%}
-              <a
-                {% if section.settings.button_link != blank %}
-                  href="{{ section.settings.button_link }}"
-                {% else %}
-                  role="link"
-                  aria-disabled="true"
-                {% endif %}
-                class="image-text-button"
-              >
-                {{ section.settings.button_label | escape }}
-              </a>
-            {%- endif -%}
+                  {%- when 'subheading' -%}
+                    {%- if block.settings.subheading != blank -%}
+                      <div
+                        class="image-text-block image-text-block--subheading"
+                        {{ block.shopify_attributes }}
+                      >
+                        <div class="image-text-text">
+                          {{ block.settings.subheading }}
+                        </div>
+                      </div>
+                    {%- endif -%}
 
+                  {%- when 'button' -%}
+                    {%- if block.settings.button_label != blank -%}
+                      <div
+                        class="image-text-block image-text-block--button"
+                        {{ block.shopify_attributes }}
+                      >
+                        {%- if block.settings.button_link != blank -%}
+                          <a
+                            href="{{ block.settings.button_link }}"
+                            class="image-text-button"
+                          >
+                            {{ block.settings.button_label | escape }}
+                          </a>
+                        {%- else -%}
+                          <span
+                            class="image-text-button image-text-button--disabled"
+                            aria-disabled="true"
+                          >
+                            {{ block.settings.button_label | escape }}
+                          </span>
+                        {%- endif -%}
+                      </div>
+                    {%- endif -%}
+
+                {%- endcase -%}
+              {%- endfor -%}
+
+            </div>
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
 </div>
-
-{% stylesheet %}
-.image-with-text-section {
-  background: rgb(var(--color-background));
-  color: rgb(var(--color-foreground));
-}
-
-.image-with-text-section .image-text-wrapper {
-  padding-top: var(--iwt-pad-top, 36px);
-  padding-bottom: var(--iwt-pad-bottom, 36px);
-}
-
-.image-with-text-section .image-text-inner {
-  max-width: var(--lv-container-max, 1920px);
-  margin: 0 auto;
-  padding-left: 56px;
-  padding-right: 56px;
-  display: grid;
-  gap: 0;
-  align-items: stretch;
-  grid-template-columns: var(--iwt-cols, 1fr 1fr);
-}
-
-/* Desktop image placement */
-.image-with-text-section[data-layout="text_first"] .image-text-media {
-  order: 2;
-}
-
-.image-with-text-section[data-layout="text_first"] .image-text-content-wrap {
-  order: 1;
-}
-
-.image-with-text-section[data-layout="image_first"] .image-text-media {
-  order: 1;
-}
-
-.image-with-text-section[data-layout="image_first"] .image-text-content-wrap {
-  order: 2;
-}
-
-.image-with-text-section .image-text-media {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: var(--iwt-img-h, 280px);
-}
-
-.image-with-text-section .image-text-media img,
-.image-with-text-section .image-text-media svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.image-with-text-section .image-text-placeholder {
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
-  display: block;
-  background: #f4f4f4;
-}
-
-/* Image hover behavior */
-.image-with-text-section[data-image-behavior="zoom-in"] .image-text-media img {
-  transition: transform .5s ease;
-}
-
-.image-with-text-section[data-image-behavior="zoom-in"]:hover .image-text-media img {
-  transform: scale(1.05);
-}
-
-.image-with-text-section .image-text-content-wrap {
-  display: flex;
-  position: relative;
-  z-index: 2;
-  align-items: var(--iwt-content-align, center);
-}
-
-.image-with-text-section .image-text-content {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0 4rem;
-  min-height: var(--iwt-img-h, 280px);
-  display: flex;
-  border: none;
-}
-
-/* Overlap (desktop only) */
-@media screen and (min-width: 990px) {
-  .image-with-text-section[data-content-layout="overlap"][data-layout="image_first"] .image-text-content {
-    margin-left: -80px;
-  }
-
-  .image-with-text-section[data-content-layout="overlap"][data-layout="text_first"] .image-text-content {
-    margin-right: -80px;
-  }
-}
-
-.image-with-text-section .image-text-content-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
-  width: 100%;
-  justify-content: center;
-  text-align: var(--iwt-text-align, left);
-  align-items: var(--iwt-items-align, flex-start);
-}
-
-.image-with-text-section .image-text-heading {
-  margin: 0;
-  font-size: var(--iwt-heading-size, 48px);
-  line-height: 1.1;
-}
-
-.image-with-text-section .image-text-text {
-  margin: 0;
-  line-height: 1.6;
-  opacity: 0.85;
-}
-
-.image-with-text-section .image-text-text p {
-  margin: 0;
-}
-
-.image-with-text-section .image-text-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 1.2rem 2.4rem;
-    text-decoration: none;
-    border: 1px solid currentColor;
-    transition: all .25s ease;
-    background: black;
-    color: white;
-}
-
-.image-with-text-section .image-text-button:hover {
-  opacity: .85;
-  background: transparent;
-  color: #000;
-}
-
-/* Tablet / mobile */
-@media screen and (max-width: 989px) {
-  .image-with-text-section .image-text-inner {
-    grid-template-columns: 1fr;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    gap: 0;
-  }
-
-  .image-with-text-section .image-text-media,
-  .image-with-text-section .image-text-content-wrap {
-    order: unset !important;
-  }
-
-  .image-with-text-section .image-text-content {
-    margin: 0 !important;
-    max-width: 100%;
-    padding: 3rem 2rem;
-    min-height: auto;
-    border: none;
-  }
-
-  /* Mobile content alignment */
-  .image-with-text-section .image-text-content-inner {
-    text-align: var(--iwt-text-align-m, left);
-    align-items: var(--iwt-items-align-m, flex-start);
-  }
-}
-
-@media screen and (max-width: 749px) {
-  .image-with-text-section .image-text-wrapper {
-    padding-top: 0px;
-    padding-bottom: 0px;
-  }
-
-  .image-with-text-section .image-text-inner {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-
-  .image-with-text-section .image-text-media {
-    height: var(--iwt-img-h-m, 220px);
-  }
-
-  .image-with-text-section .image-text-content {
-    min-height: auto;
-  }
-}
-{% endstylesheet %}
 
 {% schema %}
 {
@@ -478,12 +327,6 @@
       ]
     },
     {
-      "type": "inline_richtext",
-      "id": "heading",
-      "default": "Image with text",
-      "label": "t:labels.heading"
-    },
-    {
       "type": "range",
       "id": "heading_size",
       "label": "t:labels.heading_size",
@@ -492,23 +335,6 @@
       "step": 2,
       "unit": "px",
       "default": 48
-    },
-    {
-      "type": "textarea",
-      "id": "text",
-      "label": "t:labels.text",
-      "default": "Pair text with an image to focus on your chosen product, collection, or blog post."
-    },
-    {
-      "type": "text",
-      "id": "button_label",
-      "default": "Shop now",
-      "label": "t:labels.button_label_2"
-    },
-    {
-      "type": "url",
-      "id": "button_link",
-      "label": "t:labels.button_link"
     },
     {
       "type": "header",
@@ -559,9 +385,63 @@
       "default": 36
     }
   ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Image with text"
+        }
+      ]
+    },
+    {
+      "type": "subheading",
+      "name": "Subheading",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Pair text with an image to focus on your chosen product, collection, or blog post."
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Shop now"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
   "presets": [
     {
-      "name": "t:general.image_with_text"
+      "name": "t:general.image_with_text",
+      "blocks": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "subheading"
+        },
+        {
+          "type": "button"
+        }
+      ]
     }
   ]
 }

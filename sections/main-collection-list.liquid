@@ -1,0 +1,1292 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+
+<section
+  id="lv-main-collection-list-{{ section.id }}"
+  class="lv-main-collection-list color-{{ section.settings.color_scheme }}"
+   style="
+    --lv-padding-top: {{ section.settings.padding_top }}px;
+    --lv-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+
+  <div
+    class="lv-main-collection-list__inner container"
+    style="
+      --lv-desktop-columns: {{ section.settings.columns_desktop }};
+      --lv-tablet-columns: {{ section.settings.columns_tablet }};
+      --lv-mobile-columns: {{ section.settings.columns_mobile }};
+      --lv-column-gap: {{ section.settings.column_gap }}px;
+      --lv-row-gap: {{ section.settings.row_gap }}px;
+      --lv-card-radius: {{ section.settings.card_radius }}px;
+    "
+  >
+
+    <div class="lv-main-collection-list__header">
+      {%- if section.settings.heading != blank -%}
+        <h1 class="lv-main-collection-list__heading">
+          {{ section.settings.heading | escape }}
+        </h1>
+      {%- endif -%}
+
+      {%- if section.settings.subtitle != blank -%}
+        <div class="lv-main-collection-list__subtitle">
+          {{ section.settings.subtitle | escape }}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- paginate collections by section.settings.collections_per_page -%}
+
+      <div
+        class="
+          lv-main-collection-list__slider
+          {% if section.settings.enable_slider %}lv-slider-enabled{% endif %}
+        "
+        data-section-id="{{ section.id }}"
+        data-slider="{{ section.settings.enable_slider }}"
+      >
+
+        {%- if section.settings.enable_slider -%}
+
+          <button
+            type="button"
+            class="lv-main-collection-list__arrow lv-main-collection-list__arrow--prev"
+            aria-label="Previous collections"
+            data-lv-prev
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M15 18L9 12L15 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+
+        {%- endif -%}
+
+
+        <div
+          class="
+            lv-main-collection-list__grid
+            {% if section.settings.enable_slider %}lv-main-collection-list__grid--slider{% endif %}
+          "
+          data-lv-grid
+        >
+
+          {%- assign collection_found = false -%}
+
+          {%- for collection in collections -%}
+
+            {%- unless collection.handle == 'frontpage' -%}
+
+              {%- assign collection_found = true -%}
+
+              <a
+                href="{{ collection.url }}"
+                class="lv-main-collection-card"
+                aria-label="{{ collection.title | escape }}"
+              >
+
+                <div
+                  class="
+                    lv-main-collection-card__media
+                    lv-ratio-{{ section.settings.image_ratio }}
+                  "
+                >
+
+                  {%- if collection.featured_image != blank -%}
+
+                    {{
+                      collection.featured_image
+                      | image_url: width: 1400
+                      | image_tag:
+                        loading: 'lazy',
+                        widths: '360, 540, 720, 900, 1200, 1400',
+                        sizes: '(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw',
+                        class: 'lv-main-collection-card__image',
+                        alt: collection.title
+                      }}
+
+                  {%- elsif collection.products.first.featured_image != blank -%}
+
+                    {{
+                      collection.products.first.featured_image
+                      | image_url: width: 1400
+                      | image_tag:
+                        loading: 'lazy',
+                        widths: '360, 540, 720, 900, 1200, 1400',
+                        sizes: '(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw',
+                        class: 'lv-main-collection-card__image',
+                        alt: collection.title
+                      }}
+
+                  {%- else -%}
+
+                    {{ 'collection-1' | placeholder_svg_tag: 'lv-main-collection-card__image lv-main-collection-card__placeholder' }}
+
+                  {%- endif -%}
+
+
+                  {%- if section.settings.show_overlay -%}
+                    <div class="lv-main-collection-card__overlay"></div>
+                  {%- endif -%}
+
+
+                  <div class="lv-main-collection-card__content">
+
+                    <h2 class="lv-main-collection-card__title">
+                      {{ collection.title | escape }}
+                    </h2>
+
+                    {%- if section.settings.show_product_count -%}
+
+                      <span class="lv-main-collection-card__count">
+
+                        {{ collection.products_count }}
+
+                        {%- if collection.products_count == 1 -%}
+                          Product
+                        {%- else -%}
+                          Products
+                        {%- endif -%}
+
+                      </span>
+
+                    {%- endif -%}
+
+                  </div>
+
+                </div>
+
+              </a>
+
+            {%- endunless -%}
+
+          {%- endfor -%}
+
+          {%- unless collection_found -%}
+
+            <div class="lv-main-collection-list__empty">
+
+              <div class="lv-main-collection-list__empty-icon">
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 5C4 3.89543 4.89543 3 6 3H18C19.1046 3 20 3.89543 20 5V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V5Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M8 8H16"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M8 12H16"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M8 16H13"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+
+              <h2>
+                No collections found
+              </h2>
+
+              <p>
+                Create collections in Shopify admin and they will automatically appear here.
+              </p>
+
+            </div>
+
+          {%- endunless -%}
+
+        </div>
+
+
+        {%- if section.settings.enable_slider -%}
+
+          <button
+            type="button"
+            class="lv-main-collection-list__arrow lv-main-collection-list__arrow--next"
+            aria-label="Next collections"
+            data-lv-next
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M9 18L15 12L9 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+
+        {%- endif -%}
+
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <nav
+          class="lv-main-collection-list__pagination"
+          aria-label="Collection pagination"
+        >
+
+          {%- if paginate.previous -%}
+
+            <a
+              href="{{ paginate.previous.url }}"
+              class="lv-pagination__button lv-pagination__button--prev"
+              aria-label="Previous page"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M15 18L9 12L15 6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+
+              <span>Previous</span>
+            </a>
+          {%- endif -%}
+          <div class="lv-pagination__pages">
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a
+                  href="{{ part.url }}"
+                  class="lv-pagination__page"
+                  aria-label="Page {{ part.title }}"
+                >
+                  {{ part.title }}
+                </a>
+              {%- else -%}
+                {%- if part.title == paginate.current_page -%}
+                  <span
+                    class="lv-pagination__page lv-pagination__page--current"
+                    aria-current="page"
+                  >
+                    {{ part.title }}
+                  </span>
+                {%- else -%}
+                  <span class="lv-pagination__page lv-pagination__page--ellipsis">
+                    {{ part.title }}
+                  </span>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          {%- if paginate.next -%}
+            <a
+              href="{{ paginate.next.url }}"
+              class="lv-pagination__button lv-pagination__button--next"
+              aria-label="Next page"
+            >
+              <span>Next</span>
+
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9 18L15 12L9 6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+<script>
+    (function() {
+        'use strict';
+
+        function initCollectionList(section) {
+            if (!section || section.dataset.lvCollectionInit === 'true') {
+                return;
+            }
+
+            section.dataset.lvCollectionInit = 'true';
+
+            var slider = section.querySelector('.lv-main-collection-list__slider');
+            var grid = section.querySelector('[data-lv-grid]');
+            var prevButton = section.querySelector('[data-lv-prev]');
+            var nextButton = section.querySelector('[data-lv-next]');
+
+            if (!slider || !grid) {
+                return;
+            }
+
+            var isSlider = slider.dataset.slider === 'true';
+
+            if (!isSlider) {
+                return;
+            }
+
+            function getScrollAmount() {
+                var firstCard = grid.querySelector('.lv-main-collection-card');
+
+                if (!firstCard) {
+                    return grid.clientWidth;
+                }
+
+                var cardWidth = firstCard.getBoundingClientRect().width;
+
+                var styles = window.getComputedStyle(grid);
+                var gap = parseFloat(styles.columnGap) || 0;
+
+                return cardWidth + gap;
+            }
+
+            function updateButtons() {
+                if (!prevButton && !nextButton) {
+                    return;
+                }
+
+                var maxScroll =
+                    grid.scrollWidth - grid.clientWidth;
+
+                var currentScroll = grid.scrollLeft;
+
+                if (prevButton) {
+                    if (currentScroll <= 5) {
+                        prevButton.classList.add('is-disabled');
+                    } else {
+                        prevButton.classList.remove('is-disabled');
+                    }
+                }
+
+                if (nextButton) {
+                    if (currentScroll >= maxScroll - 5) {
+                        nextButton.classList.add('is-disabled');
+                    } else {
+                        nextButton.classList.remove('is-disabled');
+                    }
+                }
+            }
+
+            if (prevButton) {
+                prevButton.addEventListener('click', function() {
+                    grid.scrollBy({
+                        left: -getScrollAmount(),
+                        behavior: 'smooth'
+                    });
+                });
+            }
+
+            if (nextButton) {
+                nextButton.addEventListener('click', function() {
+                    grid.scrollBy({
+                        left: getScrollAmount(),
+                        behavior: 'smooth'
+                    });
+                });
+            }
+
+            grid.addEventListener('scroll', updateButtons, {
+                passive: true
+            });
+
+            window.addEventListener('resize', updateButtons);
+
+            updateButtons();
+        }
+
+        function initAllCollectionLists() {
+            var sections = document.querySelectorAll(
+                '.lv-main-collection-list'
+            );
+
+            sections.forEach(function(section) {
+                initCollectionList(section);
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener(
+                'DOMContentLoaded',
+                initAllCollectionLists
+            );
+        } else {
+            initAllCollectionLists();
+        }
+
+        document.addEventListener(
+            'shopify:section:load',
+            function(event) {
+                var section = event.target.querySelector(
+                    '.lv-main-collection-list'
+                );
+
+                if (section) {
+                    initCollectionList(section);
+                }
+            }
+        );
+
+    })(); 
+</script>
+<style>
+   /* =========================================================
+     MAIN COLLECTION LIST
+     ========================================================= */
+
+  .lv-main-collection-list {
+    display: block;
+    width: 100%;
+
+    /* Section spacing */
+    padding-top: var(--lv-padding-top, 60px);
+    padding-bottom: var(--lv-padding-bottom, 60px);
+
+    box-sizing: border-box;
+  }
+
+  .lv-main-collection-list *,
+  .lv-main-collection-list *::before,
+  .lv-main-collection-list *::after {
+    box-sizing: border-box;
+  }
+
+
+  /* =========================================================
+     INNER
+     ========================================================= */
+
+  .lv-main-collection-list__inner {
+    width: 100%;
+  }
+
+
+  /* =========================================================
+     HEADER
+     ========================================================= */
+
+  .lv-main-collection-list__header {
+    width: 100%;
+    margin: 0 0 32px;
+    text-align: center;
+  }
+
+  .lv-main-collection-list__heading {
+  margin: 0;
+  font-size: {{ section.settings.heading_font_size }}px !important;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.lv-main-collection-list__subtitle {
+  margin-top: 10px;
+  font-size: {{ section.settings.subtitle_font_size }}px !important;
+  line-height: 1.5;
+}
+
+@media screen and (max-width: 749px) {
+  .lv-main-collection-list__heading {
+    font-size: {{ section.settings.heading_font_size_mobile }}px !important;
+  }
+
+  .lv-main-collection-list__subtitle {
+    font-size: {{ section.settings.subtitle_font_size_mobile }}px !important;
+  }
+}
+
+  .lv-main-collection-list__grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        var(--lv-desktop-columns, 4),
+        minmax(0, 1fr)
+      );
+
+    column-gap: var(--lv-column-gap, 20px);
+    row-gap: var(--lv-row-gap, 30px);
+
+    width: 100%;
+  }
+  .lv-main-collection-card {
+    position: relative;
+
+    display: block;
+    width: 100%;
+
+    color: inherit;
+    text-decoration: none;
+
+    overflow: hidden;
+
+    border-radius: var(--lv-card-radius, 0px);
+
+    isolation: isolate;
+  }
+
+  .lv-main-collection-card__media {
+    position: relative;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    background: rgba(0, 0, 0, 0.04);
+
+    border-radius: var(--lv-card-radius, 0px);
+  }
+
+  .lv-ratio-square {
+    aspect-ratio: 1 / 1;
+  }
+
+  .lv-ratio-portrait {
+    aspect-ratio: 4 / 5;
+  }
+
+  .lv-ratio-landscape {
+    aspect-ratio: 4 / 3;
+  }
+
+  .lv-ratio-wide {
+    aspect-ratio: 16 / 9;
+  }
+
+  .lv-main-collection-card__image {
+    position: absolute;
+
+    inset: 0;
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: none;
+
+    object-fit: cover;
+
+    transition:
+      transform 0.4s ease,
+      opacity 0.3s ease;
+  }
+
+  .lv-main-collection-card:hover
+  .lv-main-collection-card__image {
+    transform: scale(1.04);
+  }
+
+  .lv-main-collection-card__placeholder {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+  }
+
+  .lv-main-collection-card__overlay {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 1;
+
+    background:
+      linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.62) 0%,
+        rgba(0, 0, 0, 0.18) 45%,
+        rgba(0, 0, 0, 0) 75%
+      );
+
+    pointer-events: none;
+  }
+  .lv-main-collection-card__content {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 2;
+
+    padding: 20px;
+  }
+
+  .lv-main-collection-card__title {
+    margin: 0;
+
+    font-size: {{ section.settings.card_title_font_size }}px;
+    line-height: 1.25;
+    font-weight: 600;
+
+    color: #fff;
+
+    word-break: break-word;
+  }
+
+  .lv-main-collection-card__count {
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 13px;
+    line-height: 1.4;
+
+    color: #fff;
+
+    opacity: 0.85;
+  }
+
+  .lv-main-collection-card:not(:has(.lv-main-collection-card__overlay))
+  .lv-main-collection-card__content {
+    position: relative;
+
+    padding: 14px 0 0;
+  }
+
+  .lv-main-collection-card:not(:has(.lv-main-collection-card__overlay))
+  .lv-main-collection-card__title {
+    color: inherit;
+  }
+
+  .lv-main-collection-card:not(:has(.lv-main-collection-card__overlay))
+  .lv-main-collection-card__count {
+    color: inherit;
+  }
+
+  .lv-main-collection-list__slider {
+    position: relative;
+    width: 100%;
+  }
+
+  .lv-main-collection-list__grid--slider {
+    display: grid;
+
+    grid-template-columns: none;
+
+    grid-auto-flow: column;
+
+    grid-auto-columns:
+      calc(
+        (
+          100% -
+          (
+            var(--lv-column-gap, 20px) *
+            (var(--lv-desktop-columns, 4) - 1)
+          )
+        )
+        / var(--lv-desktop-columns, 4)
+      );
+
+    column-gap: var(--lv-column-gap, 20px);
+    row-gap: 0;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-behavior: smooth;
+
+    scrollbar-width: none;
+
+    scroll-snap-type: x mandatory;
+  }
+
+  .lv-main-collection-list__grid--slider::-webkit-scrollbar {
+    display: none;
+  }
+
+  .lv-main-collection-list__grid--slider
+  .lv-main-collection-card {
+    scroll-snap-align: start;
+  }
+
+  .lv-main-collection-list__arrow {
+    position: absolute;
+
+    top: 50%;
+
+    z-index: 5;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    padding: 0;
+
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 50%;
+
+    background: #fff;
+    color: #000;
+
+    cursor: pointer;
+
+    transform: translateY(-50%);
+
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.12);
+
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .lv-main-collection-list__arrow:hover {
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .lv-main-collection-list__arrow.is-disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .lv-main-collection-list__arrow--prev {
+    left: -21px;
+  }
+
+  .lv-main-collection-list__arrow--next {
+    right: -21px;
+  }
+
+  .lv-main-collection-list__empty {
+    grid-column: 1 / -1;
+
+    width: 100%;
+
+    padding: 60px 20px;
+
+    text-align: center;
+  }
+
+  .lv-main-collection-list__empty-icon {
+    margin-bottom: 15px;
+
+    opacity: 0.5;
+  }
+
+  .lv-main-collection-list__empty h2 {
+    margin: 0 0 8px;
+  }
+
+  .lv-main-collection-list__empty p {
+    margin: 0;
+
+    opacity: 0.7;
+  }
+
+  .lv-main-collection-list__pagination {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 50px;
+  }
+
+  .lv-pagination__pages {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+  }
+
+  .lv-pagination__page,
+  .lv-pagination__button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 40px;
+    min-height: 40px;
+
+    padding: 8px 12px;
+
+    border: 1px solid rgba(0, 0, 0, 0.15);
+
+    color: inherit;
+
+    text-decoration: none;
+
+    border-radius: 4px;
+  }
+
+  .lv-pagination__page--current {
+    background: currentColor;
+    color: #fff;
+  }
+
+  .lv-pagination__page--ellipsis {
+    border-color: transparent;
+  }
+
+  @media screen and (max-width: 989px) {
+
+    .lv-main-collection-list__grid {
+      grid-template-columns:
+        repeat(
+          var(--lv-tablet-columns, 3),
+          minmax(0, 1fr)
+        );
+    }
+
+    .lv-main-collection-list__grid--slider {
+      grid-auto-columns:
+        calc(
+          (
+            100% -
+            (
+              var(--lv-column-gap, 20px) *
+              (var(--lv-tablet-columns, 3) - 1)
+            )
+          )
+          / var(--lv-tablet-columns, 3)
+        );
+
+      grid-template-columns: none;
+    }
+
+    .lv-main-collection-list__arrow--prev {
+      left: 10px;
+    }
+
+    .lv-main-collection-list__arrow--next {
+      right: 10px;
+    }
+  }
+
+
+  @media screen and (max-width: 749px) {
+
+    .lv-main-collection-list {
+      padding-top: var(--lv-padding-top, 40px);
+      padding-bottom: var(--lv-padding-bottom, 40px);
+    }
+
+    .lv-main-collection-list__header {
+      margin-bottom: 24px;
+    }
+
+    .lv-main-collection-list__heading {
+      font-size: {{ section.settings.heading_font_size_mobile }}px;
+    }
+
+    .lv-main-collection-list__subtitle {
+      font-size: {{ section.settings.subtitle_font_size_mobile }}px;
+    }
+
+    .lv-main-collection-list__grid {
+      grid-template-columns:
+        repeat(
+          var(--lv-mobile-columns, 2),
+          minmax(0, 1fr)
+        );
+    }
+
+    .lv-main-collection-list__grid--slider {
+      grid-auto-columns:
+        calc(
+          (
+            100% -
+            (
+              var(--lv-column-gap, 20px) *
+              (var(--lv-mobile-columns, 2) - 1)
+            )
+          )
+          / var(--lv-mobile-columns, 2)
+        );
+
+      grid-template-columns: none;
+    }
+
+    .lv-main-collection-card__content {
+      padding: 14px;
+    }
+
+    .lv-main-collection-card__title {
+      font-size: {{ section.settings.card_title_font_size_mobile }}px;
+    }
+
+    .lv-main-collection-card__count {
+      font-size: 12px;
+    }
+
+    .lv-main-collection-list__arrow {
+      width: 36px;
+      height: 36px;
+    }
+
+    .lv-main-collection-list__arrow--prev {
+      left: 5px;
+    }
+
+    .lv-main-collection-list__arrow--next {
+      right: 5px;
+    }
+
+    .lv-main-collection-list__pagination {
+      margin-top: 35px;
+      gap: 5px;
+    }
+
+    .lv-pagination__page,
+    .lv-pagination__button {
+      min-width: 36px;
+      min-height: 36px;
+      padding: 6px 9px;
+      font-size: 13px;
+    }
+  }
+
+</style>
+
+{% schema %}
+{
+  "name": "Collections List",
+  "tag": "section",
+  "class": "section",
+  "limit": 1,
+  "enabled_on": {
+    "templates": [
+      "list-collections"
+    ]
+  },
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Content"
+    },
+
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Collections"
+    },
+
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 20,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Mobile heading font size",
+      "min": 18,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Explore our collections"
+    },
+
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "label": "Subtitle font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+
+    {
+      "type": "range",
+      "id": "subtitle_font_size_mobile",
+      "label": "Mobile subtitle font size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+
+
+    {
+      "type": "header",
+      "content": "Collections"
+    },
+
+    {
+      "type": "range",
+      "id": "collections_per_page",
+      "label": "Collections per page",
+      "min": 4,
+      "max": 50,
+      "step": 2,
+      "default": 24
+    },
+
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "default": "square",
+      "options": [
+        {
+          "value": "square",
+          "label": "Square"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait"
+        },
+        {
+          "value": "landscape",
+          "label": "Landscape"
+        },
+        {
+          "value": "wide",
+          "label": "Wide"
+        }
+      ]
+    },
+
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Tablet columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "default": "2",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        }
+      ]
+    },
+
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Row gap",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 30
+    },
+
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+
+
+    {
+      "type": "header",
+      "content": "Card"
+    },
+
+    {
+      "type": "range",
+      "id": "card_title_font_size",
+      "label": "Card title font size",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+
+    {
+      "type": "range",
+      "id": "card_title_font_size_mobile",
+      "label": "Mobile card title font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Show product count",
+      "default": true
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Show image overlay",
+      "default": true
+    },
+
+
+    {
+      "type": "header",
+      "content": "Slider"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "label": "Enable slider",
+      "default": false
+    },
+
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+
+  ]
+}
+{% endschema %}
