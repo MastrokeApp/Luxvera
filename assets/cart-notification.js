@@ -412,6 +412,8 @@
             cartData.items.length > 0
           ) {
             openDrawer(cartData);
+          } else {
+            window.location.href = drawer.dataset.cartUrl || '/cart';
           }
         })
         .catch(function (err) {

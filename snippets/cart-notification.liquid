@@ -112,6 +112,7 @@
   aria-label="{{ 'accessibility.cart_updated' | t }}"
   aria-live="polite"
   data-currency="{{ shop.currency }}"
+  data-cart-url="{{ routes.cart_url }}"
   data-free-shipping-threshold="{{ settings.free_shipping_threshold | default: 15000 }}"
   data-shipping-remaining-template="{{ 'cart.free_shipping_remaining_template' | t }}"
   data-shipping-qualified-message="{{ 'cart.free_shipping_qualified' | t }}"
