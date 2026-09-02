@@ -23,7 +23,43 @@
     els.stickyHeader = document.querySelector('.lv-header-wrap--sticky');
   }
 
+  /*
+   * Scroll lock -- plain `overflow: hidden` on body doesn't reliably stop
+   * background touch-scroll/rubber-banding on iOS Safari, so pin body in
+   * place with position:fixed instead (restoring the exact scroll offset
+   * on unlock). Ref-counted so the drawer and search overlay can't step
+   * on each other's lock/unlock.
+   */
+  var scrollLockCount = 0;
+  var scrollLockY = 0;
+
+  function lockScroll() {
+    if (scrollLockCount === 0) {
+      scrollLockY = window.scrollY || window.pageYOffset || 0;
+      document.body.style.position = 'fixed';
+      document.body.style.top = -scrollLockY + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+    }
+    scrollLockCount++;
+  }
+
+  function unlockScroll() {
+    if (scrollLockCount === 0) return;
+    scrollLockCount--;
+    if (scrollLockCount === 0) {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      window.scrollTo(0, scrollLockY);
+    }
+  }
+
   function openDrawer() {
+    var wasOpen = els.mobileMenu && els.mobileMenu.classList.contains('open');
     if (els.mobileMenu) {
       els.mobileMenu.classList.add('open');
       els.mobileMenu.setAttribute('aria-hidden', 'false');
@@ -32,7 +68,7 @@
       els.hamburger.classList.add('open');
       els.hamburger.setAttribute('aria-expanded', 'true');
     }
-    document.body.style.overflow = 'hidden';
+    if (!wasOpen) lockScroll();
     setTimeout(function () {
       if (els.drawerClose) els.drawerClose.focus();
     }, 50);
@@ -48,13 +84,14 @@
       els.hamburger.classList.remove('open');
       els.hamburger.setAttribute('aria-expanded', 'false');
     }
-    document.body.style.overflow = '';
+    if (wasOpen) unlockScroll();
     if (wasOpen && els.hamburger) els.hamburger.focus();
   }
 
   function openSearch() {
+    var wasOpen = els.searchOverlay && els.searchOverlay.classList.contains('open');
     if (els.searchOverlay) els.searchOverlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
+    if (!wasOpen) lockScroll();
     setTimeout(function () {
       if (els.searchInput) els.searchInput.focus();
     }, 50);
@@ -63,7 +100,7 @@
   function closeSearch() {
     var wasOpen = els.searchOverlay && els.searchOverlay.classList.contains('open');
     if (els.searchOverlay) els.searchOverlay.classList.remove('open');
-    document.body.style.overflow = '';
+    if (wasOpen) unlockScroll();
     if (wasOpen && els.searchBtn) els.searchBtn.focus();
     clearPredictive();
   }

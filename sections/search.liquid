@@ -40,6 +40,7 @@
     <h1 class="lv-search-title">{{ section.settings.heading | default: 'Search' | escape }}</h1>
 
     <form action="{{ routes.search_url }}" method="get" role="search" class="lv-search-form">
+      <input type="hidden" name="type" value="product,page,article">
       <input
         type="search"
         name="q"
@@ -128,7 +129,7 @@
                     {%- endfor -%}
 
                     <div class="lv-filter-actions">
-                      <a class="lv-clear-filters" href="{{ routes.search_url }}?q={{ search.terms | url_encode }}">{{ 'collections.filter_clear_all' | t }}</a>
+                      <a class="lv-clear-filters" href="{{ routes.search_url }}?q={{ search.terms | url_encode }}&amp;type=product,page,article">{{ 'collections.filter_clear_all' | t }}</a>
                     </div>
                   </form>
                 {%- else -%}
@@ -877,6 +878,7 @@
       var url = new URL(window.location.href);
       url.search = '';
       url.searchParams.set('q', searchTerms);
+      url.searchParams.set('type', 'product,page,article');
 
       var fd = new FormData(form);
       fd.forEach(function (value, key) {

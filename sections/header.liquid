@@ -372,6 +372,7 @@
     <div class="lv-search-panel">
       <div class="lv-search-box color-{{ section.settings.header_color_scheme }}">
         <form action="{{ routes.search_url }}" method="get" role="search">
+          <input type="hidden" name="type" value="product,page,article">
           <input
             type="search"
             name="q"
