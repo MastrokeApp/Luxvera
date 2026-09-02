@@ -82,7 +82,7 @@
     if (predictiveController) predictiveController.abort();
     predictiveController = ('AbortController' in window) ? new AbortController() : null;
 
-    fetch('/search/suggest?q=' + encodeURIComponent(term) + '&section_id=predictive-search', {
+    fetch('/search/suggest?q=' + encodeURIComponent(term) + '&resources[type]=product,collection,page,article,query&section_id=predictive-search', {
       signal: predictiveController ? predictiveController.signal : undefined
     })
       .then(function (r) { return r.text(); })

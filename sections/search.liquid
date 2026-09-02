@@ -22,6 +22,7 @@
   id="lv-search-{{ section.id }}"
   data-lv-search-id="{{ section.id }}"
   data-search-terms="{{ search.terms | escape }}"
+  data-default-view="{{ section.settings.default_view }}"
   style="
     --lv-search-pt: {{ section.settings.padding_top }}px;
     --lv-search-pb: {{ section.settings.padding_bottom }}px;
@@ -54,7 +55,20 @@
       {%- if search.results_count == 0 -%}
         <p class="lv-search-empty">{{ 'search.no_results_html' | t: terms: search.terms }}</p>
       {%- else -%}
-        <p class="lv-search-count">{{ 'search.results_for_html' | t: count: search.results_count, terms: search.terms }}</p>
+        <div class="lv-search-toolbar">
+          <p class="lv-search-count">{{ 'search.results_for_html' | t: count: search.results_count, terms: search.terms }}</p>
+
+          {%- if section.settings.show_view_toggle -%}
+            <div class="lv-view-toggle" role="group" aria-label="{{ 'accessibility.collection_view' | t }}">
+              <button type="button" class="lv-view-btn lv-view-btn--grid active" data-view="grid" aria-label="{{ 'accessibility.grid_view' | t }}">
+                {{ 'icon-view-grid.svg' | inline_asset_content }}
+              </button>
+              <button type="button" class="lv-view-btn lv-view-btn--list" data-view="list" aria-label="{{ 'accessibility.list_view' | t }}">
+                {{ 'icon-view-list.svg' | inline_asset_content }}
+              </button>
+            </div>
+          {%- endif -%}
+        </div>
 
         <div class="lv-search-body{% unless section.settings.show_filters %} lv-search-body--no-sidebar{% endunless %}">
           {%- if section.settings.show_filters -%}
@@ -126,7 +140,7 @@
 
           <div class="lv-search-grid-wrap">
             {%- paginate search.results by section.settings.results_per_page -%}
-              <div class="lv-search-grid">
+              <div class="lv-search-grid" id="lv-search-grid-{{ section.id }}">
                 {%- for result in search.results -%}
                   {%- case result.object_type -%}
 
@@ -269,11 +283,45 @@
 }
 
 /* Result counts / empty */
+.lv-search .lv-search-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 24px;
+}
+
 .lv-search .lv-search-count {
   font-size: 13px;
   color: rgb(var(--color-foreground));
   opacity: .7;
-  margin: 0 0 24px;
+  margin: 0;
+}
+
+.lv-search .lv-view-toggle {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.lv-search .lv-view-btn {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(var(--color-foreground), 0.18);
+  color: rgb(var(--color-foreground));
+  background: rgb(var(--color-background));
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.lv-search .lv-view-btn.active,
+.lv-search .lv-view-btn:hover {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border-color: rgb(var(--color-button));
 }
 
 .lv-search .lv-search-empty {
@@ -446,6 +494,68 @@
 
 .lv-search .lv-search-body--no-sidebar .lv-search-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* List view */
+.lv-search .lv-search-grid.list-view {
+  grid-template-columns: 1fr !important;
+  gap: 18px;
+}
+
+.lv-search .lv-search-grid.list-view .product-card,
+.lv-search .lv-search-grid.list-view .lv-search-card {
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+}
+
+.lv-search .lv-search-grid.list-view .product-img-wrap,
+.lv-search .lv-search-grid.list-view .lv-search-card__media {
+  width: 240px;
+  min-width: 240px;
+  border-radius: 0;
+  aspect-ratio: 1/1;
+}
+
+.lv-search .lv-search-grid.list-view .product-info,
+.lv-search .lv-search-grid.list-view .lv-search-card__body {
+  border: none;
+  border-left: 1px solid rgba(var(--color-foreground), 0.14);
+  border-radius: 0;
+}
+
+.lv-search .lv-search-grid.list-view .product-name,
+.lv-search .lv-search-grid.list-view .lv-search-card__title {
+  font-size: 16px;
+}
+
+.lv-search .lv-search-grid.list-view .add-to-cart {
+  width: auto;
+  min-width: 180px;
+}
+
+@media (max-width: 768px) {
+  .lv-search .lv-search-grid.list-view .product-card,
+  .lv-search .lv-search-grid.list-view .lv-search-card {
+    flex-direction: column;
+  }
+
+  .lv-search .lv-search-grid.list-view .product-img-wrap,
+  .lv-search .lv-search-grid.list-view .lv-search-card__media {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lv-search .lv-search-grid.list-view .product-info,
+  .lv-search .lv-search-grid.list-view .lv-search-card__body {
+    border-left: none;
+    border-top: 1px solid rgba(var(--color-foreground), 0.14);
+  }
+
+  .lv-search .lv-search-grid.list-view .add-to-cart {
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 /* Product card shared styling (mirrors collection grid) */
@@ -722,6 +832,25 @@
 
     var SID = root.dataset.lvSearchId;
     var searchTerms = root.dataset.searchTerms || '';
+    var defaultView = root.dataset.defaultView || 'grid';
+    var storageKey = 'lv-search-view-' + SID;
+    var grid = document.getElementById('lv-search-grid-' + SID);
+
+    function setActiveView(view) {
+      if (!grid) return;
+      root.querySelectorAll('.lv-view-btn').forEach(function (btn) {
+        btn.classList.toggle('active', btn.dataset.view === view);
+      });
+      if (view === 'list') grid.classList.add('list-view');
+      else grid.classList.remove('list-view');
+      try { localStorage.setItem(storageKey, view); } catch (e) {}
+    }
+
+    if (grid) {
+      var savedView = null;
+      try { savedView = localStorage.getItem(storageKey); } catch (e) {}
+      setActiveView(savedView || defaultView);
+    }
 
     var modal      = document.getElementById('lv-vm-search-' + SID);
     var modalTitle = document.getElementById('lv-vm-search-title-' + SID);
@@ -856,6 +985,13 @@
     });
 
     root.addEventListener('click', function (e) {
+      var viewBtn = e.target.closest('.lv-view-btn');
+      if (viewBtn) {
+        e.preventDefault();
+        setActiveView(viewBtn.dataset.view || 'grid');
+        return;
+      }
+
       var filterToggle = e.target.closest('.lv-filter-group__toggle');
       if (filterToggle) {
         e.preventDefault();
@@ -948,6 +1084,28 @@
     {
       "type": "header",
       "content": "t:labels.results_grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_toggle",
+      "label": "t:labels.show_view_toggle",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "default_view",
+      "label": "t:labels.default_view",
+      "options": [
+        {
+          "value": "grid",
+          "label": "t:options.default_view.grid"
+        },
+        {
+          "value": "list",
+          "label": "t:options.default_view.list"
+        }
+      ],
+      "default": "grid"
     },
     {
       "type": "range",

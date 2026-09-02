@@ -1,18 +1,16 @@
 {% comment %}
   Section: Product Tabs
 
-  Two product tabs, each a Swiper carousel of product-card snippets, with a
-  size-picker modal and AJAX add-to-cart. Falls back to placeholder cards when
-  a collection is empty. Uses the Swiper library loaded globally in theme.liquid.
+  Block-based: each "tab" block is a Swiper carousel of product-card snippets
+  pulling from that block's own collection, with a size-picker modal and AJAX
+  add-to-cart. Merchants can add/remove/reorder any number of tabs. Falls back
+  to placeholder cards when a tab's collection is empty. Uses the Swiper
+  library loaded globally in theme.liquid.
 {% endcomment %}
 
 {{ 'lv-variant-modal.css' | asset_url | stylesheet_tag }}
 
-{%- liquid
-  assign tab1_collection = collections[section.settings.tab1_collection]
-  assign tab2_collection = collections[section.settings.tab2_collection]
-  assign products_limit  = section.settings.products_limit | default: 8
--%}
+{%- assign products_limit = section.settings.products_limit | default: 8 -%}
 
 {%- comment -%} Placeholder cards {%- endcomment -%}
 {%- capture placeholder_cards -%}
@@ -40,42 +38,6 @@
       </div>
     </div>
   {%- endfor -%}
-{%- endcapture -%}
-
-{%- comment -%} Tab 1 cards via snippet {%- endcomment -%}
-{%- capture card_html_tab1 -%}
-  {%- if tab1_collection != blank and tab1_collection.products.size > 0 -%}
-    {%- for product in tab1_collection.products limit: products_limit -%}
-      <div class="swiper-slide">
-        {% render 'product-card',
-          product: product,
-          card_context: 'product-tabs',
-          atc_label: section.settings.atc_label,
-          image_ratio: section.settings.image_ratio
-        %}
-      </div>
-    {%- endfor -%}
-  {%- else -%}
-    {{ placeholder_cards }}
-  {%- endif -%}
-{%- endcapture -%}
-
-{%- comment -%} Tab 2 cards via snippet {%- endcomment -%}
-{%- capture card_html_tab2 -%}
-  {%- if tab2_collection != blank and tab2_collection.products.size > 0 -%}
-    {%- for product in tab2_collection.products limit: products_limit -%}
-      <div class="swiper-slide">
-        {% render 'product-card',
-          product: product,
-          card_context: 'product-tabs',
-          atc_label: section.settings.atc_label,
-          image_ratio: section.settings.image_ratio
-        %}
-      </div>
-    {%- endfor -%}
-  {%- else -%}
-    {{ placeholder_cards }}
-  {%- endif -%}
 {%- endcapture -%}
 
 <div class="lv-variant-modal" id="lv-vm-{{ section.id }}" role="dialog" aria-modal="true" aria-label="{{ 'products.select_size' | t }}">
@@ -122,34 +84,58 @@
     </div>
   </div>
 
-  <div class="pt-bar" role="tablist">
-    <span class="pt-tab pt-tab--on" role="tab" tabindex="0" aria-selected="true" data-tab="1">{{ section.settings.tab1_label | default: 'New Arrivals' }}</span>
-    <span class="pt-tab" role="tab" tabindex="0" aria-selected="false" data-tab="2">{{ section.settings.tab2_label | default: 'Trending Now' }}</span>
-  </div>
-
-  <div class="pt-panel pt-panel--on" data-panel="1" role="tabpanel">
-    <div class="container">
-      <div class="swiper pt-sw-{{ section.id }}-1">
-        <div class="swiper-wrapper">{{ card_html_tab1 }}</div>
+  {%- if section.blocks.size > 0 -%}
+    <div class="pt-bar-wrap">
+      <button type="button" class="pt-bar-arrow pt-bar-arrow--prev" data-pt-bar-arrow="prev" aria-label="{{ 'accessibility.previous' | t }}" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="pt-bar" role="tablist" data-pt-bar>
+        {%- for block in section.blocks -%}
+          <span
+            class="pt-tab{% if forloop.first %} pt-tab--on{% endif %}"
+            role="tab"
+            tabindex="0"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            data-tab="{{ forloop.index }}"
+            {{ block.shopify_attributes }}
+          >{{ block.settings.label | default: 'Tab' | escape }}</span>
+        {%- endfor -%}
       </div>
-      <div class="swiper-nav">
-        <button class="sw-prev" id="pt-prev-1-{{ section.id }}" aria-label="{{ 'accessibility.previous' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <button class="sw-next" id="pt-next-1-{{ section.id }}" aria-label="{{ 'accessibility.next' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-      </div>
+      <button type="button" class="pt-bar-arrow pt-bar-arrow--next" data-pt-bar-arrow="next" aria-label="{{ 'accessibility.next' | t }}" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
-  </div>
 
-  <div class="pt-panel" data-panel="2" role="tabpanel">
-    <div class="container">
-      <div class="swiper pt-sw-{{ section.id }}-2">
-        <div class="swiper-wrapper">{{ card_html_tab2 }}</div>
+    {%- for block in section.blocks -%}
+      {%- assign tab_collection = collections[block.settings.collection] -%}
+      <div class="pt-panel{% if forloop.first %} pt-panel--on{% endif %}" data-panel="{{ forloop.index }}" role="tabpanel" {{ block.shopify_attributes }}>
+        <div class="container">
+          <div class="swiper pt-sw-{{ section.id }}-{{ forloop.index }}">
+            <div class="swiper-wrapper">
+              {%- if tab_collection != blank and tab_collection.products.size > 0 -%}
+                {%- for product in tab_collection.products limit: products_limit -%}
+                  <div class="swiper-slide">
+                    {% render 'product-card',
+                      product: product,
+                      card_context: 'product-tabs',
+                      atc_label: section.settings.atc_label,
+                      image_ratio: section.settings.image_ratio
+                    %}
+                  </div>
+                {%- endfor -%}
+              {%- else -%}
+                {{ placeholder_cards }}
+              {%- endif -%}
+            </div>
+          </div>
+          <div class="swiper-nav">
+            <button class="sw-prev" id="pt-prev-{{ forloop.index }}-{{ section.id }}" aria-label="{{ 'accessibility.previous' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <button class="sw-next" id="pt-next-{{ forloop.index }}-{{ section.id }}" aria-label="{{ 'accessibility.next' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+          </div>
+        </div>
       </div>
-      <div class="swiper-nav">
-        <button class="sw-prev" id="pt-prev-2-{{ section.id }}" aria-label="{{ 'accessibility.previous' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <button class="sw-next" id="pt-next-2-{{ section.id }}" aria-label="{{ 'accessibility.next' | t }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-      </div>
-    </div>
-  </div>
+    {%- endfor -%}
+  {%- endif -%}
 </section>
 
 {% stylesheet %}
@@ -177,6 +163,13 @@
   line-height: 1.15;
 }
 
+.products-section .pt-bar-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 0 0 36px;
+}
+
 .products-section .pt-bar {
   display: flex;
   flex-direction: row;
@@ -184,10 +177,45 @@
   justify-content: center;
   align-items: flex-end;
   border-bottom: 1px solid var(--lv-color-border, #e5e0d8);
-  margin: 0 0 36px;
   padding: 0;
   width: 100%;
+  min-width: 0;
   box-sizing: border-box;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.products-section .pt-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.products-section .pt-bar-arrow {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--lv-color-border, #e5e0d8);
+  background: var(--lv-color-bg, #ffffff);
+  color: var(--lv-color-text, #1a1a1a);
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.products-section .pt-bar-arrow:hover {
+  opacity: 0.75;
+}
+
+.products-section .pt-bar-arrow svg {
+  width: 14px;
+  height: 14px;
+}
+
+.products-section .pt-bar-arrow[hidden] {
+  display: none;
 }
 
 .products-section .pt-tab {
@@ -446,7 +474,10 @@
 
   .products-section .pt-bar {
     justify-content: flex-start;
-    overflow-x: auto;
+  }
+
+  .products-section .pt-bar-arrow {
+    display: flex;
   }
 
   .products-section .pt-tab {
@@ -652,6 +683,38 @@
     }
 
     mkSw('pt-sw-' + SID + '-1', '1');
+
+    var bar = root.querySelector('[data-pt-bar]');
+    var barPrev = root.querySelector('[data-pt-bar-arrow="prev"]');
+    var barNext = root.querySelector('[data-pt-bar-arrow="next"]');
+
+    function updateBarArrows() {
+      if (!bar || !barPrev || !barNext) return;
+      var scrollable = bar.scrollWidth > bar.clientWidth + 1;
+      barPrev.hidden = !scrollable || bar.scrollLeft <= 0;
+      barNext.hidden = !scrollable || bar.scrollLeft >= bar.scrollWidth - bar.clientWidth - 1;
+    }
+
+    if (bar) {
+      updateBarArrows();
+
+      bar.addEventListener('scroll', function () {
+        requestAnimationFrame(updateBarArrows);
+      }, { passive: true });
+
+      window.addEventListener('resize', updateBarArrows);
+
+      if (barPrev) {
+        barPrev.addEventListener('click', function () {
+          bar.scrollBy({ left: -bar.clientWidth * 0.6, behavior: 'smooth' });
+        });
+      }
+      if (barNext) {
+        barNext.addEventListener('click', function () {
+          bar.scrollBy({ left: bar.clientWidth * 0.6, behavior: 'smooth' });
+        });
+      }
+    }
 
     root.querySelectorAll('.pt-tab').forEach(function (tab) {
       function activate() {
@@ -883,42 +946,41 @@
         }
       ],
       "default": "portrait"
-    },
+    }
+  ],
+  "blocks": [
     {
-      "type": "header",
-      "content": "t:labels.tab_1"
-    },
-    {
-      "type": "text",
-      "id": "tab1_label",
-      "label": "t:labels.tab_1_label",
-      "default": "New Arrivals"
-    },
-    {
-      "type": "collection",
-      "id": "tab1_collection",
-      "label": "t:labels.tab_1_collection"
-    },
-    {
-      "type": "header",
-      "content": "t:labels.tab_2"
-    },
-    {
-      "type": "text",
-      "id": "tab2_label",
-      "label": "t:labels.tab_2_label",
-      "default": "Trending Now"
-    },
-    {
-      "type": "collection",
-      "id": "tab2_collection",
-      "label": "t:labels.tab_2_collection"
+      "type": "tab",
+      "name": "t:general.tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:labels.label",
+          "default": "New Arrivals"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:labels.collection"
+        }
+      ]
     }
   ],
   "presets": [
     {
       "name": "t:general.product_tabs",
-      "category": "t:general.products"
+      "category": "t:general.products",
+      "blocks": [
+        {
+          "type": "tab",
+          "settings": { "label": "New Arrivals" }
+        },
+        {
+          "type": "tab",
+          "settings": { "label": "Trending Now" }
+        }
+      ]
     }
   ]
 }
