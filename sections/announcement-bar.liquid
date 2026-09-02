@@ -1,0 +1,82 @@
+{% comment %}
+  Section: Announcement bar
+
+  A simple, static (non-scrolling) message bar -- one line of text, an
+  optional link, and a color scheme. Restricted to the header section
+  group only (see enabled_on below), unlike the Marquee section
+  (sections/announcement-ticker.liquid) which can be added anywhere.
+{% endcomment %}
+
+{%- if section.settings.text != blank -%}
+  <div class="lv-announcement-bar color-{{ section.settings.color_scheme }}">
+    <div class="lv-announcement-bar__inner">
+      {%- if section.settings.link != blank -%}
+        <a href="{{ section.settings.link }}" class="lv-announcement-bar__link">{{ section.settings.text }}</a>
+      {%- else -%}
+        <p class="lv-announcement-bar__text">{{ section.settings.text }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .lv-announcement-bar {
+    width: 100%;
+    text-align: center;
+  }
+
+  .lv-announcement-bar__inner {
+    padding: 10px 20px;
+  }
+
+  .lv-announcement-bar__text,
+  .lv-announcement-bar__link {
+    margin: 0;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: inherit;
+  }
+
+  .lv-announcement-bar__link {
+    text-decoration: none;
+  }
+
+  .lv-announcement-bar__link:hover {
+    text-decoration: underline;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.announcement_bar",
+  "tag": "div",
+  "limit": 1,
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:labels.message",
+      "default": "Free shipping on all orders over $75"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:labels.link"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.announcement_bar"
+    }
+  ]
+}
+{% endschema %}

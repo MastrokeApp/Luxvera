@@ -266,6 +266,7 @@
           bubbles: true,
           detail: { variantId: vid }
         }));
+        document.dispatchEvent(new CustomEvent('cart:open'));
 
         closeModal();
       })
