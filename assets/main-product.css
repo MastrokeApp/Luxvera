@@ -50,6 +50,24 @@
   }
 }
 
+/* Position: "right" swaps which column the gallery renders in on desktop.
+   Reset on mobile so the gallery always appears first there, regardless
+   of the desktop setting -- the more common, expected mobile pattern. */
+.lv-pdp-layout--position-right .lv-pdp-gallery {
+  order: 2;
+}
+
+.lv-pdp-layout--position-right .lv-pdp-info {
+  order: 1;
+}
+
+@media (max-width: 900px) {
+  .lv-pdp-layout--position-right .lv-pdp-gallery,
+  .lv-pdp-layout--position-right .lv-pdp-info {
+    order: initial;
+  }
+}
+
 /* ── Gallery ── */
 .lv-pdp-gallery {
   display: flex;
@@ -79,6 +97,7 @@
 }
 
 .lv-pdp-gallery__media {
+  position: relative;
   width: 100%;
   height: 100%;
 }
@@ -148,6 +167,182 @@
 
 .lv-pdp-gallery__nav--next {
   right: 14px;
+}
+
+/* Mobile thumbnail visibility: thumbnails are shown on desktop but the
+   merchant chose to hide them on mobile, so the rail hides and the
+   prev/next nav (rendered in the DOM either way) takes over <900px. */
+[data-thumbs="mobile-hide"] .lv-pdp-gallery__nav {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  [data-thumbs="mobile-hide"] .lv-pdp-gallery__rail {
+    display: none;
+  }
+
+  [data-thumbs="mobile-hide"] .lv-pdp-gallery__nav {
+    display: flex;
+  }
+}
+
+/* Per-image zoom trigger (Zoom: "Open lightbox"). Image-only -- video and
+   3D media keep their own native controls, so no button is rendered for
+   them and this rule never applies to those media types. */
+.lv-pdp-gallery__zoom {
+  position: absolute;
+  z-index: 2;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--lv-pdp-bg);
+  color: var(--lv-pdp-fg);
+  opacity: .85;
+  cursor: zoom-in;
+  transition: opacity .15s;
+}
+
+.lv-pdp-gallery__zoom:hover {
+  opacity: 1;
+}
+
+/* Stacked / grid layout -- every media item shown at once, no thumbnail
+   rail or main/hidden switching. */
+.lv-pdp-gallery--stacked .lv-pdp-gallery__stack,
+.lv-pdp-gallery--grid .lv-pdp-gallery__stack {
+  flex: 1 1 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lv-pdp-gallery--grid .lv-pdp-gallery__stack {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.lv-pdp-gallery--stacked .lv-pdp-gallery__stack .lv-pdp-gallery__media,
+.lv-pdp-gallery--grid .lv-pdp-gallery__stack .lv-pdp-gallery__media {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background: var(--lv-pdp-surface);
+  border-radius: var(--lv-pdp-radius);
+  overflow: hidden;
+}
+
+/* Lightbox */
+.lv-pdp-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.lv-pdp-lightbox.open {
+  display: flex;
+}
+
+.lv-pdp-lightbox__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1090;
+  background: rgba(0, 0, 0, .85);
+}
+
+.lv-pdp-lightbox__backdrop[hidden] {
+  display: none;
+}
+
+.lv-pdp-lightbox__stage {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lv-pdp-lightbox__media[hidden] {
+  display: none;
+}
+
+.lv-pdp-lightbox__media img,
+.lv-pdp-lightbox__media video,
+.lv-pdp-lightbox__media model-viewer,
+.lv-pdp-lightbox__media iframe {
+  display: block;
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: none;
+}
+
+.lv-pdp-lightbox__close,
+.lv-pdp-lightbox__nav {
+  position: fixed;
+  z-index: 1101;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .15);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color .15s;
+}
+
+.lv-pdp-lightbox__close:hover,
+.lv-pdp-lightbox__nav:hover {
+  background: rgba(255, 255, 255, .3);
+}
+
+.lv-pdp-lightbox__close {
+  top: 20px;
+  right: 20px;
+}
+
+.lv-pdp-lightbox__nav {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.lv-pdp-lightbox__nav--prev {
+  left: 20px;
+}
+
+.lv-pdp-lightbox__nav--next {
+  right: 20px;
+}
+
+@media (max-width: 480px) {
+  .lv-pdp-lightbox {
+    padding: 12px;
+  }
+
+  .lv-pdp-lightbox__nav--prev {
+    left: 8px;
+  }
+
+  .lv-pdp-lightbox__nav--next {
+    right: 8px;
+  }
 }
 
 .lv-pdp-gallery__rail {

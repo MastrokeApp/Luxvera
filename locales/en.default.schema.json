@@ -364,6 +364,7 @@
     "picker_type": "Variant picker style",
     "pinterest_url": "Pinterest URL",
     "popup_timing": "Popup timing",
+    "position": "Position",
     "primary_button_background": "Primary Button Background",
     "primary_button_text": "Primary Button Text",
     "product_card": "Product Card",
@@ -473,7 +474,8 @@
     "vertical_alignment": "Vertical Alignment",
     "vertical_padding": "Vertical Padding",
     "video": "Video",
-    "youtube_url": "YouTube URL"
+    "youtube_url": "YouTube URL",
+    "zoom": "Zoom"
   },
   "options": {
     "alignment": {
@@ -542,6 +544,11 @@
       "horizontal": "Horizontal",
       "vertical": "Vertical"
     },
+    "gallery_layout": {
+      "thumbnail_carousel": "Thumbnail carousel",
+      "stacked": "Stacked",
+      "grid": "Grid"
+    },
     "heading_alignment": {
       "center": "Center",
       "left": "Left",
@@ -580,6 +587,10 @@
       "square": "Square (1:1)",
       "square_2": "Square"
     },
+    "image_zoom": {
+      "none": "None",
+      "lightbox": "Open lightbox"
+    },
     "layout": {
       "image_first": "Image left",
       "text_first": "Image right"
@@ -587,6 +598,10 @@
     "logo_position": {
       "left": "Left",
       "center": "Center"
+    },
+    "media_position": {
+      "left": "Left",
+      "right": "Right"
     },
     "media_width": {
       "small": "Small",
@@ -605,6 +620,10 @@
     "mobile_layout": {
       "slide": "Slide (swipe carousel)",
       "stack": "Stack (vertical)"
+    },
+    "mobile_thumbnails": {
+      "show": "Show thumbnails",
+      "hide": "Hide thumbnails"
     },
     "nav_alignment": {
       "left": "Left",

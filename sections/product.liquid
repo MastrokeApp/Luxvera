@@ -52,78 +52,153 @@
     breadcrumb used to render here too, showing two breadcrumbs stacked.
   {%- endcomment -%}
 
-  <div class="lv-pdp-layout lv-pdp-layout--media-{{ section.settings.media_width }}">
+  <div class="lv-pdp-layout lv-pdp-layout--media-{{ section.settings.media_width }}{% if section.settings.media_position == 'right' %} lv-pdp-layout--position-right{% endif %}">
     {%- comment -%} ── MEDIA GALLERY ── {%- endcomment -%}
-    <div class="lv-pdp-gallery{% if section.settings.enable_sticky_media %} lv-pdp-gallery--sticky{% endif %}" id="lv-pdp-gallery-{{ section.id }}">
-      {%- if section.settings.show_thumbnails and product.media.size > 1 -%}
-        <div class="lv-pdp-gallery__rail">
-          <button type="button" class="lv-pdp-gallery__arrow lv-pdp-gallery__arrow--up" data-thumbs-arrow="up" aria-label="{{ 'accessibility.previous_images' | t }}" hidden>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M6 15l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
+    <div
+      class="lv-pdp-gallery lv-pdp-gallery--{{ section.settings.gallery_layout }}{% if section.settings.enable_sticky_media %} lv-pdp-gallery--sticky{% endif %}"
+      id="lv-pdp-gallery-{{ section.id }}"
+      data-thumbs="{% if section.settings.show_thumbnails == false %}none{% elsif section.settings.mobile_thumbnails == 'hide' %}mobile-hide{% else %}all{% endif %}"
+    >
+      {%- if section.settings.gallery_layout == 'thumbnail_carousel' -%}
+        {%- if section.settings.show_thumbnails and product.media.size > 1 -%}
+          <div class="lv-pdp-gallery__rail">
+            <button type="button" class="lv-pdp-gallery__arrow lv-pdp-gallery__arrow--up" data-thumbs-arrow="up" aria-label="{{ 'accessibility.previous_images' | t }}" hidden>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M6 15l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
 
-          <div class="lv-pdp-gallery__thumbs" role="list" aria-label="{{ 'accessibility.product_media' | t }}" data-thumbs-track>
-            {%- for media in product.media -%}
-              <button
-                type="button"
-                class="lv-pdp-gallery__thumb"
-                data-thumb-for="{{ media.id }}"
-                aria-current="{% if media == current_variant.featured_media or forloop.first and current_variant.featured_media == blank %}true{% else %}false{% endif %}"
-                aria-label="View image {{ forloop.index }}"
-              >
-                <img src="{{ media.preview_image | image_url: width: 150 }}" alt="" width="75" height="75" loading="lazy">
-              </button>
-            {%- endfor -%}
+            <div class="lv-pdp-gallery__thumbs" role="list" aria-label="{{ 'accessibility.product_media' | t }}" data-thumbs-track>
+              {%- for media in product.media -%}
+                <button
+                  type="button"
+                  class="lv-pdp-gallery__thumb"
+                  data-thumb-for="{{ media.id }}"
+                  aria-current="{% if media == current_variant.featured_media or forloop.first and current_variant.featured_media == blank %}true{% else %}false{% endif %}"
+                  aria-label="View image {{ forloop.index }}"
+                >
+                  <img src="{{ media.preview_image | image_url: width: 150 }}" alt="" width="75" height="75" loading="lazy">
+                </button>
+              {%- endfor -%}
+            </div>
+
+            <button type="button" class="lv-pdp-gallery__arrow lv-pdp-gallery__arrow--down" data-thumbs-arrow="down" aria-label="{{ 'accessibility.next_images' | t }}">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
           </div>
+        {%- endif -%}
 
-          <button type="button" class="lv-pdp-gallery__arrow lv-pdp-gallery__arrow--down" data-thumbs-arrow="down" aria-label="{{ 'accessibility.next_images' | t }}">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
+        <div class="lv-pdp-gallery__main">
+          {%- if section.settings.show_thumbnails == false or section.settings.mobile_thumbnails == 'hide' -%}
+            {%- if product.media.size > 1 -%}
+              <button type="button" class="lv-pdp-gallery__nav lv-pdp-gallery__nav--prev" data-media-nav="prev" aria-label="{{ 'accessibility.previous_images' | t }}">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button type="button" class="lv-pdp-gallery__nav lv-pdp-gallery__nav--next" data-media-nav="next" aria-label="{{ 'accessibility.next_images' | t }}">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- if product.media.size > 0 -%}
+            {%- for media in product.media -%}
+              <div
+                class="lv-pdp-gallery__media lv-pdp-gallery__media--{{ media.media_type }}"
+                data-media-id="{{ media.id }}"
+                {% unless media == current_variant.featured_media or forloop.first and current_variant.featured_media == blank %}hidden{% endunless %}
+              >
+                {%- if media.media_type == 'image' -%}
+                  <img
+                    src="{{ media.preview_image | image_url: width: 1000 }}"
+                    alt="{{ media.preview_image.alt | escape | default: product.title }}"
+                    width="{{ media.preview_image.width }}"
+                    height="{{ media.preview_image.height }}"
+                    loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                    {% if forloop.first %}fetchpriority="high"{% endif %}
+                  >
+                {%- else -%}
+                  {{ media | media_tag: image_size: '1000x' }}
+                {%- endif -%}
+
+                {%- if section.settings.image_zoom == 'lightbox' and media.media_type == 'image' -%}
+                  <button type="button" class="lv-pdp-gallery__zoom" data-lightbox-open data-lightbox-media-id="{{ media.id }}" aria-label="{{ 'accessibility.zoom_image' | t }}">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  </button>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          {%- else -%}
+            <div class="lv-pdp-gallery__media">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+          {%- endif -%}
+
+          {%- if current_variant.compare_at_price > current_variant.price -%}
+            {%- assign pct = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round -%}
+            <span class="lv-pdp-badge" data-sale-badge>{{ 'products.percent_off' | t: percent: pct }}</span>
+          {%- endif -%}
+        </div>
+      {%- else -%}
+        {%- comment -%} Stacked / grid: every media item shown at once, no thumbnails or switching needed. {%- endcomment -%}
+        <div class="lv-pdp-gallery__stack">
+          {%- if product.media.size > 0 -%}
+            {%- for media in product.media -%}
+              <div class="lv-pdp-gallery__media lv-pdp-gallery__media--{{ media.media_type }}" data-media-id="{{ media.id }}">
+                {%- if media.media_type == 'image' -%}
+                  <img
+                    src="{{ media.preview_image | image_url: width: 1000 }}"
+                    alt="{{ media.preview_image.alt | escape | default: product.title }}"
+                    width="{{ media.preview_image.width }}"
+                    height="{{ media.preview_image.height }}"
+                    loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                    {% if forloop.first %}fetchpriority="high"{% endif %}
+                  >
+                {%- else -%}
+                  {{ media | media_tag: image_size: '1000x' }}
+                {%- endif -%}
+
+                {%- if section.settings.image_zoom == 'lightbox' and media.media_type == 'image' -%}
+                  <button type="button" class="lv-pdp-gallery__zoom" data-lightbox-open data-lightbox-media-id="{{ media.id }}" aria-label="{{ 'accessibility.zoom_image' | t }}">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  </button>
+                {%- endif -%}
+
+                {%- if forloop.first and current_variant.compare_at_price > current_variant.price -%}
+                  {%- assign pct = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round -%}
+                  <span class="lv-pdp-badge" data-sale-badge>{{ 'products.percent_off' | t: percent: pct }}</span>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          {%- else -%}
+            <div class="lv-pdp-gallery__media">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+          {%- endif -%}
         </div>
       {%- endif -%}
+    </div>
 
-      <div class="lv-pdp-gallery__main">
-        {%- unless section.settings.show_thumbnails -%}
-          {%- if product.media.size > 1 -%}
-            <button type="button" class="lv-pdp-gallery__nav lv-pdp-gallery__nav--prev" data-media-nav="prev" aria-label="{{ 'accessibility.previous_images' | t }}">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <button type="button" class="lv-pdp-gallery__nav lv-pdp-gallery__nav--next" data-media-nav="next" aria-label="{{ 'accessibility.next_images' | t }}">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          {%- endif -%}
-        {%- endunless -%}
-
-        {%- if product.media.size > 0 -%}
+    {%- if section.settings.image_zoom == 'lightbox' and product.media.size > 0 -%}
+      <div class="lv-pdp-lightbox" id="lv-pdp-lightbox-{{ section.id }}" role="dialog" aria-modal="true" aria-label="{{ 'accessibility.product_media' | t }}">
+        <button type="button" class="lv-pdp-lightbox__close" data-lightbox-close aria-label="{{ 'accessibility.close' | t }}">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        {%- if product.media.size > 1 -%}
+          <button type="button" class="lv-pdp-lightbox__nav lv-pdp-lightbox__nav--prev" data-lightbox-nav="prev" aria-label="{{ 'accessibility.previous_images' | t }}">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="lv-pdp-lightbox__nav lv-pdp-lightbox__nav--next" data-lightbox-nav="next" aria-label="{{ 'accessibility.next_images' | t }}">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        {%- endif -%}
+        <div class="lv-pdp-lightbox__stage" data-lightbox-stage>
           {%- for media in product.media -%}
-            <div
-              class="lv-pdp-gallery__media lv-pdp-gallery__media--{{ media.media_type }}"
-              data-media-id="{{ media.id }}"
-              {% unless media == current_variant.featured_media or forloop.first and current_variant.featured_media == blank %}hidden{% endunless %}
-            >
+            <div class="lv-pdp-lightbox__media" data-media-id="{{ media.id }}" {% unless forloop.first %}hidden{% endunless %}>
               {%- if media.media_type == 'image' -%}
-                <img
-                  src="{{ media.preview_image | image_url: width: 1000 }}"
-                  alt="{{ media.preview_image.alt | escape | default: product.title }}"
-                  width="{{ media.preview_image.width }}"
-                  height="{{ media.preview_image.height }}"
-                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                  {% if forloop.first %}fetchpriority="high"{% endif %}
-                >
+                <img src="{{ media.preview_image | image_url: width: 1600 }}" alt="{{ media.preview_image.alt | escape | default: product.title }}" loading="lazy">
               {%- else -%}
-                {{ media | media_tag: image_size: '1000x' }}
+                {{ media | media_tag: image_size: '1600x' }}
               {%- endif -%}
             </div>
           {%- endfor -%}
-        {%- else -%}
-          <div class="lv-pdp-gallery__media">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
-        {%- endif -%}
-
-        {%- if current_variant.compare_at_price > current_variant.price -%}
-          {%- assign pct = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round -%}
-          <span class="lv-pdp-badge" data-sale-badge>{{ 'products.percent_off' | t: percent: pct }}</span>
-        {%- endif -%}
+        </div>
       </div>
-    </div>
+      <div class="lv-pdp-lightbox__backdrop" data-lightbox-backdrop hidden></div>
+    {%- endif -%}
 
     {%- comment -%} ── PRODUCT INFO (blocks) ── {%- endcomment -%}
     <div class="lv-pdp-info">
@@ -678,6 +753,69 @@
       if (mediaNavNext) mediaNavNext.addEventListener('click', function () { showMediaAt(currentMediaIndex() + 1); });
     }
 
+    // Lightbox zoom -- only rendered when the "Zoom" setting is set to
+    // "Open lightbox". Each image (video/3D media keep their own native
+    // controls, so they don't get a zoom trigger) has a small zoom button
+    // that opens the lightbox synced to that specific image.
+    var lightbox = root.querySelector('.lv-pdp-lightbox');
+    var zoomBtns = root.querySelectorAll('[data-lightbox-open]');
+
+    if (lightbox && zoomBtns.length) {
+      var lightboxBackdrop = root.querySelector('[data-lightbox-backdrop]');
+      var lightboxClose = root.querySelector('[data-lightbox-close]');
+      var lightboxPrev = root.querySelector('[data-lightbox-nav="prev"]');
+      var lightboxNext = root.querySelector('[data-lightbox-nav="next"]');
+      var lightboxMediaEls = Array.prototype.slice.call(lightbox.querySelectorAll('.lv-pdp-lightbox__media'));
+      var lastZoomTrigger = null;
+
+      var showLightboxMediaAt = function (index) {
+        if (!lightboxMediaEls.length) return;
+        var next = ((index % lightboxMediaEls.length) + lightboxMediaEls.length) % lightboxMediaEls.length;
+        lightboxMediaEls.forEach(function (m, i) { m.hidden = i !== next; });
+      };
+
+      var lightboxIndexFor = function (mediaId) {
+        var idx = lightboxMediaEls.findIndex(function (m) { return m.dataset.mediaId === mediaId; });
+        return idx === -1 ? 0 : idx;
+      };
+
+      var currentLightboxIndex = function () {
+        var idx = lightboxMediaEls.findIndex(function (m) { return !m.hidden; });
+        return idx === -1 ? 0 : idx;
+      };
+
+      var openLightbox = function (mediaId, trigger) {
+        lastZoomTrigger = trigger || null;
+        showLightboxMediaAt(lightboxIndexFor(mediaId));
+        lightbox.classList.add('open');
+        if (lightboxBackdrop) lightboxBackdrop.hidden = false;
+        document.body.style.overflow = 'hidden';
+        if (lightboxClose) lightboxClose.focus();
+      };
+
+      var closeLightbox = function () {
+        lightbox.classList.remove('open');
+        if (lightboxBackdrop) lightboxBackdrop.hidden = true;
+        document.body.style.overflow = '';
+        if (lastZoomTrigger) lastZoomTrigger.focus();
+      };
+
+      zoomBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          openLightbox(btn.dataset.lightboxMediaId, btn);
+        });
+      });
+
+      if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+      if (lightboxBackdrop) lightboxBackdrop.addEventListener('click', closeLightbox);
+      if (lightboxPrev) lightboxPrev.addEventListener('click', function () { showLightboxMediaAt(currentLightboxIndex() - 1); });
+      if (lightboxNext) lightboxNext.addEventListener('click', function () { showLightboxMediaAt(currentLightboxIndex() + 1); });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+      });
+    }
+
     var qty = document.getElementById('qty-' + SID);
     var minus = root.querySelector('[data-qty-minus]');
     var plus = root.querySelector('[data-qty-plus]');
@@ -769,6 +907,48 @@
     },
     {
       "type": "select",
+      "id": "gallery_layout",
+      "label": "t:labels.layout",
+      "options": [
+        { "value": "thumbnail_carousel", "label": "t:options.gallery_layout.thumbnail_carousel" },
+        { "value": "stacked", "label": "t:options.gallery_layout.stacked" },
+        { "value": "grid", "label": "t:options.gallery_layout.grid" }
+      ],
+      "default": "thumbnail_carousel"
+    },
+    {
+      "type": "select",
+      "id": "mobile_thumbnails",
+      "label": "t:labels.mobile_layout",
+      "options": [
+        { "value": "show", "label": "t:options.mobile_thumbnails.show" },
+        { "value": "hide", "label": "t:options.mobile_thumbnails.hide" }
+      ],
+      "default": "show",
+      "visible_if": "{{ section.settings.gallery_layout == 'thumbnail_carousel' and section.settings.show_thumbnails }}"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "t:labels.position",
+      "options": [
+        { "value": "left", "label": "t:options.media_position.left" },
+        { "value": "right", "label": "t:options.media_position.right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "image_zoom",
+      "label": "t:labels.zoom",
+      "options": [
+        { "value": "none", "label": "t:options.image_zoom.none" },
+        { "value": "lightbox", "label": "t:options.image_zoom.lightbox" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
       "id": "media_width",
       "label": "t:labels.media_width",
       "options": [
@@ -782,7 +962,8 @@
       "type": "checkbox",
       "id": "show_thumbnails",
       "label": "t:labels.show_thumbnails",
-      "default": true
+      "default": true,
+      "visible_if": "{{ section.settings.gallery_layout == 'thumbnail_carousel' }}"
     },
     {
       "type": "checkbox",
