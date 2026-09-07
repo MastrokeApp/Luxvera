@@ -45,21 +45,17 @@
   "
 >
 
-  {%- comment -%} Breadcrumb {%- endcomment -%}
-  <nav class="lv-pdp-breadcrumb" aria-label="{{ 'accessibility.breadcrumb' | t }}">
-    <ol class="lv-pdp-breadcrumb__list">
-      <li><a href="{{ routes.root_url }}">{{ 'products.home' | t }}</a></li>
-      {%- if product.collections.first -%}
-        <li><a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a></li>
-      {%- endif -%}
-      <li aria-current="page">{{ product.title }}</li>
-    </ol>
-  </nav>
+  {%- comment -%}
+    Breadcrumb intentionally NOT rendered here -- the global breadcrumb
+    (snippets/breadcrumb.liquid, rendered once in layout/theme.liquid for
+    every template) already covers the product page. A second, PDP-local
+    breadcrumb used to render here too, showing two breadcrumbs stacked.
+  {%- endcomment -%}
 
-  <div class="lv-pdp-layout">
+  <div class="lv-pdp-layout lv-pdp-layout--media-{{ section.settings.media_width }}">
     {%- comment -%} ── MEDIA GALLERY ── {%- endcomment -%}
-    <div class="lv-pdp-gallery" id="lv-pdp-gallery-{{ section.id }}">
-      {%- if product.media.size > 1 -%}
+    <div class="lv-pdp-gallery{% if section.settings.enable_sticky_media %} lv-pdp-gallery--sticky{% endif %}" id="lv-pdp-gallery-{{ section.id }}">
+      {%- if section.settings.show_thumbnails and product.media.size > 1 -%}
         <div class="lv-pdp-gallery__rail">
           <button type="button" class="lv-pdp-gallery__arrow lv-pdp-gallery__arrow--up" data-thumbs-arrow="up" aria-label="{{ 'accessibility.previous_images' | t }}" hidden>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M6 15l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -86,6 +82,17 @@
       {%- endif -%}
 
       <div class="lv-pdp-gallery__main">
+        {%- unless section.settings.show_thumbnails -%}
+          {%- if product.media.size > 1 -%}
+            <button type="button" class="lv-pdp-gallery__nav lv-pdp-gallery__nav--prev" data-media-nav="prev" aria-label="{{ 'accessibility.previous_images' | t }}">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" class="lv-pdp-gallery__nav lv-pdp-gallery__nav--next" data-media-nav="next" aria-label="{{ 'accessibility.next_images' | t }}">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          {%- endif -%}
+        {%- endunless -%}
+
         {%- if product.media.size > 0 -%}
           {%- for media in product.media -%}
             <div
@@ -625,6 +632,33 @@
       updateArrows();
     }
 
+    // Prev/next arrows on the main image -- only rendered when thumbnails
+    // are hidden, so media stays browsable without the thumbnail rail.
+    var mediaNavPrev = root.querySelector('[data-media-nav="prev"]');
+    var mediaNavNext = root.querySelector('[data-media-nav="next"]');
+
+    if (mediaNavPrev || mediaNavNext) {
+      var mediaEls = Array.prototype.slice.call(root.querySelectorAll('.lv-pdp-gallery__media'));
+
+      var showMediaAt = function (index) {
+        if (!mediaEls.length) return;
+        var next = ((index % mediaEls.length) + mediaEls.length) % mediaEls.length;
+        mediaEls.forEach(function (m, i) { m.hidden = i !== next; });
+        var mid = mediaEls[next].dataset.mediaId;
+        root.querySelectorAll('.lv-pdp-gallery__thumb').forEach(function (t) {
+          t.setAttribute('aria-current', t.dataset.thumbFor === mid ? 'true' : 'false');
+        });
+      };
+
+      var currentMediaIndex = function () {
+        var idx = mediaEls.findIndex(function (m) { return !m.hidden; });
+        return idx === -1 ? 0 : idx;
+      };
+
+      if (mediaNavPrev) mediaNavPrev.addEventListener('click', function () { showMediaAt(currentMediaIndex() - 1); });
+      if (mediaNavNext) mediaNavNext.addEventListener('click', function () { showMediaAt(currentMediaIndex() + 1); });
+    }
+
     var qty = document.getElementById('qty-' + SID);
     var minus = root.querySelector('[data-qty-minus]');
     var plus = root.querySelector('[data-qty-plus]');
@@ -710,6 +744,33 @@
   "class": "section section-main-product",
   "limit": 1,
   "settings": [
+    {
+      "type": "header",
+      "content": "t:labels.media"
+    },
+    {
+      "type": "select",
+      "id": "media_width",
+      "label": "t:labels.media_width",
+      "options": [
+        { "value": "small", "label": "t:options.media_width.small" },
+        { "value": "medium", "label": "t:options.media_width.medium" },
+        { "value": "large", "label": "t:options.media_width.large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_thumbnails",
+      "label": "t:labels.show_thumbnails",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_media",
+      "label": "t:labels.enable_sticky_media",
+      "default": true
+    },
     {
       "type": "range",
       "id": "padding_top_desktop",

@@ -236,6 +236,7 @@
     "enable_order_note": "Enable Order Note",
     "enable_scroll_animations": "Enable Scroll Animations",
     "enable_shipping_link": "Enable Shipping Link",
+    "enable_sticky_media": "Enable sticky media",
     "end_date_and_time": "End date and time",
     "explore_label": "Explore Label",
     "subtitle_size": "Subtitle Size",
@@ -308,7 +309,9 @@
     "map": "Map",
     "max_content_width": "Max Content Width",
     "max_products_per_tab": "Max Products Per Tab",
-    "max_products_to_show": "Max Products to Show",    
+    "max_products_to_show": "Max Products to Show",
+    "media": "Media",
+    "media_width": "Media width",
     "menu": "Main menu",
     "message": "Message",
     "min_height": "Min Height",
@@ -419,6 +422,7 @@
     "show_product_count_badge": "Show product count badge",
     "show_social_icons": "Show social icons",
     "show_sort": "Show Sort",
+    "show_thumbnails": "Show thumbnails",
     "show_tiktok_icon": "Show TikTok icon",
     "show_youtube_icon": "Show YouTube icon",
     "show_top_bar": "Show Top Bar",
@@ -581,6 +585,11 @@
     "logo_position": {
       "left": "Left",
       "center": "Center"
+    },
+    "media_width": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
     },
     "mobile_content_alignment": {
       "center": "Center",
