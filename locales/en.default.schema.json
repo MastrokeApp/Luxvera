@@ -361,6 +361,7 @@
     "paste_your_google_maps_iframe_embed": "Paste your Google Maps embed code here. Get it from maps.google.com → Share → Embed a map.",
     "phone_label": "Phone Label",
     "phone_number": "Phone Number",
+    "picker_type": "Variant picker style",
     "pinterest_url": "Pinterest URL",
     "popup_timing": "Popup timing",
     "primary_button_background": "Primary Button Background",
@@ -613,6 +614,10 @@
     "page_width": {
       "narrow": "Narrow",
       "wide": "Wide"
+    },
+    "picker_type": {
+      "pill": "Pills",
+      "dropdown": "Dropdown"
     },
     "size": {
       "large": "Large",

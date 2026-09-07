@@ -170,41 +170,60 @@
             {%- when 'variant_picker' -%}
               {%- unless product.has_only_default_variant -%}
                 <div class="lv-pdp-block lv-pdp-variant-picker" {{ block.shopify_attributes }}>
-                  {%- for option in product.options_with_values -%}
-                    <fieldset class="lv-pdp-option" data-option-position="{{ option.position }}">
-                      <legend class="lv-pdp-option__label">
-                        {{ option.name }}:
-                        <span class="lv-pdp-option__selected" data-selected-for="{{ option.position }}">{{ option.selected_value }}</span>
-                      </legend>
-                      <div class="lv-pdp-option__values">
-                        {%- for value in option.values -%}
-                          {%- assign input_id = section.id | append: '-' | append: option.position | append: '-' | append: forloop.index0 -%}
-                          <input
-                            type="radio"
-                            class="lv-pdp-opt-input"
-                            id="{{ input_id }}"
-                            name="option-{{ option.position }}"
-                            value="{{ value | escape }}"
-                            data-option-position="{{ option.position }}"
-                            {% if value.selected %}checked{% endif %}
-                          >
-                          {%- if value.swatch.image -%}
-                            <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
-                              <span class="lv-pdp-swatch__img" style="background-image:url({{ value.swatch.image | image_url: width: 100 }})"></span>
-                              <span class="visually-hidden">{{ value }}</span>
-                            </label>
-                          {%- elsif value.swatch.color -%}
-                            <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
-                              <span class="lv-pdp-swatch__color" style="background:{{ value.swatch.color }}"></span>
-                              <span class="visually-hidden">{{ value }}</span>
-                            </label>
-                          {%- else -%}
-                            <label class="lv-pdp-opt-label lv-pdp-pill" for="{{ input_id }}">{{ value }}</label>
-                          {%- endif -%}
-                        {%- endfor -%}
+                  {%- if block.settings.picker_type == 'dropdown' -%}
+                    {%- for option in product.options_with_values -%}
+                      {%- assign select_id = section.id | append: '-' | append: option.position | append: '-select' -%}
+                      <div class="lv-pdp-option lv-pdp-option--dropdown" data-option-position="{{ option.position }}">
+                        <label class="lv-pdp-option__label" for="{{ select_id }}">{{ option.name }}</label>
+                        <select
+                          class="lv-pdp-opt-select"
+                          id="{{ select_id }}"
+                          name="option-{{ option.position }}"
+                          data-option-position="{{ option.position }}"
+                        >
+                          {%- for value in option.values -%}
+                            <option value="{{ value | escape }}" {% if value.selected %}selected{% endif %}>{{ value }}</option>
+                          {%- endfor -%}
+                        </select>
                       </div>
-                    </fieldset>
-                  {%- endfor -%}
+                    {%- endfor -%}
+                  {%- else -%}
+                    {%- for option in product.options_with_values -%}
+                      <fieldset class="lv-pdp-option" data-option-position="{{ option.position }}">
+                        <legend class="lv-pdp-option__label">
+                          {{ option.name }}:
+                          <span class="lv-pdp-option__selected" data-selected-for="{{ option.position }}">{{ option.selected_value }}</span>
+                        </legend>
+                        <div class="lv-pdp-option__values">
+                          {%- for value in option.values -%}
+                            {%- assign input_id = section.id | append: '-' | append: option.position | append: '-' | append: forloop.index0 -%}
+                            <input
+                              type="radio"
+                              class="lv-pdp-opt-input"
+                              id="{{ input_id }}"
+                              name="option-{{ option.position }}"
+                              value="{{ value | escape }}"
+                              data-option-position="{{ option.position }}"
+                              {% if value.selected %}checked{% endif %}
+                            >
+                            {%- if value.swatch.image -%}
+                              <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
+                                <span class="lv-pdp-swatch__img" style="background-image:url({{ value.swatch.image | image_url: width: 100 }})"></span>
+                                <span class="visually-hidden">{{ value }}</span>
+                              </label>
+                            {%- elsif value.swatch.color -%}
+                              <label class="lv-pdp-opt-label lv-pdp-swatch" for="{{ input_id }}" title="{{ value | escape }}">
+                                <span class="lv-pdp-swatch__color" style="background:{{ value.swatch.color }}"></span>
+                                <span class="visually-hidden">{{ value }}</span>
+                              </label>
+                            {%- else -%}
+                              <label class="lv-pdp-opt-label lv-pdp-pill" for="{{ input_id }}">{{ value }}</label>
+                            {%- endif -%}
+                          {%- endfor -%}
+                        </div>
+                      </fieldset>
+                    {%- endfor -%}
+                  {%- endif -%}
                 </div>
               {%- endunless -%}
 
@@ -500,8 +519,8 @@
     function getSelectedOptions() {
       var opts = [];
       root.querySelectorAll('.lv-pdp-option').forEach(function (fs) {
-        var checked = fs.querySelector('.lv-pdp-opt-input:checked');
-        if (checked) opts.push(checked.value);
+        var el = fs.querySelector('.lv-pdp-opt-input:checked') || fs.querySelector('.lv-pdp-opt-select');
+        if (el) opts.push(el.value);
       });
       return opts;
     }
@@ -590,7 +609,7 @@
       window.history.replaceState({}, '', url.toString());
     }
 
-    root.querySelectorAll('.lv-pdp-opt-input').forEach(function (input) {
+    root.querySelectorAll('.lv-pdp-opt-input, .lv-pdp-opt-select').forEach(function (input) {
       input.addEventListener('change', function () {
         updateUI(findVariant(getSelectedOptions()));
       });
@@ -711,7 +730,7 @@
     // Only resolve a variant from options when option inputs exist.
     // Single-variant products keep the server-rendered id already in the
     // hidden input, so we must not run the "no variant" (disable) path.
-    if (root.querySelector('.lv-pdp-opt-input')) {
+    if (root.querySelector('.lv-pdp-opt-input, .lv-pdp-opt-select')) {
       updateUI(findVariant(getSelectedOptions()));
     } else if (pickupEl && !(atcBtn && atcBtn.disabled)) {
       loadPickupAvailability(pickupEl.dataset.variantId);
@@ -841,7 +860,19 @@
     {
       "type": "variant_picker",
       "name": "t:general.variant_picker",
-      "limit": 1
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "picker_type",
+          "label": "t:labels.picker_type",
+          "options": [
+            { "value": "pill", "label": "t:options.picker_type.pill" },
+            { "value": "dropdown", "label": "t:options.picker_type.dropdown" }
+          ],
+          "default": "pill"
+        }
+      ]
     },
     {
       "type": "availability",
