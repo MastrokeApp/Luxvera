@@ -19,8 +19,6 @@
   style="
     --bs-pt: {{ section.settings.padding_top }}px;
     --bs-pb: {{ section.settings.padding_bottom }}px;
-    --bs-pt-m: {{ section.settings.padding_top | times: 0.6 | round }}px;
-    --bs-pb-m: {{ section.settings.padding_bottom | times: 0.6 | round }}px;
     --bs-col: {{ section.settings.content_width }}px;
     --bs-h-d: {{ section.settings.image_height_desktop }}px;
     --bs-h-t: {{ section.settings.image_height_tablet }}px;
@@ -145,15 +143,22 @@
         </div>
       {%- endif -%}
 
-      {%- if section.settings.cta_label != blank and section.settings.cta_url != blank -%}
-        <a
-          href="{{ section.settings.cta_url }}"
-          class="btn-outline"
-          {% if section.settings.cta_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
-        >
-          <span>{{ section.settings.cta_label | escape }}</span>
-          <span class="btn-arrow" aria-hidden="true">&rarr;</span>
-        </a>
+      {%- if section.settings.cta_label != blank -%}
+        {%- if section.settings.cta_url != blank -%}
+          <a
+            href="{{ section.settings.cta_url }}"
+            class="btn btn--secondary"
+            {% if section.settings.cta_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+          >
+            <span>{{ section.settings.cta_label | escape }}</span>
+            <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        {%- else -%}
+          <button type="button" class="btn btn--secondary" disabled>
+            <span>{{ section.settings.cta_label | escape }}</span>
+            <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+          </button>
+        {%- endif -%}
       {%- endif -%}
     </div>
 
@@ -217,7 +222,7 @@
               {%- endif -%}
 
               {%- if has_link and block.settings.cta_label != blank -%}
-                <span class="brand-img-cta">
+                <span class="btn btn--primary brand-img-cta">
                   <span class="brand-img-cta__text">{{ block.settings.cta_label | escape }}</span>
                   <span class="brand-img-cta__arrow" aria-hidden="true">&rarr;</span>
                 </span>
@@ -283,7 +288,6 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  display: block;
 }
 
 /* ─ IDENTITY ─ */
@@ -408,39 +412,17 @@
 }
 
 /* ─ CTA ─ */
-.brand-section .btn-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: transparent;
-  color: rgb(var(--color-foreground));
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  padding: 11px 24px;
-  border: 1.5px solid rgb(var(--color-foreground));
-  text-decoration: none;
-  transition: background-color .25s, color .25s, border-color .25s;
-  border-radius: var(--lv-btn-radius, 0px);
-}
-
-.brand-section .btn-outline:hover {
-  background: rgb(var(--color-button));
-  border-color: rgb(var(--color-button));
-  color: rgb(var(--color-button-text));
-}
-
-.brand-section .btn-outline:focus-visible {
-  outline: 2px solid rgb(var(--color-foreground));
-  outline-offset: 2px;
-}
-
+/**
+ * Both buttons in this section (the left-column CTA and the hover pill on the
+ * image) use .btn from assets/component-button.css, so their height, padding,
+ * type, colours and radius match every other section. Only the arrow motion
+ * and the pill's positioning stay here.
+ */
 .brand-section .btn-arrow {
   transition: transform .2s;
 }
 
-.brand-section .btn-outline:hover .btn-arrow {
+.brand-section .btn:hover .btn-arrow {
   transform: translateX(3px);
 }
 
@@ -496,7 +478,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
 
 .brand-section .brand-img-front {
@@ -516,7 +497,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
   transition: transform .5s ease;
 }
 
@@ -524,24 +504,13 @@
   transform: scale(1.04);
 }
 
-/* ─ HOVER CTA PILL ─ */
+/* ─ HOVER CTA PILL ─ positioning and reveal only */
 .brand-section .brand-img-cta {
   position: absolute;
   left: 50%;
   bottom: 24px;
   transform: translate(-50%, 12px);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   max-width: calc(100% - 32px);
-  padding: 11px 22px;
-  background: rgb(var(--color-button));
-  color: rgb(var(--color-button-text));
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  border-radius: var(--lv-btn-radius, 0px);
   opacity: 0;
   pointer-events: none;
   transition: opacity .3s ease, transform .3s ease;
@@ -593,7 +562,8 @@
 /* ─ MOBILE ─ */
 @media (max-width: 768px) {
   .brand-section .brand-inner {
-    padding: var(--bs-pt-m, 43px) 20px var(--bs-pb-m, 43px);
+    padding-left: 20px;
+    padding-right: 20px;
     gap: 32px;
   }
 
@@ -616,8 +586,6 @@
 
   .brand-section .brand-img-cta {
     bottom: 16px;
-    padding: 9px 18px;
-    font-size: 10px;
   }
 }
 
@@ -633,6 +601,7 @@
   .brand-section .brand-img-front img,
   .brand-section .brand-img-cta,
   .brand-section .btn-arrow,
+  .brand-section .brand-img-cta__arrow,
   .brand-section .bl-chevron {
     transition: none !important;
   }
@@ -749,17 +718,8 @@
     "groups": ["header", "footer"]
   },
   "class": "luxvera-brand-story",
+  "max_blocks": 6,
   "settings": [
-    {
-      "type": "header",
-      "content": "t:labels.appearance"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:labels.color_scheme",
-      "default": "scheme-1"
-    },
     {
       "type": "header",
       "content": "t:labels.brand_identity"
@@ -794,7 +754,7 @@
     {
       "type": "range",
       "id": "icon_size",
-      "label": "t:labels.font_size",
+      "label": "Icon size",
       "min": 16,
       "max": 48,
       "step": 2,
@@ -874,13 +834,13 @@
       "type": "text",
       "id": "cta_label",
       "label": "t:labels.button_label",
+      "info": "Leave blank to hide the button.",
       "default": "Explore Collections"
     },
     {
       "type": "url",
       "id": "cta_url",
-      "label": "t:labels.button_url",
-      "info": "The button is hidden until a link is set."
+      "label": "t:labels.button_url"
     },
     {
       "type": "checkbox",
@@ -931,6 +891,16 @@
       "step": 20,
       "unit": "px",
       "default": 260
+    },
+    {
+      "type": "header",
+      "content": "t:labels.colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
     },
     {
       "type": "header",
@@ -995,7 +965,7 @@
           "id": "cta_label",
           "label": "t:labels.button_label",
           "default": "Shop now",
-          "info": "Shown on the image on hover. Always visible on touch devices."
+          "info": "Shown on the image on hover. Always visible on touch devices. Needs a link above."
         },
         {
           "type": "checkbox",

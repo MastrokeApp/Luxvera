@@ -1,4 +1,3 @@
-
 {% comment %}
   Section: Image with Text
 
@@ -24,19 +23,19 @@
   case section.settings.desktop_image_width
     when 'small'
       assign iwt_cols = '0.8fr 1.2fr'
-    when 'medium'
-      assign iwt_cols = '1fr 1fr'
     when 'large'
       assign iwt_cols = '1.2fr 0.8fr'
+    else
+      assign iwt_cols = '1fr 1fr'
   endcase
 
   case section.settings.desktop_content_position
     when 'top'
       assign iwt_content_align = 'flex-start'
-    when 'middle'
-      assign iwt_content_align = 'center'
     when 'bottom'
       assign iwt_content_align = 'flex-end'
+    else
+      assign iwt_content_align = 'center'
   endcase
 
   case section.settings.desktop_content_alignment
@@ -62,14 +61,11 @@
       assign iwt_text_align_m = 'left'
       assign iwt_items_align_m = 'flex-start'
   endcase
-
-  assign pad_top_m = section.settings.padding_top | times: 0.75 | round: 0
-  assign pad_bottom_m = section.settings.padding_bottom | times: 0.75 | round: 0
 -%}
 
 <div
   id="image-with-text-{{ section.id }}"
-  class="image-with-text-section color-{{ section.settings.section_color_scheme }} gradient"
+  class="image-with-text-section color-{{ section.settings.section_color_scheme }}"
   data-layout="{{ layout }}"
   data-content-layout="{{ content_layout }}"
   data-image-behavior="{{ section.settings.image_behavior }}"
@@ -82,8 +78,6 @@
     --iwt-items-align-m: {{ iwt_items_align_m }};
     --iwt-pad-top: {{ section.settings.padding_top }}px;
     --iwt-pad-bottom: {{ section.settings.padding_bottom }}px;
-    --iwt-pad-top-m: {{ pad_top_m }}px;
-    --iwt-pad-bottom-m: {{ pad_bottom_m }}px;
     --iwt-img-h: {{ section.settings.image_height_desktop }}px;
     --iwt-img-h-m: {{ section.settings.image_height_mobile }}px;
     --iwt-heading-size: {{ section.settings.heading_size }}px;
@@ -133,7 +127,7 @@
                         {{ block.shopify_attributes }}
                       >
                         <div class="image-text-text">
-                          {{ block.settings.subheading }}
+                          {{ block.settings.subheading | escape | newline_to_br }}
                         </div>
                       </div>
                     {%- endif -%}
@@ -147,17 +141,14 @@
                         {%- if block.settings.button_link != blank -%}
                           <a
                             href="{{ block.settings.button_link }}"
-                            class="image-text-button"
+                            class="btn btn--primary"
                           >
-                            {{ block.settings.button_label | escape }}
+                            {{- block.settings.button_label | escape -}}
                           </a>
                         {%- else -%}
-                          <span
-                            class="image-text-button image-text-button--disabled"
-                            aria-disabled="true"
-                          >
-                            {{ block.settings.button_label | escape }}
-                          </span>
+                          <button type="button" class="btn btn--primary" disabled>
+                            {{- block.settings.button_label | escape -}}
+                          </button>
                         {%- endif -%}
                       </div>
                     {%- endif -%}
@@ -183,6 +174,10 @@
   },
   "class": "section",
   "settings": [
+    {
+      "type": "header",
+      "content": "t:labels.image"
+    },
     {
       "type": "image_picker",
       "id": "image",
@@ -210,6 +205,56 @@
     },
     {
       "type": "select",
+      "id": "image_behavior",
+      "label": "t:labels.image_behavior",
+      "default": "none",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.image_behavior.none"
+        },
+        {
+          "value": "zoom-in",
+          "label": "t:options.image_behavior.zoom_in"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "t:labels.typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "t:labels.heading_size",
+      "min": 18,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "t:labels.layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "t:labels.desktop_image_placement",
+      "default": "image_first",
+      "options": [
+        {
+          "value": "image_first",
+          "label": "t:options.layout.image_first"
+        },
+        {
+          "value": "text_first",
+          "label": "t:options.layout.text_first"
+        }
+      ]
+    },
+    {
+      "type": "select",
       "id": "desktop_image_width",
       "label": "t:labels.desktop_image_width",
       "default": "medium",
@@ -230,17 +275,17 @@
     },
     {
       "type": "select",
-      "id": "layout",
-      "label": "t:labels.desktop_image_placement",
-      "default": "image_first",
+      "id": "content_layout",
+      "label": "t:labels.content_layout",
+      "default": "no-overlap",
       "options": [
         {
-          "value": "image_first",
-          "label": "t:options.layout.image_first"
+          "value": "no-overlap",
+          "label": "t:options.content_layout.no_overlap"
         },
         {
-          "value": "text_first",
-          "label": "t:options.layout.text_first"
+          "value": "overlap",
+          "label": "t:options.content_layout.overlap"
         }
       ]
     },
@@ -285,61 +330,6 @@
       ]
     },
     {
-      "type": "select",
-      "id": "content_layout",
-      "label": "t:labels.content_layout",
-      "default": "no-overlap",
-      "options": [
-        {
-          "value": "no-overlap",
-          "label": "t:options.content_layout.no_overlap"
-        },
-        {
-          "value": "overlap",
-          "label": "t:options.content_layout.overlap"
-        }
-      ]
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:labels.container_color_scheme",
-      "default": "scheme-1"
-    },
-    {
-      "type": "color_scheme",
-      "id": "section_color_scheme",
-      "label": "t:labels.section_background_color_scheme",
-      "info": "t:labels.background_for_the_whole_section_behind",
-      "default": "scheme-1"
-    },
-    {
-      "type": "select",
-      "id": "image_behavior",
-      "label": "t:labels.image_behavior",
-      "default": "none",
-      "options": [
-        {
-          "value": "none",
-          "label": "t:options.image_behavior.none"
-        },
-        {
-          "value": "zoom-in",
-          "label": "t:options.image_behavior.zoom_in"
-        }
-      ]
-    },
-    {
-      "type": "range",
-      "id": "heading_size",
-      "label": "t:labels.heading_size",
-      "min": 18,
-      "max": 72,
-      "step": 2,
-      "unit": "px",
-      "default": 48
-    },
-    {
       "type": "header",
       "content": "t:labels.mobile_layout"
     },
@@ -365,12 +355,29 @@
     },
     {
       "type": "header",
-      "content": "t:labels.section_padding_2"
+      "content": "t:labels.colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "label": "t:labels.section_background_color_scheme",
+      "info": "t:labels.background_for_the_whole_section_behind",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.container_color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
     },
     {
       "type": "range",
       "id": "padding_top",
-      "label": "t:labels.top_padding",
+      "label": "t:labels.padding_top",
       "min": 0,
       "max": 100,
       "step": 4,
@@ -380,7 +387,7 @@
     {
       "type": "range",
       "id": "padding_bottom",
-      "label": "t:labels.bottom_padding",
+      "label": "t:labels.padding_bottom",
       "min": 0,
       "max": 100,
       "step": 4,
@@ -391,42 +398,46 @@
   "blocks": [
     {
       "type": "heading",
-      "name": "Heading",
+      "name": "t:labels.heading",
+      "limit": 1,
       "settings": [
         {
           "type": "inline_richtext",
           "id": "heading",
-          "label": "Heading",
+          "label": "t:labels.heading",
           "default": "Image with text"
         }
       ]
     },
     {
       "type": "subheading",
-      "name": "Subheading",
+      "name": "t:labels.subheading",
+      "limit": 1,
       "settings": [
         {
           "type": "textarea",
           "id": "subheading",
-          "label": "Subheading",
+          "label": "t:labels.subheading",
           "default": "Pair text with an image to focus on your chosen product, collection, or blog post."
         }
       ]
     },
     {
       "type": "button",
-      "name": "Button",
+      "name": "t:labels.button",
+      "limit": 1,
       "settings": [
         {
           "type": "text",
           "id": "button_label",
-          "label": "Button label",
+          "label": "t:labels.button_label",
+          "info": "Leave blank to hide the button.",
           "default": "Shop now"
         },
         {
           "type": "url",
           "id": "button_link",
-          "label": "Button link"
+          "label": "t:labels.button_link"
         }
       ]
     }

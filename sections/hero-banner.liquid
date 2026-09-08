@@ -3,40 +3,110 @@
 
   Fading hero slideshow with autoplay, arrows, dots, touch swipe,
   per-slide image + overlay, and an empty-state placeholder.
+
+  Settings architecture follows Shopify's slideshow convention:
+  - Section settings control BEHAVIOUR shared by every slide
+    (height, autoplay, accessibility label).
+  - Block settings control APPEARANCE of that individual slide
+    (colour scheme, content position/alignment, heading size,
+    overlay, button style).
+
+  Maximum 5 slides.
 {% endcomment %}
 
-{% assign slide_blocks = section.blocks | where: 'type', 'slide' %}
-{% assign has_slides = false %}
-{% if slide_blocks.size > 0 %}{% assign has_slides = true %}{% endif %}
+{%- liquid
+  assign slide_blocks = section.blocks | where: 'type', 'slide'
+
+  assign has_slides = false
+  if slide_blocks.size > 0
+    assign has_slides = true
+  endif
+
+  assign slideshow_label = section.settings.slideshow_description
+  if slideshow_label == blank
+    assign slideshow_label = 'accessibility.hero_slideshow' | t
+  endif
+-%}
 
 <div
-  class="hero-slideshow color-{{ section.settings.color_scheme }} gradient"
+  class="hero-slideshow"
   id="hero-banner-{{ section.id }}"
   style="
     --hero-height-desktop:{{ section.settings.height_desktop }}px;
     --hero-height-tablet:{{ section.settings.height_tablet }}px;
     --hero-height-mobile:{{ section.settings.height_mobile }}px;
-    --hero-content-align:{{ section.settings.content_alignment }};
-    --hero-heading-size:{{ section.settings.heading_size }}px;
-    --hero-heading-size-mobile:{{ section.settings.heading_size | times: 0.65 | round }}px;
   "
-  aria-label="{{ 'accessibility.hero_slideshow' | t }}"
+  role="region"
+  aria-label="{{ slideshow_label | escape }}"
   data-autoplay="{{ section.settings.autoplay }}"
   data-speed="{{ section.settings.autoplay_speed | times: 1000 }}"
 >
   {%- if has_slides -%}
 
     {%- for block in slide_blocks -%}
-      {%- assign is_first = false -%}
-      {%- if forloop.index0 == 0 -%}{%- assign is_first = true -%}{%- endif -%}
+      {%- liquid
+        assign is_first = false
+        if forloop.index0 == 0
+          assign is_first = true
+        endif
+
+        # Content position -> flexbox. Values are stored as "block_inline",
+        # e.g. "middle_left", so one setting drives both axes.
+        assign position_parts = block.settings.content_position | split: '_'
+        assign position_block = position_parts[0]
+        assign position_inline = position_parts[1]
+
+        case position_block
+          when 'top'
+            assign justify_content = 'flex-start'
+          when 'bottom'
+            assign justify_content = 'flex-end'
+          else
+            assign justify_content = 'center'
+        endcase
+
+        case position_inline
+          when 'left'
+            assign align_items = 'flex-start'
+          when 'right'
+            assign align_items = 'flex-end'
+          else
+            assign align_items = 'center'
+        endcase
+
+        case block.settings.mobile_content_alignment
+          when 'left'
+            assign align_items_mobile = 'flex-start'
+          when 'right'
+            assign align_items_mobile = 'flex-end'
+          else
+            assign align_items_mobile = 'center'
+        endcase
+
+        # Placeholders cycle through the two valid lifestyle SVGs so slides
+        # 3-5 can't throw "Unknown SVG placeholder" before an image is set.
+        assign placeholder_index = forloop.index0 | modulo: 2 | plus: 1
+        assign placeholder_name = 'lifestyle-' | append: placeholder_index
+
+        assign button_variant = 'btn--primary'
+        if block.settings.button_outline
+          assign button_variant = 'btn--secondary'
+        endif
+      -%}
 
       <div
-        class="hero-slide{% if is_first %} is-active{% endif %}"
-        data-index="{{ forloop.index0 }}"
+        class="hero-slide color-{{ block.settings.color_scheme }}{% if is_first %} is-active{% endif %}"
         {{ block.shopify_attributes }}
         style="
           --slide-overlay-color:{{ block.settings.overlay_color }};
           --slide-overlay-opacity:{{ block.settings.overlay_opacity | divided_by: 100.0 }};
+          --hero-justify:{{ justify_content }};
+          --hero-align:{{ align_items }};
+          --hero-align-mobile:{{ align_items_mobile }};
+          --hero-text-align:{{ block.settings.content_alignment }};
+          --hero-text-align-mobile:{{ block.settings.mobile_content_alignment }};
+          --hero-heading-size:{{ block.settings.heading_size }}px;
+          --hero-heading-size-mobile:{{ block.settings.heading_size | times: 0.65 | round }}px;
         "
         aria-hidden="{% if is_first %}false{% else %}true{% endif %}"
       >
@@ -53,16 +123,13 @@
             >
           {%- else -%}
             <div class="hero-slide__placeholder">
-              {{- 'lifestyle-' | append: forloop.index | placeholder_svg_tag: 'hero-placeholder-svg' -}}
+              {{- placeholder_name | placeholder_svg_tag: 'hero-placeholder-svg' -}}
             </div>
           {%- endif -%}
           <div class="hero-slide__overlay"></div>
         </div>
 
-        <div
-          class="hero-slide__content"
-          style="text-align:{{ section.settings.content_alignment | replace:'flex-start','left' | replace:'center','center' | replace:'flex-end','right' }};"
-        >
+        <div class="hero-slide__content">
           {%- if block.settings.heading != blank -%}
             {%- if template.name == 'index' -%}
               <h1 class="hero-slide__heading">{{ block.settings.heading | escape }}</h1>
@@ -75,10 +142,10 @@
             <p class="hero-slide__subtext">{{ block.settings.subtext | escape }}</p>
           {%- endif -%}
 
-          {%- if block.settings.button_label != blank and block.settings.button_url != blank -%}
+          {%- if block.settings.button_label != blank -%}
             <a
-              href="{{ block.settings.button_url }}"
-              class="hero-slide__btn"
+              href="{{ block.settings.button_url | default: '#' }}"
+              class="btn {{ button_variant }} hero-slide__btn"
               {% if block.settings.button_open_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
             >
               {{ block.settings.button_label | escape }}
@@ -117,14 +184,14 @@
 
   {%- else -%}
 
-    <div class="hero-slide is-active hero-slide--empty">
+    <div class="hero-slide is-active">
       <div class="hero-slide__bg">
         <div class="hero-slide__placeholder">
           {{ 'lifestyle-1' | placeholder_svg_tag: 'hero-placeholder-svg' }}
         </div>
         <div class="hero-slide__overlay" style="--slide-overlay-color:#100a04;--slide-overlay-opacity:0.5;"></div>
       </div>
-      <div class="hero-slide__content" style="text-align:center;">
+      <div class="hero-slide__content">
         <h2 class="hero-slide__heading">{{ 'hero_banner.add_first_slide' | t }}</h2>
         <p class="hero-slide__subtext">{{ 'hero_banner.add_first_slide_hint' | t }}</p>
       </div>
@@ -138,8 +205,6 @@
   position: relative;
   height: var(--hero-height-desktop, 580px);
   overflow: clip;
-  background: rgb(var(--color-background));
-  color: rgb(var(--color-foreground));
 }
 
 .hero-slideshow .hero-slide {
@@ -149,6 +214,8 @@
   pointer-events: none;
   transition: opacity 0.7s ease;
   z-index: 0;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
 }
 
 .hero-slideshow .hero-slide.is-active {
@@ -167,7 +234,6 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  display: block;
 }
 
 .hero-slideshow .hero-slide__placeholder {
@@ -181,17 +247,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
 
 .hero-slideshow .hero-slide__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(16, 10, 4, calc(var(--slide-overlay-opacity, 0.6))) 32%,
-    rgba(16, 10, 4, calc(var(--slide-overlay-opacity, 0.1) * 0.2)) 100%
-  );
   background: linear-gradient(
     to right,
     color-mix(in srgb, var(--slide-overlay-color, #100a04) calc(var(--slide-overlay-opacity, 0.6) * 100%), transparent) 32%,
@@ -208,8 +268,9 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: var(--hero-content-align, flex-start);
+  justify-content: var(--hero-justify, center);
+  align-items: var(--hero-align, flex-start);
+  text-align: var(--hero-text-align, left);
 }
 
 @keyframes luxvera-fade-up {
@@ -250,34 +311,18 @@
 .hero-slideshow .hero-slide__subtext {
   color: rgb(var(--color-foreground));
   font-size: 18px;
-  font-weight: 400;
   margin: 0;
   max-width: 480px;
   opacity: 0.88;
 }
 
+/**
+ * Button appearance (height, padding, type, colours, hover) is owned by
+ * .btn / .btn--primary / .btn--secondary in assets/component-button.css
+ * so every section matches. Only layout/spacing stays here.
+ */
 .hero-slideshow .hero-slide__btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 52px;
-  padding: 0 34px;
   margin-top: 36px;
-  border: 1px solid rgb(var(--color-button));
-  background: rgb(var(--color-button));
-  color: rgb(var(--color-button-text));
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-}
-
-.hero-slideshow .hero-slide__btn:hover {
-  background: #fff;
-  transform: translateY(-2px);
 }
 
 .hero-slideshow .hero-arrow {
@@ -329,8 +374,8 @@
   border-radius: 50%;
   background: rgba(var(--color-foreground), 0.45);
   border: none;
-  cursor: pointer;
   padding: 0;
+  cursor: pointer;
   transition: background 0.3s, transform 0.3s;
 }
 
@@ -369,7 +414,8 @@
 
   .hero-slideshow .hero-slide__content {
     padding: 0 24px;
-    align-items: var(--hero-content-align, flex-start);
+    align-items: var(--hero-align-mobile, flex-start);
+    text-align: var(--hero-text-align-mobile, left);
   }
 
   .hero-slideshow .hero-slide__heading {
@@ -383,13 +429,23 @@
   }
 
   .hero-slideshow .hero-slide__btn {
-    width: 100%;
-    max-width: 200px;
     margin-top: 28px;
   }
 
   .hero-slideshow .hero-arrow {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slideshow .hero-slide {
+    transition: none;
+  }
+
+  .hero-slideshow .hero-slide.is-active .hero-slide__heading,
+  .hero-slideshow .hero-slide.is-active .hero-slide__subtext,
+  .hero-slideshow .hero-slide.is-active .hero-slide__btn {
+    animation: none;
   }
 }
 {% endstylesheet %}
@@ -398,42 +454,42 @@
 (function () {
   'use strict';
 
+  function setActive(root, index) {
+    var slides = Array.prototype.slice.call(root.querySelectorAll('.hero-slide'));
+    var dots = Array.prototype.slice.call(root.querySelectorAll('.hero-dot'));
+
+    slides.forEach(function (slide, i) {
+      var active = i === index;
+      slide.classList.toggle('is-active', active);
+      slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+
+      if (dots[i]) {
+        dots[i].classList.toggle('is-active', active);
+        dots[i].setAttribute('aria-selected', active ? 'true' : 'false');
+      }
+    });
+  }
+
   function initHeroSlideshow(root) {
     if (!root || root.dataset.lvHeroInit) return;
     root.dataset.lvHeroInit = '1';
 
-    var slides = Array.prototype.slice.call(root.querySelectorAll('.hero-slide'));
-    var dots   = Array.prototype.slice.call(root.querySelectorAll('.hero-dot'));
-    var prev   = root.querySelector('.hero-arrow--prev');
-    var next   = root.querySelector('.hero-arrow--next');
-    var total  = slides.length;
-
+    var total = root.querySelectorAll('.hero-slide').length;
     if (total <= 1) return;
 
+    var prev = root.querySelector('.hero-arrow--prev');
+    var next = root.querySelector('.hero-arrow--next');
+    var dots = Array.prototype.slice.call(root.querySelectorAll('.hero-dot'));
+
     var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var current  = 0;
+    var current = 0;
     var autoplay = root.dataset.autoplay === 'true' && !prefersReducedMotion;
-    var speed    = parseInt(root.dataset.speed, 10) || 5000;
-    var timer    = null;
+    var speed = parseInt(root.dataset.speed, 10) || 5000;
+    var timer = null;
 
     function goTo(index) {
-      slides[current].classList.remove('is-active');
-      slides[current].setAttribute('aria-hidden', 'true');
-
-      if (dots[current]) {
-        dots[current].classList.remove('is-active');
-        dots[current].setAttribute('aria-selected', 'false');
-      }
-
       current = (index + total) % total;
-
-      slides[current].classList.add('is-active');
-      slides[current].setAttribute('aria-hidden', 'false');
-
-      if (dots[current]) {
-        dots[current].classList.add('is-active');
-        dots[current].setAttribute('aria-selected', 'true');
-      }
+      setActive(root, current);
     }
 
     function startAuto() {
@@ -448,26 +504,28 @@
       clearInterval(timer);
     }
 
+    function step(delta) {
+      stopAuto();
+      goTo(current + delta);
+      startAuto();
+    }
+
     if (prev) {
       prev.addEventListener('click', function () {
-        stopAuto();
-        goTo(current - 1);
-        startAuto();
+        step(-1);
       });
     }
 
     if (next) {
       next.addEventListener('click', function () {
-        stopAuto();
-        goTo(current + 1);
-        startAuto();
+        step(1);
       });
     }
 
     dots.forEach(function (dot) {
       dot.addEventListener('click', function () {
         stopAuto();
-        goTo(parseInt(this.dataset.index, 10));
+        goTo(parseInt(dot.dataset.index, 10));
         startAuto();
       });
     });
@@ -484,38 +542,55 @@
     root.addEventListener('touchend', function (e) {
       var diff = touchStartX - e.changedTouches[0].screenX;
       if (Math.abs(diff) > 40) {
-        stopAuto();
-        goTo(diff > 0 ? current + 1 : current - 1);
-        startAuto();
+        step(diff > 0 ? 1 : -1);
       }
     }, { passive: true });
 
-    // Expose cleanup so the theme editor can stop the timer on unload
+    // Let the theme editor pause autoplay and jump between slides
     root.lvHeroStop = stopAuto;
+    root.lvHeroGoTo = goTo;
 
     startAuto();
   }
 
   function initAll(scope) {
-    (scope || document).querySelectorAll('.hero-slideshow').forEach(function (el) {
-      initHeroSlideshow(el);
-    });
+    (scope || document).querySelectorAll('.hero-slideshow').forEach(initHeroSlideshow);
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+    document.addEventListener('DOMContentLoaded', function () {
+      initAll();
+    });
   } else {
     initAll();
   }
 
-  // Theme-editor lifecycle
   document.addEventListener('shopify:section:load', function (e) {
     initAll(e.target);
   });
 
   document.addEventListener('shopify:section:unload', function (e) {
-    var el = e.target && e.target.querySelector ? e.target.querySelector('.hero-slideshow') : null;
-    if (el && typeof el.lvHeroStop === 'function') el.lvHeroStop();
+    var root = e.target.querySelector('.hero-slideshow');
+    if (root && typeof root.lvHeroStop === 'function') root.lvHeroStop();
+  });
+
+  // Show the slide being edited when it is selected in the theme editor
+  document.addEventListener('shopify:block:select', function (e) {
+    var slide = e.target.closest('.hero-slide');
+    var root = slide && slide.closest('.hero-slideshow');
+    if (!root) return;
+
+    var slides = Array.prototype.slice.call(root.querySelectorAll('.hero-slide'));
+    var index = slides.indexOf(slide);
+    if (index === -1) return;
+
+    if (typeof root.lvHeroStop === 'function') root.lvHeroStop();
+
+    if (typeof root.lvHeroGoTo === 'function') {
+      root.lvHeroGoTo(index);
+    } else {
+      setActive(root, index);
+    }
   });
 })();
 {% endjavascript %}
@@ -528,7 +603,7 @@
     "groups": ["header", "footer"]
   },
   "class": "luxvera-hero-banner",
-  
+  "max_blocks": 5,
   "settings": [
     {
       "type": "header",
@@ -566,46 +641,6 @@
     },
     {
       "type": "header",
-      "content": "t:labels.content"
-    },
-    {
-      "type": "select",
-      "id": "content_alignment",
-      "label": "t:labels.content_alignment_2",
-      "options": [
-        {
-          "value": "flex-start",
-          "label": "t:options.content_alignment.flex_start"
-        },
-        {
-          "value": "center",
-          "label": "t:options.content_alignment.center"
-        },
-        {
-          "value": "flex-end",
-          "label": "t:options.content_alignment.flex_end"
-        }
-      ],
-      "default": "flex-start"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:labels.color_scheme",
-      "default": "scheme-1"
-    },
-    {
-      "type": "range",
-      "id": "heading_size",
-      "label": "t:labels.heading_font_size_2",
-      "min": 28,
-      "max": 96,
-      "step": 2,
-      "unit": "px",
-      "default": 48
-    },
-    {
-      "type": "header",
       "content": "t:labels.autoplay"
     },
     {
@@ -623,6 +658,16 @@
       "step": 1,
       "unit": "s",
       "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Accessibility"
+    },
+    {
+      "type": "text",
+      "id": "slideshow_description",
+      "label": "Slideshow description",
+      "info": "Describe the slideshow for those using screen readers."
     }
   ],
   "blocks": [
@@ -667,6 +712,16 @@
           "default": "Western Soul, Modern Style"
         },
         {
+          "type": "range",
+          "id": "heading_size",
+          "label": "t:labels.heading_font_size_2",
+          "min": 28,
+          "max": 96,
+          "step": 2,
+          "unit": "px",
+          "default": 48
+        },
+        {
           "type": "textarea",
           "id": "subtext",
           "label": "t:labels.subtext",
@@ -680,6 +735,7 @@
           "type": "text",
           "id": "button_label",
           "label": "t:labels.button_label",
+          "info": "Leave blank to hide the button.",
           "default": "Shop the Collection"
         },
         {
@@ -689,9 +745,64 @@
         },
         {
           "type": "checkbox",
+          "id": "button_outline",
+          "label": "Outline style",
+          "default": false
+        },
+        {
+          "type": "checkbox",
           "id": "button_open_new_tab",
           "label": "t:labels.open_in_new_tab",
           "default": false
+        },
+        {
+          "type": "header",
+          "content": "t:labels.layout"
+        },
+        {
+          "type": "select",
+          "id": "content_position",
+          "label": "Content position",
+          "options": [
+            { "value": "top_left", "label": "Top left" },
+            { "value": "top_center", "label": "Top center" },
+            { "value": "top_right", "label": "Top right" },
+            { "value": "middle_left", "label": "Middle left" },
+            { "value": "middle_center", "label": "Middle center" },
+            { "value": "middle_right", "label": "Middle right" },
+            { "value": "bottom_left", "label": "Bottom left" },
+            { "value": "bottom_center", "label": "Bottom center" },
+            { "value": "bottom_right", "label": "Bottom right" }
+          ],
+          "default": "middle_left"
+        },
+        {
+          "type": "select",
+          "id": "content_alignment",
+          "label": "t:labels.text_alignment",
+          "options": [
+            { "value": "left", "label": "t:options.text_alignment.left" },
+            { "value": "center", "label": "t:options.text_alignment.center" },
+            { "value": "right", "label": "t:options.text_alignment.right" }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "select",
+          "id": "mobile_content_alignment",
+          "label": "Mobile content alignment",
+          "options": [
+            { "value": "left", "label": "t:options.text_alignment.left" },
+            { "value": "center", "label": "t:options.text_alignment.center" },
+            { "value": "right", "label": "t:options.text_alignment.right" }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "t:labels.color_scheme",
+          "default": "scheme-1"
         }
       ]
     }
@@ -707,7 +818,11 @@
             "heading": "Western Soul, Modern Style",
             "subtext": "From laid-back daytime to summer nights — discover Western style crafted for you.",
             "button_label": "Shop the Collection",
-            "button_url": "/collections/all"
+            "button_url": "/collections/all",
+            "content_position": "middle_left",
+            "content_alignment": "left",
+            "mobile_content_alignment": "left",
+            "color_scheme": "scheme-1"
           }
         },
         {
@@ -716,7 +831,11 @@
             "heading": "New Arrivals Are Here",
             "subtext": "Explore our latest styles — fresh drops every week.",
             "button_label": "Shop New Arrivals",
-            "button_url": "/collections/new-arrival"
+            "button_url": "/collections/new-arrival",
+            "content_position": "middle_left",
+            "content_alignment": "left",
+            "mobile_content_alignment": "left",
+            "color_scheme": "scheme-1"
           }
         }
       ]

@@ -26,7 +26,9 @@
         },
         "variant_picker": {
           "type": "variant_picker",
-          "settings": {}
+          "settings": {
+            "picker_type": "pill"
+          }
         },
         "availability": {
           "type": "availability",
@@ -97,6 +99,13 @@
         "share"
       ],
       "settings": {
+        "gallery_layout": "thumbnail_carousel",
+        "mobile_thumbnails": "hide",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "media_width": "medium",
+        "show_thumbnails": true,
+        "enable_sticky_media": true,
         "padding_top_desktop": 40,
         "padding_bottom_desktop": 40,
         "padding_top_mobile": 24,

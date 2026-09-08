@@ -1,0 +1,173 @@
+/* ============================================================
+   BUTTON — canonical component
+   ------------------------------------------------------------
+   Single source of truth for every button/CTA in the theme.
+
+   Colours come from the section's colour scheme:
+     --color-button                 primary background
+     --color-button-text            primary label
+     --color-secondary-button-text  secondary label / border
+     --color-foreground             plain / link buttons
+
+   Radius comes from the theme setting (Button style):
+     --lv-btn-radius   0px | 4px | 24px
+
+   Never hardcode a hex value on a button. Never use --color-primary
+   (it is not defined anywhere in this theme).
+
+   Usage:
+     {% render 'button', label: 'Shop now', url: '/collections/all' %}
+     {% render 'button', label: 'Add to cart', variant: 'secondary', type: 'submit' %}
+   ============================================================ */
+
+.btn {
+  --btn-padding-block: 14px;
+  --btn-padding-inline: 32px;
+  --btn-font-size: 12px;
+  --btn-letter-spacing: 0.1em;
+  --btn-min-height: 46px;
+  --btn-border-width: 1px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  box-sizing: border-box;
+  min-height: var(--btn-min-height);
+  padding: var(--btn-padding-block) var(--btn-padding-inline);
+
+  font-family: var(--lv-font-body, sans-serif);
+  font-size: var(--btn-font-size);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: var(--btn-letter-spacing);
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  border: var(--btn-border-width) solid transparent;
+  border-radius: var(--lv-btn-radius, 0px);
+  cursor: pointer;
+
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* ── Variants ───────────────────────────────────────────── */
+
+/* Primary — solid fill, inverts on hover (theme's established look) */
+.btn--primary {
+  background-color: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border-color: rgb(var(--color-button));
+}
+
+.btn--primary:hover,
+.btn--primary:focus-visible {
+  background-color: transparent;
+  color: rgb(var(--color-button));
+}
+
+/* Secondary — outline, fills on hover */
+.btn--secondary {
+  background-color: transparent;
+  color: rgb(var(--color-secondary-button-text));
+  border-color: rgb(var(--color-secondary-button-text));
+}
+
+.btn--secondary:hover,
+.btn--secondary:focus-visible {
+  background-color: rgb(var(--color-secondary-button-text));
+  color: rgb(var(--color-background));
+}
+
+/* Link — text only, for tertiary CTAs ("View all", "Read more") */
+.btn--link {
+  --btn-padding-block: 4px;
+  --btn-padding-inline: 0;
+  --btn-min-height: 0;
+
+  background-color: transparent;
+  color: rgb(var(--color-foreground));
+  border-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.btn--link:hover,
+.btn--link:focus-visible {
+  opacity: 0.7;
+}
+
+/* ── Sizes ──────────────────────────────────────────────── */
+
+.btn--small {
+  --btn-padding-block: 10px;
+  --btn-padding-inline: 20px;
+  --btn-font-size: 11px;
+  --btn-min-height: 38px;
+}
+
+.btn--large {
+  --btn-padding-block: 18px;
+  --btn-padding-inline: 44px;
+  --btn-font-size: 13px;
+  --btn-min-height: 56px;
+}
+
+/* ── Modifiers ──────────────────────────────────────────── */
+
+.btn--full {
+  width: 100%;
+  white-space: normal;
+}
+
+/* ── States ─────────────────────────────────────────────── */
+
+.btn:focus-visible {
+  outline: 2px solid rgb(var(--color-foreground));
+  outline-offset: 3px;
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.btn--loading {
+  cursor: wait;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+
+@media screen and (max-width: 640px) {
+  .btn {
+    --btn-padding-inline: 24px;
+  }
+
+  .btn--large {
+    --btn-padding-inline: 32px;
+    --btn-min-height: 50px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+}

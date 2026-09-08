@@ -32,10 +32,16 @@
             "overlay_color": "#100a04",
             "overlay_opacity": 60,
             "heading": "Western Soul, Modern Style",
+            "heading_size": 48,
             "subtext": "From laid-back daytime to summer nights — discover Western style crafted for you.",
             "button_label": "Shop the Collection",
             "button_url": "/collections/all",
-            "button_open_new_tab": false
+            "button_outline": false,
+            "button_open_new_tab": false,
+            "content_position": "middle_left",
+            "content_alignment": "left",
+            "mobile_content_alignment": "left",
+            "color_scheme": "scheme-1"
           }
         },
         "slide_VLKVTj": {
@@ -44,10 +50,16 @@
             "overlay_color": "#100a04",
             "overlay_opacity": 60,
             "heading": "New Arrivals Are Here",
+            "heading_size": 48,
             "subtext": "Explore our latest styles — fresh drops every week.",
             "button_label": "Shop New Arrivals",
             "button_url": "/collections/new-arrival",
-            "button_open_new_tab": false
+            "button_outline": false,
+            "button_open_new_tab": false,
+            "content_position": "middle_left",
+            "content_alignment": "left",
+            "mobile_content_alignment": "left",
+            "color_scheme": ""
           }
         }
       },
@@ -60,11 +72,9 @@
         "height_desktop": 580,
         "height_tablet": 420,
         "height_mobile": 360,
-        "content_alignment": "flex-start",
-        "color_scheme": "",
-        "heading_size": 48,
-        "autoplay": false,
-        "autoplay_speed": 5
+        "autoplay": true,
+        "autoplay_speed": 5,
+        "slideshow_description": ""
       }
     },
     "announcement_ticker_qd9XG3": {
@@ -198,63 +208,57 @@
       "type": "sale-countdown",
       "name": "Sale Countdown",
       "settings": {
-        "padding_top": 40,
-        "padding_bottom": 40,
-        "heading_size": 28,
         "eyebrow": "Sale is live now",
         "heading": "Upto 80% Off & Extra 15% Off",
+        "heading_size": 28,
         "button_label": "Shop Look",
-        "button_url": "",
+        "button_url": "#",
         "countdown_end": "",
         "label_days": "Days",
         "label_hours": "Hours",
         "label_minutes": "Minutes",
         "label_seconds": "Seconds",
-        "color_scheme": ""
+        "color_scheme": "scheme-1",
+        "padding_top": 40,
+        "padding_bottom": 40
       }
     },
     "image_with_text_PParEA": {
       "type": "image-with-text",
       "name": "t:general.image_with_text_2",
       "settings": {
-        "color_scheme": "",
+        "image_height": "portrait",
+        "image_custom_height": 500,
+        "image_border_radius": 8,
+        "show_divider": true,
+        "subtitle": "Our Story",
+        "subtitle_size": 12,
+        "heading": "Welcome to Luxvera Fashion",
+        "heading_tag": "h2",
+        "heading_size": 36,
+        "heading_weight": "700",
+        "text": "<p>Hey there, beautiful soul. We built this space from a feeling — a desire to create something that celebrates you, exactly as you are.</p>",
+        "text_size": 16,
+        "btn_label": "Shop Now",
+        "btn_url": "#",
+        "btn_style": "solid",
+        "btn_new_tab": false,
         "image_position": "left",
         "mobile_image_position": "image_first",
+        "text_alignment": "left",
         "content_vertical_align": "center",
         "image_width": 1,
         "text_width": 1,
         "column_gap": 80,
         "mobile_gap": 32,
-        "padding_top": 40,
-        "padding_bottom": 40,
-        "padding_top_mobile": 48,
-        "padding_bottom_mobile": 48,
-        "image_height": "portrait",
-        "image_custom_height": 500,
-        "image_border_radius": 8,
-        "text_alignment": "left",
-        "show_divider": true,
-        "subtitle": "Our Story",
-        "subtitle_size": 12,
-        "heading_tag": "h2",
-        "heading": "Welcome to Luxvera Fashion",
-        "heading_size": 36,
-        "heading_weight": "700",
-        "text": "<p>Hey there, beautiful soul. We built this space from a feeling — a desire to create something that celebrates you, exactly as you are.</p>",
-        "text_size": 16,
         "text_box_padding": 0,
         "text_box_border_width": 0,
         "text_box_border_color": "rgba(0,0,0,0)",
         "text_box_border_radius": 0,
         "text_box_shadow": false,
-        "btn_label": "Shop Now",
-        "btn_url": "",
-        "btn_new_tab": false,
-        "btn_style": "solid",
-        "btn_font_size": 13,
-        "btn_padding_v": 14,
-        "btn_padding_h": 32,
-        "btn_border_radius": 4
+        "color_scheme": "scheme-1",
+        "padding_top": 40,
+        "padding_bottom": 40
       }
     },
     "brand_story_jEbFwR": {
@@ -305,7 +309,6 @@
       ],
       "name": "Brand Story",
       "settings": {
-        "color_scheme": "scheme-1",
         "icon": "gift",
         "icon_image": "shopify://shop_images/favicon.png",
         "icon_size": 24,
@@ -318,12 +321,13 @@
         "body_size": 13,
         "explore_label": "Explore",
         "cta_label": "Explore Collections",
-        "cta_url": "",
+        "cta_url": "#",
         "cta_new_tab": false,
         "content_width": 340,
         "image_height_desktop": 500,
         "image_height_tablet": 380,
         "image_height_mobile": 260,
+        "color_scheme": "scheme-1",
         "padding_top": 72,
         "padding_bottom": 72
       }
@@ -464,19 +468,17 @@
       "type": "one-of-a-kind",
       "name": "t:general.one_of_a_kind",
       "settings": {
-        "padding_top_desktop": 80,
-        "padding_bottom_desktop": 80,
-        "padding_top_mobile": 48,
-        "padding_bottom_mobile": 48,
-        "color_scheme": "",
         "overlay_color": "#f7f4f0",
         "overlay_opacity": 95,
-        "min_height": 460,
         "heading": "One of A Kind,\nJust Like You",
         "heading_size": 48,
         "text": "We're here to empower women to feel confident and beautiful in their own skin",
         "button_label": "Shop the Collection",
-        "button_url": ""
+        "button_url": "#",
+        "min_height": 460,
+        "color_scheme": "",
+        "padding_top": 80,
+        "padding_bottom": 80
       }
     },
     "instagram_carousel_E6wRtz": {
@@ -619,7 +621,6 @@
       "type": "newsletter",
       "name": "Newsletter",
       "settings": {
-        "color_scheme": "",
         "eyebrow": "Stay connected",
         "heading": "Join our newsletter",
         "body_text": "<p>Sign up to receive exclusive access to new collections, limited releases, and member-only offers.</p>",
@@ -631,10 +632,9 @@
         "content_width": 600,
         "heading_size": 40,
         "heading_size_mobile": 30,
+        "color_scheme": "scheme-1",
         "padding_top": 60,
-        "padding_bottom": 60,
-        "padding_top_mobile": 40,
-        "padding_bottom_mobile": 40
+        "padding_bottom": 60
       }
     },
     "richtext_dL6wyX": {
@@ -664,7 +664,7 @@
           "type": "button",
           "settings": {
             "label": "Shop now",
-            "link": "",
+            "link": "#",
             "open_in_new_tab": false
           }
         }
@@ -677,17 +677,14 @@
       ],
       "name": "Rich text",
       "settings": {
-        "color_scheme": "",
         "text_alignment": "center",
         "max_width": 1920,
         "content_width": 1920,
         "text_size": 16,
         "text_size_mobile": 14,
-        "button_radius": 2,
+        "color_scheme": "scheme-1",
         "padding_top": 60,
-        "padding_bottom": 60,
-        "padding_top_mobile": 45,
-        "padding_bottom_mobile": 45
+        "padding_bottom": 60
       }
     },
     "collections_gLyUHm": {
@@ -762,11 +759,7 @@
         "heading_alignment": "center",
         "atc_label": "Add To Cart",
         "products_limit": 8,
-        "image_ratio": "portrait",
-        "tab1_label": "New Arrivals",
-        "tab1_collection": "",
-        "tab2_label": "Trending Now",
-        "tab2_collection": ""
+        "image_ratio": "portrait"
       }
     },
     "image_text_section_TbVzTt": {
@@ -788,7 +781,7 @@
           "type": "button",
           "settings": {
             "button_label": "Shop now",
-            "button_link": ""
+            "button_link": "#"
           }
         }
       },
@@ -799,19 +792,18 @@
       ],
       "name": "t:general.image_with_text",
       "settings": {
-        "image": "shopify://shop_images/Image_Luxury_boutique.png",
         "image_height_desktop": 500,
         "image_height_mobile": 220,
-        "desktop_image_width": "small",
+        "image_behavior": "zoom-in",
+        "heading_size": 48,
         "layout": "image_first",
+        "desktop_image_width": "small",
+        "content_layout": "no-overlap",
         "desktop_content_position": "middle",
         "desktop_content_alignment": "left",
-        "content_layout": "overlap",
-        "color_scheme": "",
-        "section_color_scheme": "",
-        "image_behavior": "none",
-        "heading_size": 48,
         "mobile_content_alignment": "left",
+        "section_color_scheme": "",
+        "color_scheme": "scheme-1",
         "padding_top": 36,
         "padding_bottom": 36
       }

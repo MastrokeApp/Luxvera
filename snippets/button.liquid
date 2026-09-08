@@ -1,0 +1,75 @@
+{% doc %}
+  Renders the theme's canonical button. Use this everywhere instead of
+  writing per-section button markup and CSS.
+
+  Renders an <a> when `url` is given, otherwise a <button>.
+  Renders nothing when `label` is blank, so sections don't need to
+  wrap the call in their own {% if %}.
+
+  @param {string} label - Button text. Required; blank renders nothing.
+  @param {string} [url] - Link target. Omit for a real <button>.
+  @param {string} [variant] - primary (default) | secondary | link
+  @param {string} [size] - medium (default) | small | large
+  @param {boolean} [full_width] - Stretch to the container width.
+  @param {string} [type] - button (default) | submit | reset. Ignored when url is set.
+  @param {boolean} [open_in_new_tab] - Add target="_blank" (link only).
+  @param {boolean} [disabled] - Disable the button.
+  @param {string} [name] - Form control name (button only).
+  @param {string} [value] - Form control value (button only).
+  @param {string} [form] - Associated form id (button only).
+  @param {string} [class] - Extra classes appended to the button.
+  @param {string} [id] - Element id.
+  @param {string} [aria_label] - Accessible name when the label alone isn't enough.
+
+  @example
+  {% render 'button', label: section.settings.button_label, url: section.settings.button_url %}
+  {% render 'button', label: 'Add to cart', type: 'submit', variant: 'secondary', full_width: true %}
+{% enddoc %}
+
+{%- liquid
+  assign btn_label = label | default: '' | strip
+
+  if btn_label == blank
+    break
+  endif
+
+  assign btn_variant = variant | default: 'primary'
+  assign btn_size = size | default: 'medium'
+
+  assign btn_classes = 'btn btn--' | append: btn_variant
+  unless btn_size == 'medium'
+    assign btn_classes = btn_classes | append: ' btn--' | append: btn_size
+  endunless
+  if full_width
+    assign btn_classes = btn_classes | append: ' btn--full'
+  endif
+  if class != blank
+    assign btn_classes = btn_classes | append: ' ' | append: class
+  endif
+-%}
+
+{%- if url != blank -%}
+  <a
+    class="{{ btn_classes }}"
+    href="{{ url }}"
+    {% if id != blank %}id="{{ id }}"{% endif %}
+    {% if open_in_new_tab %}target="_blank" rel="noopener"{% endif %}
+    {% if disabled %}aria-disabled="true" tabindex="-1"{% endif %}
+    {% if aria_label != blank %}aria-label="{{ aria_label | escape }}"{% endif %}
+  >
+    {{ btn_label | escape }}
+  </a>
+{%- else -%}
+  <button
+    class="{{ btn_classes }}"
+    type="{{ type | default: 'button' }}"
+    {% if id != blank %}id="{{ id }}"{% endif %}
+    {% if name != blank %}name="{{ name }}"{% endif %}
+    {% if value != blank %}value="{{ value | escape }}"{% endif %}
+    {% if form != blank %}form="{{ form }}"{% endif %}
+    {% if disabled %}disabled{% endif %}
+    {% if aria_label != blank %}aria-label="{{ aria_label | escape }}"{% endif %}
+  >
+    {{ btn_label | escape }}
+  </button>
+{%- endif -%}
