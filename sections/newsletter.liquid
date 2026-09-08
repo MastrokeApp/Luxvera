@@ -14,8 +14,6 @@
   style="
     --lv-nl-pt: {{ section.settings.padding_top }}px;
     --lv-nl-pb: {{ section.settings.padding_bottom }}px;
-    --lv-nl-pt-m: {{ section.settings.padding_top_mobile }}px;
-    --lv-nl-pb-m: {{ section.settings.padding_bottom_mobile }}px;
     --lv-nl-content-width: {{ section.settings.content_width }}px;
     --lv-nl-text-align: {{ section.settings.text_alignment }};
     --lv-nl-heading-size: {{ section.settings.heading_size }}px;
@@ -61,7 +59,7 @@
             required
           >
 
-          <button type="submit" class="lv-newsletter__button">
+          <button type="submit" class="btn btn--primary">
             {{ section.settings.button_label | escape }}
           </button>
         </div>
@@ -183,24 +181,14 @@
   opacity: .55;
 }
 
-.lv-newsletter__button {
+/**
+ * Submit button appearance (height, padding, type, colours, radius, hover) is
+ * owned by .btn / .btn--primary in assets/component-button.css so every
+ * section matches. Only its behaviour inside the flex row stays here — without
+ * flex: 0 0 auto the button would shrink to fit the email field.
+ */
+.lv-newsletter__field .btn {
   flex: 0 0 auto;
-  min-width: 150px;
-  padding: 14px 20px;
-  background: rgb(var(--color-button));
-  color: rgb(var(--color-button-text));
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  border: none;
-  border-radius: var(--lv-btn-radius, 4px);
-  cursor: pointer;
-  transition: opacity .2s;
-}
-
-.lv-newsletter__button:hover {
-  opacity: .85;
 }
 
 .lv-newsletter__consent {
@@ -217,7 +205,6 @@
   font-size: 14px;
   line-height: 1.6;
   color: var(--color-success, #2a7a2a);
-  border-radius: var(--lv-btn-radius, 4px);
 }
 
 .lv-newsletter__error {
@@ -236,11 +223,6 @@
 
 /* Mobile */
 @media screen and (max-width: 640px) {
-  .lv-newsletter {
-    padding-top: var(--lv-nl-pt-m, 40px);
-    padding-bottom: var(--lv-nl-pb-m, 40px);
-  }
-
   .lv-newsletter__container {
     padding: 0 20px;
   }
@@ -253,7 +235,8 @@
     flex-direction: column;
   }
 
-  .lv-newsletter__button {
+  /* Stacked form — match the button width to the email field above it */
+  .lv-newsletter__field .btn {
     width: 100%;
   }
 }
@@ -276,22 +259,12 @@
   "settings": [
     {
       "type": "header",
-      "content": "t:labels.colors"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:labels.color_scheme",
-      "default": "scheme-1"
-    },
-    {
-      "type": "header",
       "content": "t:labels.text"
     },
     {
       "type": "text",
       "id": "eyebrow",
-      "label": "t:labels.eyebrow_text",
+      "label": "t:labels.subheading",
       "default": "Stay connected"
     },
     {
@@ -352,7 +325,7 @@
     {
       "type": "range",
       "id": "content_width",
-      "label": "Content width",
+      "label": "t:labels.content_width",
       "min": 400,
       "max": 1920,
       "step": 20,
@@ -362,7 +335,7 @@
     {
       "type": "range",
       "id": "heading_size",
-      "label": "Desktop heading size",
+      "label": "t:labels.heading_size",
       "min": 20,
       "max": 70,
       "step": 2,
@@ -381,12 +354,22 @@
     },
     {
       "type": "header",
+      "content": "t:labels.colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
       "content": "t:labels.section_padding"
     },
     {
       "type": "range",
       "id": "padding_top",
-      "label": "t:labels.padding_top_desktop",
+      "label": "t:labels.padding_top",
       "min": 0,
       "max": 150,
       "step": 5,
@@ -396,32 +379,12 @@
     {
       "type": "range",
       "id": "padding_bottom",
-      "label": "t:labels.padding_bottom_desktop",
+      "label": "t:labels.padding_bottom",
       "min": 0,
       "max": 150,
       "step": 5,
       "unit": "px",
       "default": 60
-    },
-    {
-      "type": "range",
-      "id": "padding_top_mobile",
-      "label": "t:labels.padding_top_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom_mobile",
-      "label": "t:labels.padding_bottom_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "default": 40
     }
   ],
   "presets": [

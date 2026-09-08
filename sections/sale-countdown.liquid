@@ -7,7 +7,7 @@
 {% endcomment %}
 
 <div
-  class="sale-section color-{{ section.settings.color_scheme }} gradient"
+  class="sale-section color-{{ section.settings.color_scheme }}"
   id="sale-countdown-{{ section.id }}"
   data-end="{{ section.settings.countdown_end | strip | escape }}"
   style="
@@ -26,67 +26,35 @@
         <h2>{{ section.settings.heading | escape }}</h2>
       {%- endif -%}
 
-      {% comment %} {%- if section.settings.button_label != blank -%}
-        <a href="{{ section.settings.button_url | default: '#' }}" class="sale-btn">
-          {{ section.settings.button_label | escape }} →
-        </a>
-      {%- endif -%} {% endcomment %}
-       {%- if section.settings.button_label != blank -%}
-  {%- if section.settings.button_url != blank -%}
-    <a
-      href="{{ section.settings.button_url }}"
-      class="sale-btn"
-    >
-      {{ section.settings.button_label | escape }}
-      <span class="icon-wrap">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M3 8H13M9 4L13 8L9 12"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </span>
-    </a>
-  {%- else -%}
-    <button
-      type="button"
-      class="sale-btn"
-      disabled
-      aria-disabled="true"
-      style="opacity: 0.5; cursor: not-allowed; pointer-events: none;"
-    >
-      {{ section.settings.button_label | escape }}
-      <span class="icon-wrap">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M3 8H13M9 4L13 8L9 12"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </span>
-    </button>
-  {%- endif -%}
-{%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        {%- capture sale_button_content -%}
+          {{ section.settings.button_label | escape }}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 8H13M9 4L13 8L9 12"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        {%- endcapture -%}
+
+        {%- if section.settings.button_url != blank -%}
+          <a href="{{ section.settings.button_url }}" class="btn btn--primary">
+            {{ sale_button_content }}
+          </a>
+        {%- else -%}
+          <button type="button" class="btn btn--primary" disabled>
+            {{ sale_button_content }}
+          </button>
+        {%- endif -%}
+      {%- endif -%}
     </div>
 
     <div class="sale-divider" aria-hidden="true"></div>
@@ -156,25 +124,12 @@
   margin-bottom: 16px;
 }
 
-.sale-section .sale-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgb(var(--color-button));
-  color: rgb(var(--color-button-text));
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: .04em;
-  padding: 9px 18px;
-  border: none;
-  border-radius: var(--lv-btn-radius, 0px);
-  text-decoration: none;
-  transition: opacity .2s;
-}
-
-.sale-section .sale-btn:hover {
-  opacity: 0.82;
-}
+/**
+ * The CTA uses .btn / .btn--primary from assets/component-button.css so its
+ * height, padding, type and colours match every other section. Background and
+ * label come from the colour scheme's --color-button / --color-button-text.
+ * Nothing to declare here — the heading's margin-bottom already spaces it.
+ */
 
 .sale-section .sale-right {
   padding-left: 56px;
@@ -381,31 +336,19 @@
   "settings": [
     {
       "type": "header",
-      "content": "t:labels.section_padding"
+      "content": "t:labels.text"
     },
     {
-      "type": "range",
-      "id": "padding_top",
-      "label": "t:labels.padding_top",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "default": 40
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.subheading",
+      "default": "Sale is live now"
     },
     {
-      "type": "range",
-      "id": "padding_bottom",
-      "label": "t:labels.padding_bottom",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "default": 40
-    },
-    {
-      "type": "header",
-      "content": "t:labels.typography"
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Upto 80% Off & Extra 15% Off"
     },
     {
       "type": "range",
@@ -419,24 +362,13 @@
     },
     {
       "type": "header",
-      "content": "t:labels.text"
-    },
-    {
-      "type": "text",
-      "id": "eyebrow",
-      "label": "t:labels.eyebrow_text",
-      "default": "Sale is live now"
-    },
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "t:labels.heading",
-      "default": "Upto 80% Off & Extra 15% Off"
+      "content": "t:labels.button"
     },
     {
       "type": "text",
       "id": "button_label",
       "label": "t:labels.button_label",
+      "info": "Leave blank to hide the button.",
       "default": "Shop Look"
     },
     {
@@ -491,6 +423,30 @@
       "id": "color_scheme",
       "label": "t:labels.color_scheme",
       "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.section_padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
     }
   ],
   "presets": [

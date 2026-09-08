@@ -1,26 +1,38 @@
 {% comment %}
   Section: Rich Text
 
-  Flexible block-based rich text section (eyebrow, heading, text, divider,
+  Flexible block-based rich text section (subheading, heading, text, divider,
   button). Colors follow the selected color scheme. Padding/width/typography
   settings are passed as CSS custom properties so the section renders
   correctly even with multiple instances on the same page.
 {% endcomment %}
 
+{%- liquid
+  # text-align keywords don't work as flexbox values, so map them once here
+  # for the subheading row.
+  case section.settings.text_alignment
+    when 'left'
+      assign flex_align = 'flex-start'
+    when 'right'
+      assign flex_align = 'flex-end'
+    else
+      assign flex_align = 'center'
+  endcase
+-%}
+
 <section
   id="rich-text-{{ section.id }}"
   class="lv-rich-text color-{{ section.settings.color_scheme }}"
+  data-text-align="{{ section.settings.text_alignment }}"
   style="
     --lv-rt-pt: {{ section.settings.padding_top }}px;
     --lv-rt-pb: {{ section.settings.padding_bottom }}px;
-    --lv-rt-pt-m: {{ section.settings.padding_top_mobile }}px;
-    --lv-rt-pb-m: {{ section.settings.padding_bottom_mobile }}px;
+    --lv-rt-flex-align: {{ flex_align }};
     --lv-rt-max-width: {{ section.settings.max_width }}px;
     --lv-rt-content-width: {{ section.settings.content_width }}px;
     --lv-rt-text-align: {{ section.settings.text_alignment }};
     --lv-rt-text-size: {{ section.settings.text_size }}px;
     --lv-rt-text-size-m: {{ section.settings.text_size_mobile }}px;
-    --lv-rt-btn-radius: {{ section.settings.button_radius }}px;
   "
 >
   <div class="lv-rich-text__container">
@@ -60,13 +72,19 @@
         {%- when 'button' -%}
           {%- if block.settings.label != blank -%}
             <div class="lv-rich-text__button-wrapper" {{ block.shopify_attributes }}>
-              
-              <a href="{{ block.settings.link | default: routes.all_products_collection_url }}"
-                class="lv-rich-text__button"
-                {% if block.settings.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
-              >
-                {{ block.settings.label | escape }}
-              </a>
+              {%- if block.settings.link != blank -%}
+                <a
+                  href="{{ block.settings.link }}"
+                  class="btn btn--primary"
+                  {% if block.settings.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+                >
+                  {{- block.settings.label | escape -}}
+                </a>
+              {%- else -%}
+                <button type="button" class="btn btn--primary" disabled>
+                  {{- block.settings.label | escape -}}
+                </button>
+              {%- endif -%}
             </div>
           {%- endif -%}
 
@@ -94,11 +112,11 @@
   text-align: var(--lv-rt-text-align, center);
 }
 
-/* Eyebrow */
+/* Subheading — follows the section's Text alignment setting */
 .lv-rich-text__eyebrow {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: var(--lv-rt-flex-align, center);
   gap: 12px;
   margin: 0 0 14px;
   color: rgb(var(--color-foreground));
@@ -117,6 +135,15 @@
   height: 1px;
   background: currentColor;
   opacity: 0.55;
+}
+
+/**
+ * Drop the rule on the side the text is aligned to, so the subheading starts
+ * flush with the heading below it instead of being indented by the line.
+ */
+.lv-rich-text[data-text-align="left"] .lv-rich-text__eyebrow::before,
+.lv-rich-text[data-text-align="right"] .lv-rich-text__eyebrow::after {
+  display: none;
 }
 
 /* Heading */
@@ -186,11 +213,19 @@
   text-align: left;
 }
 
-/* Divider */
+/* Divider — follows the section's Text alignment setting */
 .lv-rich-text__divider {
   width: 100%;
   max-width: 100px;
   margin: 28px auto;
+}
+
+.lv-rich-text[data-text-align="left"] .lv-rich-text__divider {
+  margin-left: 0;
+}
+
+.lv-rich-text[data-text-align="right"] .lv-rich-text__divider {
+  margin-right: 0;
 }
 
 .lv-rich-text__divider span {
@@ -200,33 +235,13 @@
   background: rgba(var(--color-foreground), 0.25);
 }
 
-/* Button */
+/**
+ * Button appearance (height, padding, type, colours, radius, hover) is owned
+ * by .btn / .btn--primary in assets/component-button.css so every section
+ * matches. Only the wrapper's spacing stays here.
+ */
 .lv-rich-text__button-wrapper {
   margin-top: 28px;
-}
-
-.lv-rich-text__button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 145px;
-  min-height: 48px;
-  padding: 0 25px;
-  border-radius: var(--lv-rt-btn-radius, 2px);
-  background: rgb(var(--color-button));
-  color: rgb(var(--color-button-text));
-  text-decoration: none;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.lv-rich-text__button:hover {
-  opacity: 0.85;
-  transform: translateY(-1px);
 }
 
 /* Tablet */
@@ -238,11 +253,6 @@
 
 /* Mobile */
 @media screen and (max-width: 749px) {
-  .lv-rich-text {
-    padding-top: var(--lv-rt-pt-m, 45px);
-    padding-bottom: var(--lv-rt-pb-m, 45px);
-  }
-
   .lv-rich-text__container {
     padding: 0 20px;
   }
@@ -272,10 +282,6 @@
   .lv-rich-text__content {
     font-size: var(--lv-rt-text-size-m, 14px);
   }
-
-  .lv-rich-text__button {
-    width: 100%;
-  }
 }
 
 @media screen and (max-width: 480px) {
@@ -294,16 +300,6 @@
   },
   "class": "section-rich-text",
   "settings": [
-    {
-      "type": "header",
-      "content": "t:labels.colors"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:labels.color_scheme",
-      "default": "scheme-1"
-    },
     {
       "type": "header",
       "content": "t:labels.layout"
@@ -360,14 +356,14 @@
       "default": 14
     },
     {
-      "type": "range",
-      "id": "button_radius",
-      "label": "t:labels.button_border_radius",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "unit": "px",
-      "default": 2
+      "type": "header",
+      "content": "t:labels.colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
     },
     {
       "type": "header",
@@ -376,7 +372,7 @@
     {
       "type": "range",
       "id": "padding_top",
-      "label": "t:labels.padding_top_desktop",
+      "label": "t:labels.padding_top",
       "min": 0,
       "max": 150,
       "step": 5,
@@ -386,44 +382,24 @@
     {
       "type": "range",
       "id": "padding_bottom",
-      "label": "t:labels.padding_bottom_desktop",
+      "label": "t:labels.padding_bottom",
       "min": 0,
       "max": 150,
       "step": 5,
       "unit": "px",
       "default": 60
-    },
-    {
-      "type": "range",
-      "id": "padding_top_mobile",
-      "label": "t:labels.padding_top_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "default": 45
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom_mobile",
-      "label": "t:labels.padding_bottom_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "default": 45
     }
   ],
   "blocks": [
     {
       "type": "eyebrow",
-      "name": "Eyebrow",
+      "name": "Subheading",
       "limit": 1,
       "settings": [
         {
           "type": "text",
           "id": "text",
-          "label": "t:labels.eyebrow_text",
+          "label": "t:labels.subheading",
           "default": "Our story"
         }
       ]
@@ -454,7 +430,7 @@
         {
           "type": "select",
           "id": "size",
-          "label": "Heading size",
+          "label": "t:labels.heading_size",
           "options": [
             { "value": "small", "label": "Small" },
             { "value": "medium", "label": "Medium" },
@@ -489,6 +465,7 @@
           "type": "text",
           "id": "label",
           "label": "t:labels.button_label",
+          "info": "Leave blank to hide the button.",
           "default": "Shop now"
         },
         {
