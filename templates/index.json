@@ -332,9 +332,9 @@
         "padding_bottom": 72
       }
     },
-    "dress_looks_hpWcBt": {
-      "type": "dress-looks",
-      "name": "Dress Looks",
+    "featured_collection_hpWcBt": {
+      "type": "featured-collection",
+      "name": "Featured Collection",
       "settings": {
         "padding_top_desktop": 64,
         "padding_bottom_desktop": 64,
@@ -800,7 +800,7 @@
     "sale_countdown_7RBL9T",
     "image_with_text_PParEA",
     "brand_story_jEbFwR",
-    "dress_looks_hpWcBt",
+    "featured_collection_hpWcBt",
     "featured_product_NE6BjJ",
     "instagram_carousel_E6wRtz",
     "testimonials_KBbzUQ",

@@ -1,10 +1,11 @@
 {% comment %}
-  Section: Dress Looks
+  Section: Featured Collection
 
   Swiper carousel of product-card snippets from a chosen collection, with a
   size-picker modal and AJAX add-to-cart. Falls back to placeholder cards when
-  the collection is empty. Styles live in assets/dress-looks.css; Swiper is
-  loaded globally in theme.liquid.
+  the collection is empty. Styles live in assets/dress-looks.css (shared with
+  sections/product-recommendations.liquid); Swiper is loaded globally in
+  theme.liquid.
 {% endcomment %}
 
 {{ 'lv-variant-modal.css' | asset_url | stylesheet_tag }}
@@ -362,12 +363,12 @@
 
 {% schema %}
 {
-  "name": "t:general.dress_looks",
+  "name": "t:general.featured_collection",
   "tag": "section",
   "disabled_on": {
     "groups": ["header", "footer"]
   },
-  "class": "luxvera-dress-looks",
+  "class": "luxvera-featured-collection",
   "settings": [
     {
       "type": "header",
@@ -530,7 +531,7 @@
   ],
   "presets": [
     {
-      "name": "t:general.dress_looks",
+      "name": "t:general.featured_collection",
       "category": "t:general.products"
     }
   ]
