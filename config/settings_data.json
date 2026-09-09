@@ -22,7 +22,7 @@
     "enable_shipping_link": true,
     "shipping_url": "",
     "enable_order_note": true,
-    "checkout_button_text": "s",
+    "checkout_button_text": "Proceed to Checkout",
     "content_for_index": [],
     "color_schemes": {
       "scheme-1": {
