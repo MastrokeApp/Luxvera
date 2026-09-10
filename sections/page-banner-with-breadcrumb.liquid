@@ -20,6 +20,7 @@
   endif
 
   assign banner_subtext = section.settings.subtext
+  assign mobile_background_image = section.settings.mobile_background_image | default: section.settings.background_image
 -%}
 
 <section
@@ -32,20 +33,15 @@
     --lv-banner-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
     --lv-banner-overlay-color: {{ section.settings.overlay_color }};
     --lv-banner-content-align: {{ section.settings.content_alignment }};
+    {% if section.settings.background_image != blank %}
+      --lv-banner-bg-desktop: url('{{ section.settings.background_image | image_url: width: 1920 }}');
+      --lv-banner-bg-mobile: url('{{ mobile_background_image | image_url: width: 900 }}');
+    {% endif %}
   "
 >
   <div class="lv-page-banner__bg">
     {% if section.settings.background_image != blank %}
-      <div
-        class="lv-page-banner__bg-image"
-        style="background-image:
-          linear-gradient(
-            to right,
-            color-mix(in srgb, {{ section.settings.overlay_color }} calc(var(--lv-banner-overlay-opacity) * 100%), transparent) 32%,
-            color-mix(in srgb, {{ section.settings.overlay_color }} calc(var(--lv-banner-overlay-opacity) * 10%), transparent) 100%
-          ),
-          url('{{ section.settings.background_image | image_url: width: 1920 }}');"
-      ></div>
+      <div class="lv-page-banner__bg-image"></div>
     {% else %}
       <div class="lv-page-banner__bg-placeholder">
         {{ 'lifestyle-1' | placeholder_svg_tag: 'lv-page-banner__placeholder-svg' }}
@@ -145,6 +141,13 @@
   }
 
   #lv-page-banner-{{ section.id }} .lv-page-banner__bg-image {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--lv-banner-overlay-color) calc(var(--lv-banner-overlay-opacity) * 100%), transparent) 32%,
+        color-mix(in srgb, var(--lv-banner-overlay-color) calc(var(--lv-banner-overlay-opacity) * 10%), transparent) 100%
+      ),
+      var(--lv-banner-bg-desktop);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -321,6 +324,16 @@
     #lv-page-banner-{{ section.id }} .lv-page-banner__content {
       padding: 0 28px;
     }
+
+    #lv-page-banner-{{ section.id }} .lv-page-banner__bg-image {
+      background-image:
+        linear-gradient(
+          to right,
+          color-mix(in srgb, var(--lv-banner-overlay-color) calc(var(--lv-banner-overlay-opacity) * 100%), transparent) 32%,
+          color-mix(in srgb, var(--lv-banner-overlay-color) calc(var(--lv-banner-overlay-opacity) * 10%), transparent) 100%
+        ),
+        var(--lv-banner-bg-mobile);
+    }
   }
 
   @media (max-width: 480px) {
@@ -355,6 +368,7 @@
 {
   "name": "t:general.page_banner_breadcrumb",
   "tag": "section",
+  "limit": 1,
   "disabled_on": {
     "groups": ["header", "footer"]
   },
@@ -375,6 +389,12 @@
       "id": "background_image",
       "label": "t:labels.background_image_2",
       "info": "t:labels.recommended_1920_1080px"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_background_image",
+      "label": "t:labels.mobile_background_image",
+      "info": "t:labels.defaults_to_desktop_image"
     },
     {
       "type": "color",
