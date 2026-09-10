@@ -65,7 +65,12 @@
         <ol class="lv-collection-banner__breadcrumbs-list">
           <li class="lv-collection-banner__breadcrumbs-item">
             <a class="lv-collection-banner__breadcrumbs-link" href="{{ routes.root_url }}">
-              {{ section.settings.breadcrumb_home_label | default: 'Home' | escape }}
+              {{ 'accessibility.home' | t }}
+            </a>
+          </li>
+          <li class="lv-collection-banner__breadcrumbs-item">
+            <a class="lv-collection-banner__breadcrumbs-link" href="{{ routes.collections_url }}">
+              {{ 'collections.title' | t }}
             </a>
           </li>
           <li class="lv-collection-banner__breadcrumbs-item" aria-current="page">
@@ -281,8 +286,8 @@
 {
   "name": "t:general.collection_banner",
   "tag": "section",
-  "disabled_on": {
-    "groups": ["header", "footer"]
+  "enabled_on": {
+    "templates": ["collection", "list-collections"]
   },
   "class": "luxvera-collection-banner",
   "settings": [
@@ -385,12 +390,6 @@
       "id": "show_breadcrumbs",
       "label": "t:labels.show_breadcrumb",
       "default": true
-    },
-    {
-      "type": "text",
-      "id": "breadcrumb_home_label",
-      "label": "t:labels.home_label",
-      "default": "Home"
     },
     {
       "type": "header",

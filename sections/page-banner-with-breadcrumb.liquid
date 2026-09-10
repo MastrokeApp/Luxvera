@@ -59,11 +59,16 @@
         <ol class="lv-page-banner__breadcrumbs-list">
           <li class="lv-page-banner__breadcrumbs-item">
             <a class="lv-page-banner__breadcrumbs-link" href="{{ routes.root_url }}">
-              {{ section.settings.breadcrumb_home_label | default: 'Home' | escape }}
+              {{ 'accessibility.home' | t }}
             </a>
           </li>
 
           {%- if template.name == 'collection' -%}
+            <li class="lv-page-banner__breadcrumbs-item">
+              <a class="lv-page-banner__breadcrumbs-link" href="{{ routes.collections_url }}">
+                {{ 'collections.title' | t }}
+              </a>
+            </li>
             <li class="lv-page-banner__breadcrumbs-item" aria-current="page">{{ collection.title | escape }}</li>
 
           {%- elsif template.name == 'product' -%}
@@ -89,17 +94,7 @@
             <li class="lv-page-banner__breadcrumbs-item" aria-current="page">{{ article.title | escape }}</li>
 
           {%- else -%}
-            {%- for block in section.blocks -%}
-              {%- if block.type == 'breadcrumb_item' -%}
-                <li class="lv-page-banner__breadcrumbs-item" {% if forloop.last %}aria-current="page"{% endif %} {{ block.shopify_attributes }}>
-                  {%- if block.settings.url != blank and forloop.last == false -%}
-                    <a class="lv-page-banner__breadcrumbs-link" href="{{ block.settings.url }}">{{ block.settings.label | escape }}</a>
-                  {%- else -%}
-                    {{ block.settings.label | escape }}
-                  {%- endif -%}
-                </li>
-              {%- endif -%}
-            {%- endfor -%}
+            <li class="lv-page-banner__breadcrumbs-item" aria-current="page">{{ page_title | escape }}</li>
           {%- endif -%}
         </ol>
       </nav>
@@ -466,12 +461,6 @@
       "default": true
     },
     {
-      "type": "text",
-      "id": "breadcrumb_home_label",
-      "label": "t:labels.home_label",
-      "default": "Home"
-    },
-    {
       "type": "header",
       "content": "t:labels.heading"
     },
@@ -516,26 +505,6 @@
       "id": "button_open_new_tab",
       "label": "t:labels.open_link_in_new_tab",
       "default": false
-    }
-  ],
-  "blocks": [
-    {
-      "type": "breadcrumb_item",
-      "name": "t:general.custom_breadcrumb_item",
-      "limit": 5,
-      "settings": [
-        {
-          "type": "text",
-          "id": "label",
-          "label": "t:labels.label",
-          "default": "Category"
-        },
-        {
-          "type": "url",
-          "id": "url",
-          "label": "t:labels.link"
-        }
-      ]
     }
   ],
   "presets": [
