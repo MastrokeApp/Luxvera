@@ -82,6 +82,8 @@
             <span>
               {%- if settings.enable_shipping_link and settings.shipping_url != blank -%}
                 <a href="{{ settings.shipping_url }}">{{ settings.shipping_label }}</a>
+              {%- elsif shop.policies.shipping_policy.url != blank -%}
+                <a href="{{ shop.policies.shipping_policy.url }}">{{ settings.shipping_label }}</a>
               {%- else -%}
                 {{ settings.shipping_label }}
               {%- endif -%}
