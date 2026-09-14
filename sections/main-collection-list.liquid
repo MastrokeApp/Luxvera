@@ -18,6 +18,8 @@
       --lv-column-gap: {{ section.settings.column_gap }}px;
       --lv-row-gap: {{ section.settings.row_gap }}px;
       --lv-card-radius: {{ section.settings.card_radius }}px;
+      --lv-overlay-color: {{ section.settings.overlay_color }};
+      --lv-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
     "
   >
 
@@ -93,7 +95,7 @@
 
               <a
                 href="{{ collection.url }}"
-                class="lv-main-collection-card"
+                class="lv-main-collection-card lv-main-collection-card--{{ section.settings.text_position }}"
                 aria-label="{{ collection.title | escape }}"
               >
 
@@ -136,11 +138,41 @@
 
                   {%- endif -%}
 
+                  {%- if section.settings.text_position == 'overlay' -%}
 
-                  {%- if section.settings.show_overlay -%}
-                    <div class="lv-main-collection-card__overlay"></div>
+                    {%- if section.settings.show_overlay -%}
+                      <div class="lv-main-collection-card__overlay"></div>
+                    {%- endif -%}
+
+                    <div class="lv-main-collection-card__content">
+
+                      <h2 class="lv-main-collection-card__title">
+                        {{ collection.title | escape }}
+                      </h2>
+
+                      {%- if section.settings.show_product_count -%}
+
+                        <span class="lv-main-collection-card__count">
+
+                          {{ collection.products_count }}
+
+                          {%- if collection.products_count == 1 -%}
+                            Product
+                          {%- else -%}
+                            Products
+                          {%- endif -%}
+
+                        </span>
+
+                      {%- endif -%}
+
+                    </div>
+
                   {%- endif -%}
 
+                </div>
+
+                {%- if section.settings.text_position == 'below' -%}
 
                   <div class="lv-main-collection-card__content">
 
@@ -166,7 +198,7 @@
 
                   </div>
 
-                </div>
+                {%- endif -%}
 
               </a>
 
@@ -650,9 +682,9 @@
     background:
       linear-gradient(
         to top,
-        rgba(0, 0, 0, 0.62) 0%,
-        rgba(0, 0, 0, 0.18) 45%,
-        rgba(0, 0, 0, 0) 75%
+        color-mix(in srgb, var(--lv-overlay-color, #000) calc(var(--lv-overlay-opacity, 0.62) * 100%), transparent) 0%,
+        color-mix(in srgb, var(--lv-overlay-color, #000) calc(var(--lv-overlay-opacity, 0.62) * 29%), transparent) 45%,
+        transparent 75%
       );
 
     pointer-events: none;
@@ -694,20 +726,18 @@
     opacity: 0.85;
   }
 
-  .lv-main-collection-card:not(:has(.lv-main-collection-card__overlay))
-  .lv-main-collection-card__content {
+  .lv-main-collection-card--below .lv-main-collection-card__content {
     position: relative;
+
+    left: auto;
+    right: auto;
+    bottom: auto;
 
     padding: 14px 0 0;
   }
 
-  .lv-main-collection-card:not(:has(.lv-main-collection-card__overlay))
-  .lv-main-collection-card__title {
-    color: inherit;
-  }
-
-  .lv-main-collection-card:not(:has(.lv-main-collection-card__overlay))
-  .lv-main-collection-card__count {
+  .lv-main-collection-card--below .lv-main-collection-card__title,
+  .lv-main-collection-card--below .lv-main-collection-card__count {
     color: inherit;
   }
 
@@ -967,6 +997,10 @@
       padding: 14px;
     }
 
+    .lv-main-collection-card--below .lv-main-collection-card__content {
+      padding: 12px 0 0;
+    }
+
     .lv-main-collection-card__title {
       font-size: {{ section.settings.card_title_font_size_mobile }}px;
     }
@@ -1198,6 +1232,24 @@
     },
 
     {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "info": "Where the collection title and product count appear",
+      "options": [
+        {
+          "value": "overlay",
+          "label": "Overlay on image"
+        },
+        {
+          "value": "below",
+          "label": "Below image"
+        }
+      ],
+      "default": "overlay"
+    },
+
+    {
       "type": "range",
       "id": "card_title_font_size",
       "label": "Card title font size",
@@ -1230,7 +1282,28 @@
       "type": "checkbox",
       "id": "show_overlay",
       "label": "Show image overlay",
-      "default": true
+      "default": true,
+      "visible_if": "{{ section.settings.text_position == 'overlay' }}"
+    },
+
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000",
+      "visible_if": "{{ section.settings.text_position == 'overlay' }}"
+    },
+
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 62,
+      "visible_if": "{{ section.settings.text_position == 'overlay' }}"
     },
 
 
