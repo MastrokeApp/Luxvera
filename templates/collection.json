@@ -20,7 +20,6 @@
         "height_mobile": 260,
         "content_alignment": "flex-start",
         "show_breadcrumbs": true,
-        "breadcrumb_home_label": "Home",
         "heading": "",
         "heading_size": 42,
         "subtext": ""

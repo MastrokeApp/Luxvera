@@ -20,7 +20,7 @@
     "cart_gift_notes": true,
     "subtotal_label": "Subtotal",
     "enable_shipping_link": true,
-    "shipping_url": "",
+    "shipping_url": "shopify://policies/shipping-policy",
     "enable_order_note": true,
     "checkout_button_text": "Proceed to Checkout",
     "content_for_index": [],

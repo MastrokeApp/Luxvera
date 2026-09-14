@@ -9,6 +9,7 @@
   Labels come from the global Cart settings (Settings > Cart).
 {% endcomment %}
 
+
 <div
   class="lv-cart"
   id="lv-cart-{{ section.id }}"
@@ -479,6 +480,20 @@
   .lv-cart {
     padding: 28px 16px 48px;
   }
+}
+
+
+/* Shipping link  */
+
+.lv-cart-summary-row a {
+  color: inherit;
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.lv-cart-summary-row a:hover {
+  text-decoration-thickness: 1.5px;
 }
 {% endstylesheet %}
 
