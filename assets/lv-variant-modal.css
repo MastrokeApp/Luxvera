@@ -140,3 +140,81 @@
     padding: 16px;
   }
 }
+
+
+
+/* Empty collection wrapper */
+.lv-col-grid-wrap {
+  width: 100%;
+}
+
+/* Empty collection message */
+.lv-col-empty {
+  width: 100%;
+  margin: 0;
+  padding: 60px 20px 25px;
+  text-align: center;
+  color: #777;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Continue Shopping button */
+.lv-empty-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+  min-width: 206px;
+  height: 42px;
+
+  margin: 0 auto 60px;
+  padding: 0 25px;
+
+  background: #000;
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  border: none;
+  border-radius: 0;
+
+  box-sizing: border-box;
+  transition: opacity 0.2s ease;
+}
+
+/* Hover */
+.lv-empty-btn:hover {
+  color: #fff;
+  background: #000;
+  opacity: 0.85;
+}
+
+/* Remove theme decorative elements */
+.lv-empty-btn::before,
+.lv-empty-btn::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Mobile */
+@media screen and (max-width: 749px) {
+  .lv-col-empty {
+    padding: 20px 20px 20px;
+    font-size: 15px;
+  }
+
+  .lv-empty-btn {
+    min-width: 190px;
+    height: 42px;
+    margin-bottom: 40px;
+    padding: 0 20px;
+    font-size: 13px;
+  }
+}

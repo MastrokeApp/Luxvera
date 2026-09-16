@@ -18,7 +18,7 @@
 }
 
 .faq-accordion-section .faq-container {
-  max-width: var(--lv-container-max, 1920px);
+   max-width: var(--lv-faq-width, 1920px);
   margin: 0 auto;
   padding: 0 20px;
   border: 1px solid rgba(var(--color-foreground), 0.18);

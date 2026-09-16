@@ -82,6 +82,7 @@
 
     <div class="lv-col-body{% unless section.settings.show_filters %} lv-col-body--no-sidebar{% endunless %}">
       {%- if section.settings.show_filters -%}
+        {% if collection.products_count > 0 %}
         <aside class="lv-col-sidebar" id="lv-col-sidebar-{{ section.id }}">
           <div class="lv-sidebar-inner">
             <p class="lv-sidebar__heading">{{ section.settings.filter_heading | default: 'FILTER BY' }}</p>
@@ -146,6 +147,7 @@
             {%- endif -%}
           </div>
         </aside>
+      {% endif %}
 
         {%- if section.settings.enable_mobile_filter_button -%}
           <div class="lv-mobile-filter-drawer" id="lv-mobile-filter-drawer-{{ section.id }}" aria-hidden="true">
@@ -222,6 +224,11 @@
       <div class="lv-col-grid-wrap">
         {%- if collection.products_count == 0 -%}
           <p class="lv-col-empty">{{ section.settings.empty_text }}</p>
+          
+       <a href="{{ routes.all_products_collection_url }}" class="lv-empty-btn">
+         {{ 'collections.continue_shopping' | t }}
+       </a>
+   
         {%- else -%}
           <div class="lv-product-grid" id="lv-product-grid-{{ section.id }}">
             {%- for product in collection.products -%}

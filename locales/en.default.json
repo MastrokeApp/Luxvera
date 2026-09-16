@@ -204,7 +204,8 @@
     "filter_clear_all": "Clear all",
     "filter_min": "Min",
     "filter_max": "Max",
-    "filters_unavailable": "Filters are not available for this collection."
+    "filters_unavailable": "Filters are not available for this collection.",
+    "continue_shopping": "Continue Shopping"
   },
   "header": {
     "my_account": "My Account"
