@@ -54,7 +54,6 @@
     "hero_banner": "Hero banner",
     "image": "Image",
     "image_with_text": "Image with text",
-    "image_with_text_2": "Advanced image with text",
     "instagram_carousel": "Instagram carousel",
     "instagram_post": "Instagram post",
     "layout": "Layout",
@@ -520,11 +519,6 @@
       "no_overlap": "No overlap",
       "overlap": "Overlap"
     },
-    "content_vertical_align": {
-      "center": "Middle",
-      "end": "Bottom",
-      "start": "Top"
-    },
     "default_view": {
       "grid": "Grid",
       "list": "List"
@@ -577,17 +571,6 @@
       "none": "None",
       "zoom_in": "Ambient zoom"
     },
-    "image_height": {
-      "custom": "Custom Height",
-      "landscape": "Landscape (16:9)",
-      "natural": "Natural (auto)",
-      "portrait": "Portrait (3:4)",
-      "square": "Square (1:1)"
-    },
-    "image_position": {
-      "left": "Image Left",
-      "right": "Image Right"
-    },
     "image_ratio": {
       "landscape": "Landscape (4:3)",
       "portrait": "Portrait (3:4)",
@@ -620,10 +603,6 @@
       "center": "Center",
       "left": "Left",
       "right": "Right"
-    },
-    "mobile_image_position": {
-      "image_first": "Image on Top",
-      "text_first": "Text on Top"
     },
     "mobile_layout": {
       "slide": "Slide (swipe carousel)",

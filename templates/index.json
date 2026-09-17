@@ -223,44 +223,6 @@
         "padding_bottom": 40
       }
     },
-    "image_with_text_PParEA": {
-      "type": "image-with-text",
-      "name": "t:general.image_with_text_2",
-      "settings": {
-        "image_height": "portrait",
-        "image_custom_height": 500,
-        "image_border_radius": 8,
-        "show_divider": true,
-        "subtitle": "Our Story",
-        "subtitle_size": 12,
-        "heading": "Welcome to Luxvera Fashion",
-        "heading_tag": "h2",
-        "heading_size": 36,
-        "heading_weight": "700",
-        "text": "<p>Hey there, beautiful soul. We built this space from a feeling — a desire to create something that celebrates you, exactly as you are.</p>",
-        "text_size": 16,
-        "btn_label": "Shop Now",
-        "btn_url": "#",
-        "btn_style": "solid",
-        "btn_new_tab": false,
-        "image_position": "left",
-        "mobile_image_position": "image_first",
-        "text_alignment": "left",
-        "content_vertical_align": "center",
-        "image_width": 1,
-        "text_width": 1,
-        "column_gap": 80,
-        "mobile_gap": 32,
-        "text_box_padding": 0,
-        "text_box_border_width": 0,
-        "text_box_border_color": "rgba(0,0,0,0)",
-        "text_box_border_radius": 0,
-        "text_box_shadow": false,
-        "color_scheme": "scheme-1",
-        "padding_top": 40,
-        "padding_bottom": 40
-      }
-    },
     "brand_story_jEbFwR": {
       "type": "brand-story",
       "blocks": {
@@ -878,7 +840,6 @@
     "announcement_ticker_qd9XG3",
     "category_grid_JzzWFE",
     "sale_countdown_7RBL9T",
-    "image_with_text_PParEA",
     "brand_story_jEbFwR",
     "featured_collection_hpWcBt",
     "featured_product_NE6BjJ",
