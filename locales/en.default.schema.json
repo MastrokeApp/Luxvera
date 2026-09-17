@@ -157,6 +157,8 @@
     "card_border_radius": "Card Border Radius",
     "card_radius": "Card Radius",
     "cards": "Cards",
+    "cards_per_row": "Cards per row",
+    "cards_per_row_mobile": "Cards per row (mobile)",
     "cards_to_show": "Cards to Show",
     "cart_summary_title": "Cart Summary Title",
     "cart_text_settings": "Cart Text Settings",
@@ -238,6 +240,7 @@
     "enable_order_note": "Enable Order Note",
     "enable_scroll_animations": "Enable Scroll Animations",
     "enable_shipping_link": "Enable Shipping Link",
+    "enable_slider": "Enable slider",
     "enable_sticky_media": "Enable sticky media",
     "end_date_and_time": "End date and time",
     "explore_label": "Explore Label",
@@ -497,6 +500,15 @@
       "sharp": "Sharp (0px)",
       "soft": "Soft (4px)"
     },
+    "cards_per_row": {
+      "4": "4 cards",
+      "5": "5 cards",
+      "6": "6 cards"
+    },
+    "cards_per_row_mobile": {
+      "1": "1 card",
+      "2": "2 cards"
+    },
     "cards_to_show": {
       "4": "4 Cards",
       "8": "8 Cards",
@@ -610,10 +622,6 @@
       "center": "Center",
       "left": "Left",
       "right": "Right"
-    },
-    "mobile_layout": {
-      "slide": "Slide (swipe carousel)",
-      "stack": "Stack (vertical)"
     },
     "mobile_thumbnails": {
       "show": "Show thumbnails",

@@ -559,7 +559,8 @@
         "color_scheme": "",
         "padding_top": 48,
         "padding_bottom": 48,
-        "mobile_layout": "stack"
+        "cards_per_row": "4",
+        "enable_slider": false
       }
     },
     "newsletter_hg4G9E": {

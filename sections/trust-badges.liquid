@@ -5,17 +5,29 @@
   use an uploaded icon or falls back to a built-in SVG based on its position.
   Ships pre-filled via presets. Colours follow the selected color scheme.
 
-  Mobile layout can be Stack (vertical) or Slide (swipe slider with
-  dots + arrows, built on native CSS scroll-snap and progressively enhanced).
+  Cards per row (4/5/6) sets the desktop grid column count; Cards per row
+  (mobile) (1/2, default 1) sets it for mobile. When Enable Slider is off,
+  the grid always collapses to a single column on mobile regardless of that
+  mobile setting.
+
+  Enable Slider turns the grid into a swipe/scroll carousel (dots + arrows,
+  built on native CSS scroll-snap and progressively enhanced) on both
+  desktop and mobile, using the two cards-per-row settings above to size
+  each slide. The dots/arrows are built by JS from the actual number of
+  cards visible per view, so if a cards-per-row setting is >= the total
+  number of badges, everything already fits and the nav stays hidden.
 {% endcomment %}
 
 <div
   class="trust-section color-{{ section.settings.color_scheme }} gradient"
   id="trust-{{ section.id }}"
-  data-mobile="{{ section.settings.mobile_layout | default: 'stack' }}"
+  data-slider="{{ section.settings.enable_slider }}"
+  data-cards-per-row="{{ section.settings.cards_per_row }}"
   style="
     --trust-pt: {{ section.settings.padding_top | default: 48 }}px;
     --trust-pb: {{ section.settings.padding_bottom | default: 48 }}px;
+    --trust-cols: {{ section.settings.cards_per_row | default: 4 }};
+    --trust-cols-mobile: {{ section.settings.cards_per_row_mobile | default: 1 }};
   "
 >
   <div class="trust-container">
@@ -69,7 +81,7 @@
       {%- endfor -%}
     </div>
 
-    {%- if section.settings.mobile_layout == 'slide' and section.blocks.size > 1 -%}
+    {%- if section.settings.enable_slider and section.blocks.size > 1 -%}
       <div class="trust-slider-nav">
         <button type="button" class="trust-arrow trust-arrow--prev" aria-label="{{ 'accessibility.previous' | t }}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -77,16 +89,12 @@
           </svg>
         </button>
 
-        <div class="trust-dots">
-          {%- for block in section.blocks -%}
-            <button
-              type="button"
-              class="trust-dot{% if forloop.first %} is-active{% endif %}"
-              data-index="{{ forloop.index0 }}"
-              aria-label="Go to badge {{ forloop.index }}"
-            ></button>
-          {%- endfor -%}
-        </div>
+        {%- comment -%}
+          Dots are built by JS (one per visible "page" of cards, not one per
+          card) because how many cards fit per page depends on the live
+          viewport width and the desktop/mobile cards-per-row settings.
+        {%- endcomment -%}
+        <div class="trust-dots"></div>
 
         <button type="button" class="trust-arrow trust-arrow--next" aria-label="{{ 'accessibility.next' | t }}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -114,7 +122,7 @@
 
 .trust-section .trust-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--trust-cols, 4), 1fr);
 }
 
 .trust-section .trust-item {
@@ -122,18 +130,55 @@
   flex-direction: column;
   align-items: flex-start;
   padding: 8px 48px;
-}
-
-.trust-section .trust-item:first-child {
-  padding-left: 0;
+  border-left: 1px solid rgba(var(--color-foreground), 0.12);
 }
 
 .trust-section .trust-item:last-child {
   padding-right: 0;
 }
 
-.trust-section .trust-item + .trust-item {
+/* First card of each row has no left divider/padding - scoped per column count so it works whichever row a card wraps onto */
+.trust-section[data-cards-per-row="4"] .trust-item:nth-child(4n+1),
+.trust-section[data-cards-per-row="5"] .trust-item:nth-child(5n+1),
+.trust-section[data-cards-per-row="6"] .trust-item:nth-child(6n+1) {
+  border-left: none;
+  padding-left: 0;
+}
+
+/* Slider mode - horizontal scroll-snap carousel on every breakpoint */
+.trust-section[data-slider="true"] .trust-grid {
+  display: flex;
+  grid-template-columns: none;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.trust-section[data-slider="true"] .trust-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.trust-section[data-slider="true"] .trust-item {
+  flex: 0 0 calc(100% / var(--trust-cols, 4));
+  box-sizing: border-box;
+  scroll-snap-align: start;
   border-left: 1px solid rgba(var(--color-foreground), 0.12);
+}
+
+.trust-section[data-slider="true"] .trust-item:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+
+.trust-section.trust-js[data-slider="true"] .trust-slider-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
 }
 
 .trust-section .trust-icon {
@@ -169,7 +214,7 @@
   line-height: 1.6;
 }
 
-/* Slider navigation (dots + arrows) — hidden until mobile + slide + JS */
+/* Slider navigation (dots + arrows) — hidden until slider is enabled + JS */
 .trust-section .trust-slider-nav {
   display: none;
 }
@@ -234,12 +279,12 @@
     padding: 0 20px;
   }
 
-  /* Default mobile layout: stack (vertical), centered */
-  .trust-section .trust-grid {
+  /* Grid mode (slider disabled): single column, stacked, centered */
+  .trust-section:not([data-slider="true"]) .trust-grid {
     grid-template-columns: 1fr;
   }
 
-  .trust-section .trust-item {
+  .trust-section:not([data-slider="true"]) .trust-item {
     padding: 20px 0;
     border-left: none !important;
     border-top: 1px solid rgba(var(--color-foreground), 0.12);
@@ -247,46 +292,19 @@
     text-align: center;
   }
 
-  .trust-section .trust-item:first-child {
+  .trust-section:not([data-slider="true"]) .trust-item:first-child {
     border-top: none;
     padding-top: 0;
   }
 
-  /* Mobile layout: slide (one full card at a time via CSS scroll-snap) */
-  .trust-section[data-mobile="slide"] .trust-grid {
-    display: flex;
-    grid-template-columns: none;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 0;
-  }
-
-  .trust-section[data-mobile="slide"] .trust-grid::-webkit-scrollbar {
-    display: none;
-  }
-
-  .trust-section[data-mobile="slide"] .trust-item {
-    flex: 0 0 100%;
-    box-sizing: border-box;
-    scroll-snap-align: start;
+  /* Slider mode: --trust-cols-mobile cards at a time via CSS scroll-snap */
+  .trust-section[data-slider="true"] .trust-item {
+    flex: 0 0 calc(100% / var(--trust-cols-mobile, 1));
     border-left: none !important;
-    border-top: none !important;
     padding: 8px 0;
   }
 
-  .trust-section[data-mobile="slide"] .trust-item:first-child {
-    padding-top: 8px;
-  }
-
-  /* Reveal slider controls only on mobile + slide + JS */
-  .trust-section.trust-js[data-mobile="slide"] .trust-slider-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
+  .trust-section.trust-js[data-slider="true"] .trust-slider-nav {
     margin-top: 22px;
   }
 }
@@ -307,56 +325,115 @@
 
     var nav = root.querySelector('.trust-slider-nav');
     var grid = root.querySelector('.trust-grid');
-    if (!nav || !grid) return; // only slide-enabled sections render nav
+    var dotsWrap = root.querySelector('.trust-dots');
+    if (!nav || !grid || !dotsWrap) return; // only slider-enabled sections render nav
 
     root.dataset.lvTrustInit = '1';
     root.classList.add('trust-js');
 
     var items = Array.prototype.slice.call(root.querySelectorAll('.trust-item'));
-    var dots = Array.prototype.slice.call(root.querySelectorAll('.trust-dot'));
     var prev = root.querySelector('.trust-arrow--prev');
     var next = root.querySelector('.trust-arrow--next');
     if (items.length === 0) return;
 
-    var active = 0;
+    var perView = 1;
+    var itemWidth = 0;
+    var pageCount = 1;
+    var activePage = 0;
+    var dots = [];
+    var scrollTimer = null;
+    var resizeTimer = null;
 
-    function setActive(i) {
-      active = Math.max(0, Math.min(i, items.length - 1));
-      dots.forEach(function (d, di) { d.classList.toggle('is-active', di === active); });
-      if (prev) prev.disabled = active <= 0;
-      if (next) next.disabled = active >= items.length - 1;
+    // How many cards are actually visible at once right now - depends on
+    // the live viewport width, not just the desktop/mobile setting values.
+    function getPerView() {
+      itemWidth = items[0].getBoundingClientRect().width;
+      if (!itemWidth) return 1;
+      return Math.max(1, Math.round(grid.clientWidth / itemWidth));
     }
 
-    function goTo(i) {
-      i = Math.max(0, Math.min(i, items.length - 1));
-      items[i].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
-      setActive(i);
+    function buildDots() {
+      dotsWrap.innerHTML = '';
+      dots = [];
+      for (var p = 0; p < pageCount; p++) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'trust-dot' + (p === 0 ? ' is-active' : '');
+        dot.setAttribute('aria-label', 'Go to slide ' + (p + 1));
+        dot.addEventListener('click', (function (page) {
+          return function () { goToPage(page); };
+        })(p));
+        dotsWrap.appendChild(dot);
+        dots.push(dot);
+      }
     }
 
-    dots.forEach(function (d, di) {
-      d.addEventListener('click', function () { goTo(di); });
-    });
-    if (prev) prev.addEventListener('click', function () { goTo(active - 1); });
-    if (next) next.addEventListener('click', function () { goTo(active + 1); });
+    function setActivePage(p) {
+      activePage = Math.max(0, Math.min(p, pageCount - 1));
+      dots.forEach(function (d, di) { d.classList.toggle('is-active', di === activePage); });
+      if (prev) prev.disabled = activePage <= 0;
+      if (next) next.disabled = activePage >= pageCount - 1;
+    }
 
-    // Track the active badge as the user swipes.
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
-          var idx = items.indexOf(entry.target);
-          if (idx > -1) setActive(idx);
-        }
-      });
-    }, { root: grid, threshold: [0.55, 0.8] });
+    // While a button/dot click is driving a smooth scroll, the scroll-snap
+    // container fires its own scroll events as it settles. If the debounced
+    // listener below recomputes the active page from an in-between
+    // scrollLeft, it can undo the page we just navigated to - which is what
+    // made "Next" look like it re-triggered "Previous" and needed a second
+    // click. This window suppresses that recalculation until the
+    // programmatic scroll has had time to finish.
+    var ignoreScrollUntil = 0;
 
-    items.forEach(function (it) { io.observe(it); });
-    root._lvTrustIO = io;
+    function goToPage(p) {
+      p = Math.max(0, Math.min(p, pageCount - 1));
+      var targetIndex = Math.min(p * perView, items.length - 1);
+      ignoreScrollUntil = Date.now() + 600;
+      grid.scrollTo({ left: items[targetIndex].offsetLeft, behavior: 'smooth' });
+      setActivePage(p);
+    }
 
-    setActive(0);
+    // Recompute how many "pages" of cards there are for the current
+    // viewport. When every card already fits in one view (cards per row
+    // >= total cards), there's nothing to page through, so hide the nav.
+    function recalculate() {
+      perView = getPerView();
+      pageCount = Math.max(1, Math.ceil(items.length / perView));
+      nav.style.display = pageCount <= 1 ? 'none' : '';
+      buildDots();
+      setActivePage(0);
+    }
+
+    if (prev) prev.addEventListener('click', function () { goToPage(activePage - 1); });
+    if (next) next.addEventListener('click', function () { goToPage(activePage + 1); });
+
+    // Track the active page as the user swipes/scrolls (not while a click
+    // above is still settling its own programmatic scroll).
+    grid.addEventListener('scroll', function () {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(function () {
+        if (Date.now() < ignoreScrollUntil) return;
+        if (!itemWidth) return;
+        var index = Math.round(grid.scrollLeft / itemWidth);
+        setActivePage(Math.round(index / perView));
+      }, 100);
+    }, { passive: true });
+
+    function onResize() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(recalculate, 150);
+    }
+    window.addEventListener('resize', onResize);
+
+    recalculate();
+    root._lvTrustCleanup = function () {
+      clearTimeout(scrollTimer);
+      clearTimeout(resizeTimer);
+      window.removeEventListener('resize', onResize);
+    };
   }
 
   function initAll(scope) {
-    (scope || document).querySelectorAll('.trust-section[data-mobile="slide"]').forEach(initTrust);
+    (scope || document).querySelectorAll('.trust-section[data-slider="true"]').forEach(initTrust);
   }
 
   if (document.readyState === 'loading') {
@@ -371,9 +448,9 @@
 
   document.addEventListener('shopify:section:unload', function (e) {
     var root = e.target.querySelector ? e.target.querySelector('.trust-section') : null;
-    if (root && root._lvTrustIO) {
-      root._lvTrustIO.disconnect();
-      root._lvTrustIO = null;
+    if (root && root._lvTrustCleanup) {
+      root._lvTrustCleanup();
+      root._lvTrustCleanup = null;
     }
   });
 })();
@@ -420,31 +497,42 @@
     },
     {
       "type": "header",
-      "content": "t:labels.mobile"
+      "content": "t:labels.layout"
     },
     {
       "type": "select",
-      "id": "mobile_layout",
-      "label": "t:labels.mobile_layout",
-      "info": "t:labels.slide_shows_a_swipeable_carousel_with",
-      "default": "stack",
+      "id": "cards_per_row",
+      "label": "t:labels.cards_per_row",
+      "default": "4",
       "options": [
-        {
-          "value": "stack",
-          "label": "t:options.mobile_layout.stack"
-        },
-        {
-          "value": "slide",
-          "label": "t:options.mobile_layout.slide"
-        }
+        { "value": "4", "label": "t:options.cards_per_row.4" },
+        { "value": "5", "label": "t:options.cards_per_row.5" },
+        { "value": "6", "label": "t:options.cards_per_row.6" }
       ]
+    },
+    {
+      "type": "select",
+      "id": "cards_per_row_mobile",
+      "label": "t:labels.cards_per_row_mobile",
+      "default": "1",
+      "options": [
+        { "value": "1", "label": "t:options.cards_per_row_mobile.1" },
+        { "value": "2", "label": "t:options.cards_per_row_mobile.2" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "label": "t:labels.enable_slider",
+      "info": "t:labels.slide_shows_a_swipeable_carousel_with",
+      "default": false
     }
   ],
   "blocks": [
     {
       "type": "badge",
       "name": "t:general.badge",
-      "limit": 6,
+      "limit": 12,
       "settings": [
         {
           "type": "text",
