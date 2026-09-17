@@ -26,15 +26,31 @@
   if slideshow_label == blank
     assign slideshow_label = 'accessibility.hero_slideshow' | t
   endif
+
+  # Adaptive height uses the first slide's image aspect ratio so the
+  # banner scales with the image instead of using a fixed pixel height.
+  # It naturally stays consistent across breakpoints since aspect-ratio
+  # scales with the container's width on every device.
+  assign use_adaptive_height = false
+  assign first_slide_image = slide_blocks.first.settings.image
+  if section.settings.height_type == 'adapt' and first_slide_image != blank
+    assign use_adaptive_height = true
+  endif
+
+  assign has_dots = false
+  if slide_blocks.size > 1
+    assign has_dots = true
+  endif
 -%}
 
 <div
-  class="hero-slideshow"
+  class="hero-slideshow{% if use_adaptive_height %} hero-slideshow--adaptive{% endif %}{% if has_dots %} hero-slideshow--has-dots{% endif %}"
   id="hero-banner-{{ section.id }}"
   style="
     --hero-height-desktop:{{ section.settings.height_desktop }}px;
     --hero-height-tablet:{{ section.settings.height_tablet }}px;
     --hero-height-mobile:{{ section.settings.height_mobile }}px;
+    {% if use_adaptive_height %}--hero-aspect-ratio:{{ first_slide_image.aspect_ratio }};{% endif %}
   "
   role="region"
   aria-label="{{ slideshow_label | escape }}"
@@ -50,11 +66,10 @@
           assign is_first = true
         endif
 
-        # Content position -> flexbox. Values are stored as "block_inline",
-        # e.g. "middle_left", so one setting drives both axes.
-        assign position_parts = block.settings.content_position | split: '_'
-        assign position_block = position_parts[0]
-        assign position_inline = position_parts[1]
+        # Content position only controls the vertical axis (top/middle/
+        # bottom). Older saved values store it as "block_inline" (e.g.
+        # "middle_left"); splitting still yields the vertical segment first.
+        assign position_block = block.settings.content_position | split: '_' | first
 
         case position_block
           when 'top'
@@ -65,7 +80,10 @@
             assign justify_content = 'center'
         endcase
 
-        case position_inline
+        # Horizontal box position and text alignment share one source of
+        # truth - the "Text alignment" setting - so the selected value is
+        # always reflected, on both desktop and mobile.
+        case block.settings.content_alignment
           when 'left'
             assign align_items = 'flex-start'
           when 'right'
@@ -207,6 +225,11 @@
   overflow: clip;
 }
 
+.hero-slideshow--adaptive {
+  height: auto;
+  aspect-ratio: var(--hero-aspect-ratio, 16 / 9);
+}
+
 .hero-slideshow .hero-slide {
   position: absolute;
   inset: 0;
@@ -264,13 +287,17 @@
   z-index: 2;
   max-width: var(--lv-container-max, 1920px);
   margin: 0 auto;
-  padding: 0 56px;
+  padding: 56px;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: var(--hero-justify, center);
   align-items: var(--hero-align, flex-start);
   text-align: var(--hero-text-align, left);
+}
+
+.hero-slideshow--has-dots .hero-slide__content {
+  padding-bottom: 76px;
 }
 
 @keyframes luxvera-fade-up {
@@ -385,12 +412,16 @@
 }
 
 @media (max-width: 768px) {
-  .hero-slideshow {
+  .hero-slideshow:not(.hero-slideshow--adaptive) {
     height: var(--hero-height-tablet, 420px);
   }
 
   .hero-slideshow .hero-slide__content {
-    padding: 0 28px;
+    padding: 28px;
+  }
+
+  .hero-slideshow--has-dots .hero-slide__content {
+    padding-bottom: 56px;
   }
 
   .hero-slideshow .hero-arrow {
@@ -408,14 +439,18 @@
 }
 
 @media (max-width: 480px) {
-  .hero-slideshow {
+  .hero-slideshow:not(.hero-slideshow--adaptive) {
     height: var(--hero-height-mobile, 360px);
   }
 
   .hero-slideshow .hero-slide__content {
-    padding: 0 24px;
+    padding: 24px;
     align-items: var(--hero-align-mobile, flex-start);
     text-align: var(--hero-text-align-mobile, left);
+  }
+
+  .hero-slideshow--has-dots .hero-slide__content {
+    padding-bottom: 52px;
   }
 
   .hero-slideshow .hero-slide__heading {
@@ -610,6 +645,17 @@
       "content": "t:labels.section_height_2"
     },
     {
+      "type": "select",
+      "id": "height_type",
+      "label": "t:labels.image_height",
+      "info": "t:labels.adapt_to_image_info",
+      "options": [
+        { "value": "fixed", "label": "t:options.height_type.fixed" },
+        { "value": "adapt", "label": "t:options.height_type.adapt" }
+      ],
+      "default": "fixed"
+    },
+    {
       "type": "range",
       "id": "height_desktop",
       "label": "t:labels.desktop_height_2",
@@ -617,7 +663,8 @@
       "max": 900,
       "step": 10,
       "unit": "px",
-      "default": 580
+      "default": 580,
+      "visible_if": "{{ section.settings.height_type == 'fixed' }}"
     },
     {
       "type": "range",
@@ -627,7 +674,8 @@
       "max": 700,
       "step": 10,
       "unit": "px",
-      "default": 420
+      "default": 420,
+      "visible_if": "{{ section.settings.height_type == 'fixed' }}"
     },
     {
       "type": "range",
@@ -637,7 +685,8 @@
       "max": 600,
       "step": 10,
       "unit": "px",
-      "default": 360
+      "default": 360,
+      "visible_if": "{{ section.settings.height_type == 'fixed' }}"
     },
     {
       "type": "header",
@@ -762,19 +811,14 @@
         {
           "type": "select",
           "id": "content_position",
-          "label": "Content position",
+          "label": "t:labels.content_position",
+          "info": "t:labels.content_position_info",
           "options": [
-            { "value": "top_left", "label": "Top left" },
-            { "value": "top_center", "label": "Top center" },
-            { "value": "top_right", "label": "Top right" },
-            { "value": "middle_left", "label": "Middle left" },
-            { "value": "middle_center", "label": "Middle center" },
-            { "value": "middle_right", "label": "Middle right" },
-            { "value": "bottom_left", "label": "Bottom left" },
-            { "value": "bottom_center", "label": "Bottom center" },
-            { "value": "bottom_right", "label": "Bottom right" }
+            { "value": "top", "label": "t:options.desktop_content_position.top" },
+            { "value": "middle", "label": "t:options.desktop_content_position.middle" },
+            { "value": "bottom", "label": "t:options.desktop_content_position.bottom" }
           ],
-          "default": "middle_left"
+          "default": "middle"
         },
         {
           "type": "select",

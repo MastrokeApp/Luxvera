@@ -107,6 +107,7 @@
   "labels": {
     "500_700px_recommended": "500×700px recommended",
     "600_800px_recommended": "600×800px recommended",
+    "adapt_to_image_info": "When set to \"Adapt to image\", the height scales with the first slide's image and the fixed height settings below are ignored.",
     "add_to_cart_button": "Add to Cart Button",
     "add_to_cart_label": "Add To Cart Label",
     "add_to_cart_label_single_variant": "Add to Cart label (single variant)",
@@ -193,6 +194,8 @@
     "content_alignment_2": "Content Alignment",
     "content_from_page": "Content from page",
     "content_layout": "Content layout",
+    "content_position": "Content position",
+    "content_position_info": "Controls the vertical position of the text. Use \"Text alignment\" below to control the horizontal position.",
     "content_width": "Content width",
     "continue_shopping_text": "Continue Shopping Text",
     "countdown_timer": "Countdown Timer",
@@ -565,6 +568,10 @@
       "500": "Medium",
       "600": "Semi-Bold",
       "700": "Bold"
+    },
+    "height_type": {
+      "fixed": "Fixed height",
+      "adapt": "Adapt to image"
     },
     "image_behavior": {
       "none": "None",
