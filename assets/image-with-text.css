@@ -38,11 +38,28 @@
 
 .image-with-text-section .image-text-media {
   width: 100%;
-  height: var(--iwt-img-h);
   min-width: 0;
   overflow: hidden;
   position: relative;
   z-index: 1;
+}
+
+/* Image height presets - desktop */
+.image-with-text-section .image-text-media--small {
+  height: 280px;
+}
+
+.image-with-text-section .image-text-media--medium {
+  height: 420px;
+}
+
+.image-with-text-section .image-text-media--large {
+  height: 560px;
+}
+
+.image-with-text-section .image-text-media--adapt {
+  height: auto;
+  aspect-ratio: var(--iwt-img-ratio, 1.5);
 }
 
 .image-with-text-section .image-text-media img,
@@ -186,8 +203,19 @@
 
   .image-with-text-section .image-text-media {
     width: 100%;
-    height: var(--iwt-img-h-m);
     order: 1 !important;
+  }
+
+  .image-with-text-section .image-text-media--small {
+    height: 220px;
+  }
+
+  .image-with-text-section .image-text-media--medium {
+    height: 320px;
+  }
+
+  .image-with-text-section .image-text-media--large {
+    height: 420px;
   }
 
   .image-with-text-section .image-text-content-wrap {

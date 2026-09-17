@@ -20,6 +20,10 @@
   assign layout = section.settings.layout
   assign content_layout = section.settings.content_layout
 
+  assign image_height_class = 'image-text-media--' | append: section.settings.image_height
+
+  assign image_aspect_ratio = section.settings.image.aspect_ratio | default: 1.5
+
   case section.settings.desktop_image_width
     when 'small'
       assign iwt_cols = '0.8fr 1.2fr'
@@ -78,8 +82,7 @@
     --iwt-items-align-m: {{ iwt_items_align_m }};
     --iwt-pad-top: {{ section.settings.padding_top }}px;
     --iwt-pad-bottom: {{ section.settings.padding_bottom }}px;
-    --iwt-img-h: {{ section.settings.image_height_desktop }}px;
-    --iwt-img-h-m: {{ section.settings.image_height_mobile }}px;
+    --iwt-img-ratio: {{ image_aspect_ratio }};
     --iwt-heading-size: {{ section.settings.heading_size }}px;
   "
 >
@@ -87,7 +90,7 @@
     <div class="image-text-wrapper">
       <div class="image-text-inner">
 
-        <div class="image-text-media">
+        <div class="image-text-media {{ image_height_class }}">
           {%- if section.settings.image != blank -%}
             <img
               src="{{ section.settings.image | image_url: width: 1600 }}"
@@ -184,24 +187,17 @@
       "label": "t:labels.image"
     },
     {
-      "type": "range",
-      "id": "image_height_desktop",
-      "label": "t:labels.image_height_desktop",
-      "min": 200,
-      "max": 700,
-      "step": 10,
-      "unit": "px",
-      "default": 280
-    },
-    {
-      "type": "range",
-      "id": "image_height_mobile",
-      "label": "t:labels.image_height_mobile",
-      "min": 160,
-      "max": 500,
-      "step": 10,
-      "unit": "px",
-      "default": 220
+      "type": "select",
+      "id": "image_height",
+      "label": "t:labels.image_height",
+      "info": "t:labels.image_height_info",
+      "default": "medium",
+      "options": [
+        { "value": "adapt", "label": "t:options.image_height.adapt" },
+        { "value": "small", "label": "t:options.image_height.small" },
+        { "value": "medium", "label": "t:options.image_height.medium" },
+        { "value": "large", "label": "t:options.image_height.large" }
+      ]
     },
     {
       "type": "select",

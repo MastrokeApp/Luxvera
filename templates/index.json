@@ -737,8 +737,7 @@
       ],
       "name": "t:general.image_with_text",
       "settings": {
-        "image_height_desktop": 500,
-        "image_height_mobile": 220,
+        "image_height": "large",
         "image_behavior": "zoom-in",
         "heading_size": 48,
         "layout": "image_first",

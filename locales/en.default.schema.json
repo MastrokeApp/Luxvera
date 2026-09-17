@@ -284,6 +284,7 @@
     "image_column_flex_ratio_text_column": "Image column flex ratio. Text column is the inverse.",
     "image_column_width_fr": "Image Column Width (fr)",
     "image_height": "Image Height",
+    "image_height_info": "Adapt to image keeps the image's natural proportions; the other options crop it to a fixed height that scales for mobile.",
     "image_height_desktop": "Image height (desktop)",
     "image_height_mobile": "Image height (mobile)",
     "image_position_desktop": "Image Position — Desktop",
@@ -570,6 +571,12 @@
     "image_behavior": {
       "none": "None",
       "zoom_in": "Ambient zoom"
+    },
+    "image_height": {
+      "adapt": "Adapt to image",
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
     },
     "image_ratio": {
       "landscape": "Landscape (4:3)",
