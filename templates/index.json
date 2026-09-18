@@ -69,6 +69,7 @@
       ],
       "name": "Hero Banner",
       "settings": {
+        "height_type": "fixed",
         "height_desktop": 580,
         "height_tablet": 420,
         "height_mobile": 360,
@@ -223,6 +224,89 @@
         "padding_bottom": 40
       }
     },
+    "product_tabs_fPhtgz": {
+      "type": "product-tabs",
+      "blocks": {
+        "tab_y3AmKL": {
+          "type": "tab",
+          "settings": {
+            "label": "New Arrivals",
+            "collection": ""
+          }
+        },
+        "tab_fpyJbP": {
+          "type": "tab",
+          "settings": {
+            "label": "Trending Now",
+            "collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "tab_y3AmKL",
+        "tab_fpyJbP"
+      ],
+      "name": "t:general.product_tabs",
+      "settings": {
+        "padding_top_desktop": 56,
+        "padding_bottom_desktop": 56,
+        "padding_top_tablet": 40,
+        "padding_bottom_tablet": 40,
+        "padding_top_mobile": 28,
+        "padding_bottom_mobile": 28,
+        "heading": "Our Products You’ll Love",
+        "heading_size": 32,
+        "heading_alignment": "center",
+        "atc_label": "Add To Cart",
+        "products_limit": 8,
+        "image_ratio": "portrait"
+      }
+    },
+    "image_text_section_TbVzTt": {
+      "type": "image-text-section",
+      "blocks": {
+        "heading_MFmbmN": {
+          "type": "heading",
+          "settings": {
+            "heading": "Image with text"
+          }
+        },
+        "subheading_qiDhK3": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "Pair text with an image to focus on your chosen product, collection, or blog post."
+          }
+        },
+        "button_LLUfW3": {
+          "type": "button",
+          "settings": {
+            "button_label": "Shop now",
+            "button_link": "#"
+          }
+        }
+      },
+      "block_order": [
+        "heading_MFmbmN",
+        "subheading_qiDhK3",
+        "button_LLUfW3"
+      ],
+      "name": "t:general.image_with_text",
+      "settings": {
+        "image_height": "large",
+        "image_behavior": "zoom-in",
+        "heading_size": 48,
+        "layout": "image_first",
+        "desktop_image_width": "small",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "",
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
     "brand_story_jEbFwR": {
       "type": "brand-story",
       "blocks": {
@@ -311,119 +395,44 @@
         "subtitle": "Some of our new looks you will love",
         "subtitle_size": 13,
         "atc_label": "Add To Cart",
-        "collection": "designer",
+        "collection": "",
         "products_limit": 8
       }
     },
-    "featured_product_NE6BjJ": {
-      "type": "featured-product",
+    "hero_banner_YdeLrP": {
+      "type": "hero-banner",
       "blocks": {
-        "heading_ymnnic": {
-          "type": "heading",
+        "slide_3y83Gt": {
+          "type": "slide",
           "settings": {
-            "heading": "Featured Product"
-          }
-        },
-        "vendor_XWnQqr": {
-          "type": "vendor",
-          "settings": {}
-        },
-        "title_GWe3Nw": {
-          "type": "title",
-          "settings": {
-            "placeholder_title": "Featured Product"
-          }
-        },
-        "price_wXBLeb": {
-          "type": "price",
-          "settings": {}
-        },
-        "variant_picker_LdEHDV": {
-          "type": "variant_picker",
-          "settings": {
-            "show_placeholder": true,
-            "placeholder_label": "Size"
-          }
-        },
-        "availability_BFGwM8": {
-          "type": "availability",
-          "settings": {}
-        },
-        "quantity_q6GLng": {
-          "type": "quantity",
-          "settings": {}
-        },
-        "buy_buttons_y4jnQw": {
-          "type": "buy_buttons",
-          "settings": {
-            "show_dynamic_checkout": true,
-            "add_to_cart_text": "Add to cart",
-            "buy_now_text": "Buy it now"
-          }
-        },
-        "trust_F7XLwh": {
-          "type": "trust",
-          "settings": {
-            "line_1": "Free shipping over $75",
-            "line_2": "Easy 30-day returns",
-            "line_3": "Secure checkout"
-          }
-        },
-        "description_UAbN73": {
-          "type": "description",
-          "settings": {
-            "heading": "Description",
-            "open_by_default": false
-          }
-        },
-        "collapsible_row_cjA3Tt": {
-          "type": "collapsible_row",
-          "settings": {
-            "heading": "Shipping & Returns",
-            "content": "",
-            "page": "",
-            "open_by_default": false
-          }
-        },
-        "collapsible_row_ym9hbX": {
-          "type": "collapsible_row",
-          "settings": {
-            "heading": "Care Instructions",
-            "content": "",
-            "page": "",
-            "open_by_default": false
-          }
-        },
-        "share_9VpBJG": {
-          "type": "share",
-          "settings": {
-            "label": "Share"
+            "overlay_color": "#100a04",
+            "overlay_opacity": 60,
+            "heading": "Western Soul, Modern Style",
+            "heading_size": 48,
+            "subtext": "From laid-back daytime to summer nights — discover Western style crafted for you.",
+            "button_label": "Shop the Collection",
+            "button_url": "/collections/all",
+            "button_outline": false,
+            "button_open_new_tab": false,
+            "content_position": "middle",
+            "content_alignment": "left",
+            "mobile_content_alignment": "left",
+            "color_scheme": "scheme-1"
           }
         }
       },
       "block_order": [
-        "heading_ymnnic",
-        "vendor_XWnQqr",
-        "title_GWe3Nw",
-        "price_wXBLeb",
-        "variant_picker_LdEHDV",
-        "availability_BFGwM8",
-        "quantity_q6GLng",
-        "buy_buttons_y4jnQw",
-        "trust_F7XLwh",
-        "description_UAbN73",
-        "collapsible_row_cjA3Tt",
-        "collapsible_row_ym9hbX",
-        "share_9VpBJG"
+        "slide_3y83Gt"
       ],
-      "name": "Featured Product",
+      "name": "t:general.hero_banner",
       "settings": {
-        "product": "",
-        "padding_top_desktop": 40,
-        "padding_bottom_desktop": 40,
-        "padding_top_mobile": 24,
-        "padding_bottom_mobile": 24,
-        "color_scheme": ""
+        "height_type": "fixed",
+        "height_desktop": 580,
+        "height_tablet": 420,
+        "height_mobile": 360,
+        "autoplay": false,
+        "autoplay_speed": 5,
+        "slideshow_description": ""
       }
     },
     "instagram_carousel_E6wRtz": {
@@ -559,278 +568,9 @@
         "color_scheme": "",
         "padding_top": 48,
         "padding_bottom": 48,
-        "cards_per_row": "4",
+        "cards_per_row": "3",
+        "cards_per_row_mobile": "1",
         "enable_slider": false
-      }
-    },
-    "newsletter_hg4G9E": {
-      "type": "newsletter",
-      "name": "Newsletter",
-      "settings": {
-        "eyebrow": "Stay connected",
-        "heading": "Join our newsletter",
-        "body_text": "<p>Sign up to receive exclusive access to new collections, limited releases, and member-only offers.</p>",
-        "email_placeholder": "Email",
-        "button_label": "Subscribe",
-        "consent_text": "By signing up, you agree to receive marketing emails.",
-        "success_message": "Thanks for signing up!",
-        "text_alignment": "center",
-        "content_width": 600,
-        "heading_size": 40,
-        "heading_size_mobile": 30,
-        "color_scheme": "scheme-1",
-        "padding_top": 60,
-        "padding_bottom": 60
-      }
-    },
-    "richtext_dL6wyX": {
-      "type": "richtext",
-      "blocks": {
-        "eyebrow_D7yBiE": {
-          "type": "eyebrow",
-          "settings": {
-            "text": "Our story"
-          }
-        },
-        "heading_adP4tt": {
-          "type": "heading",
-          "settings": {
-            "heading": "Designed for your everyday",
-            "heading_tag": "h2",
-            "size": "medium"
-          }
-        },
-        "text_Xhmb8H": {
-          "type": "text",
-          "settings": {
-            "content": "<p>Discover thoughtfully designed pieces created to make every day feel effortless. Explore our collection and find something made for you.</p>"
-          }
-        },
-        "button_jGQj4V": {
-          "type": "button",
-          "settings": {
-            "label": "Shop now",
-            "link": "#",
-            "open_in_new_tab": false
-          }
-        }
-      },
-      "block_order": [
-        "eyebrow_D7yBiE",
-        "heading_adP4tt",
-        "text_Xhmb8H",
-        "button_jGQj4V"
-      ],
-      "name": "Rich text",
-      "settings": {
-        "text_alignment": "center",
-        "max_width": 1920,
-        "content_width": 1920,
-        "text_size": 16,
-        "text_size_mobile": 14,
-        "color_scheme": "scheme-1",
-        "padding_top": 60,
-        "padding_bottom": 60
-      }
-    },
-    "collections_gLyUHm": {
-      "type": "collections",
-      "blocks": {
-        "collection_hiaGTi": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "title": ""
-          }
-        },
-        "collection_9rQmJA": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "title": ""
-          }
-        },
-        "collection_NijxBg": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "title": ""
-          }
-        },
-        "collection_bE97RB": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "title": ""
-          }
-        }
-      },
-      "block_order": [
-        "collection_hiaGTi",
-        "collection_9rQmJA",
-        "collection_NijxBg",
-        "collection_bE97RB"
-      ],
-      "name": "Collections List",
-      "settings": {
-        "color_scheme": "",
-        "heading": "Collections For You To Explore",
-        "heading_size": 32,
-        "subtitle": "Everything you need to make your look fantastic",
-        "subtitle_size": 15,
-        "columns_desktop": 4,
-        "columns_tablet": 3,
-        "columns_mobile": "2",
-        "grid_gap": 12,
-        "image_ratio": "square",
-        "card_radius": 8,
-        "enable_slider": true,
-        "show_count": false,
-        "padding_top": 56,
-        "padding_bottom": 64
-      }
-    },
-    "product_tabs_fPhtgz": {
-      "type": "product-tabs",
-      "name": "t:general.product_tabs",
-      "settings": {
-        "padding_top_desktop": 56,
-        "padding_bottom_desktop": 56,
-        "padding_top_tablet": 40,
-        "padding_bottom_tablet": 40,
-        "padding_top_mobile": 28,
-        "padding_bottom_mobile": 28,
-        "heading": "Our Products You’ll Love",
-        "heading_size": 32,
-        "heading_alignment": "center",
-        "atc_label": "Add To Cart",
-        "products_limit": 8,
-        "image_ratio": "portrait"
-      }
-    },
-    "image_text_section_TbVzTt": {
-      "type": "image-text-section",
-      "blocks": {
-        "heading_MFmbmN": {
-          "type": "heading",
-          "settings": {
-            "heading": "Image with text"
-          }
-        },
-        "subheading_qiDhK3": {
-          "type": "subheading",
-          "settings": {
-            "subheading": "Pair text with an image to focus on your chosen product, collection, or blog post."
-          }
-        },
-        "button_LLUfW3": {
-          "type": "button",
-          "settings": {
-            "button_label": "Shop now",
-            "button_link": "#"
-          }
-        }
-      },
-      "block_order": [
-        "heading_MFmbmN",
-        "subheading_qiDhK3",
-        "button_LLUfW3"
-      ],
-      "name": "t:general.image_with_text",
-      "settings": {
-        "image_height": "large",
-        "image_behavior": "zoom-in",
-        "heading_size": 48,
-        "layout": "image_first",
-        "desktop_image_width": "small",
-        "content_layout": "no-overlap",
-        "desktop_content_position": "middle",
-        "desktop_content_alignment": "left",
-        "mobile_content_alignment": "left",
-        "section_color_scheme": "",
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "faq_accordion_PcbxVL": {
-      "type": "faq-accordion",
-      "blocks": {
-        "faq_item_Bm4H6B": {
-          "type": "faq_item",
-          "settings": {
-            "question": "How long does shipping take?",
-            "answer": "<p>Orders are processed within 1 to 3 business days. Delivery times vary based on location, and international orders to Canada typically take 5 to 10 business days.</p>"
-          }
-        },
-        "faq_item_Jw37iC": {
-          "type": "faq_item",
-          "settings": {
-            "question": "Do you offer free shipping?",
-            "answer": "<p>Yes, we offer free standard shipping on all domestic orders over a certain threshold. Please check our shipping policy page for the latest details.</p>"
-          }
-        },
-        "faq_item_JQ6aLz": {
-          "type": "faq_item",
-          "settings": {
-            "question": "How can I track my order?",
-            "answer": "<p>Once your order ships, you'll receive a confirmation email with a tracking number. You can use this to track your package directly on our website or the carrier's site.</p>"
-          }
-        },
-        "faq_item_i98Dai": {
-          "type": "faq_item",
-          "settings": {
-            "question": "What is your return policy?",
-            "answer": "<p>We accept returns within 30 days of delivery for most items in their original, unused condition. Please visit our returns page to start a return request.</p>"
-          }
-        },
-        "faq_item_WN3Ug3": {
-          "type": "faq_item",
-          "settings": {
-            "question": "Do you offer exchanges?",
-            "answer": "<p>Yes, exchanges are available for a different size or color of the same item, subject to stock availability. Contact our support team to initiate an exchange.</p>"
-          }
-        },
-        "faq_item_3XBUq9": {
-          "type": "faq_item",
-          "settings": {
-            "question": "Are there items that cannot be returned?",
-            "answer": "<p>Certain items such as final sale products, gift cards, and personalized items are not eligible for return. These will be marked clearly on the product page.</p>"
-          }
-        },
-        "faq_item_tCAfyk": {
-          "type": "faq_item",
-          "settings": {
-            "question": "Will the item look exactly like the photos?",
-            "answer": "<p>We strive for accurate product photography. However, slight color variations may occur due to monitor settings and lighting. Handmade items may also have minor natural variations.</p>"
-          }
-        },
-        "faq_item_WJ4GTB": {
-          "type": "faq_item",
-          "settings": {
-            "question": "Do you restock sold-out items?",
-            "answer": "<p>Restocks depend on the product. You can sign up for restock notifications on the product page by clicking \"Notify Me\" when an item is out of stock.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "faq_item_Bm4H6B",
-        "faq_item_Jw37iC",
-        "faq_item_JQ6aLz",
-        "faq_item_i98Dai",
-        "faq_item_WN3Ug3",
-        "faq_item_3XBUq9",
-        "faq_item_tCAfyk",
-        "faq_item_WJ4GTB"
-      ],
-      "name": "t:general.faq_accordion",
-      "settings": {
-        "color_scheme": "",
-        "section_padding_top": 40,
-        "section_padding_bottom": 40,
-        "container_width": 1400,
-        "open_first": true,
-        "allow_multiple": false
       }
     }
   },
@@ -840,17 +580,13 @@
     "announcement_ticker_qd9XG3",
     "category_grid_JzzWFE",
     "sale_countdown_7RBL9T",
-    "brand_story_jEbFwR",
-    "featured_collection_hpWcBt",
-    "featured_product_NE6BjJ",
-    "instagram_carousel_E6wRtz",
-    "testimonials_KBbzUQ",
-    "trust_badges_Xyi6PV",
-    "newsletter_hg4G9E",
-    "richtext_dL6wyX",
-    "collections_gLyUHm",
     "product_tabs_fPhtgz",
     "image_text_section_TbVzTt",
-    "faq_accordion_PcbxVL"
+    "brand_story_jEbFwR",
+    "featured_collection_hpWcBt",
+    "hero_banner_YdeLrP",
+    "instagram_carousel_E6wRtz",
+    "testimonials_KBbzUQ",
+    "trust_badges_Xyi6PV"
   ]
 }

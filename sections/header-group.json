@@ -23,10 +23,11 @@
     "header": {
       "type": "header",
       "blocks": {
-        "mega_menu_image_YhzHPr": {
+        "mega_menu_image_yKB4Bx": {
           "type": "mega_menu_image",
+          "disabled": true,
           "settings": {
-            "menu_item": "Catalog",
+            "menu_item": "",
             "title": "Discover the collection",
             "text": "",
             "image_link": "",
@@ -36,7 +37,7 @@
         }
       },
       "block_order": [
-        "mega_menu_image_YhzHPr"
+        "mega_menu_image_yKB4Bx"
       ],
       "settings": {
         "show_top_bar": true,

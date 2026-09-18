@@ -501,6 +501,7 @@
       "soft": "Soft (4px)"
     },
     "cards_per_row": {
+      "3": "3 cards",
       "4": "4 cards",
       "5": "5 cards",
       "6": "6 cards"

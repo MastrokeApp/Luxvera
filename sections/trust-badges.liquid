@@ -5,7 +5,7 @@
   use an uploaded icon or falls back to a built-in SVG based on its position.
   Ships pre-filled via presets. Colours follow the selected color scheme.
 
-  Cards per row (4/5/6) sets the desktop grid column count; Cards per row
+  Cards per row (3/4/5/6) sets the desktop grid column count; Cards per row
   (mobile) (1/2, default 1) sets it for mobile. When Enable Slider is off,
   the grid always collapses to a single column on mobile regardless of that
   mobile setting.
@@ -123,6 +123,7 @@
 .trust-section .trust-grid {
   display: grid;
   grid-template-columns: repeat(var(--trust-cols, 4), 1fr);
+  row-gap: 32px;
 }
 
 .trust-section .trust-item {
@@ -138,6 +139,7 @@
 }
 
 /* First card of each row has no left divider/padding - scoped per column count so it works whichever row a card wraps onto */
+.trust-section[data-cards-per-row="3"] .trust-item:nth-child(3n+1),
 .trust-section[data-cards-per-row="4"] .trust-item:nth-child(4n+1),
 .trust-section[data-cards-per-row="5"] .trust-item:nth-child(5n+1),
 .trust-section[data-cards-per-row="6"] .trust-item:nth-child(6n+1) {
@@ -155,6 +157,7 @@
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  row-gap: 0;
 }
 
 .trust-section[data-slider="true"] .trust-grid::-webkit-scrollbar {
@@ -282,6 +285,7 @@
   /* Grid mode (slider disabled): single column, stacked, centered */
   .trust-section:not([data-slider="true"]) .trust-grid {
     grid-template-columns: 1fr;
+    row-gap: 0;
   }
 
   .trust-section:not([data-slider="true"]) .trust-item {
@@ -505,6 +509,7 @@
       "label": "t:labels.cards_per_row",
       "default": "4",
       "options": [
+        { "value": "3", "label": "t:options.cards_per_row.3" },
         { "value": "4", "label": "t:options.cards_per_row.4" },
         { "value": "5", "label": "t:options.cards_per_row.5" },
         { "value": "6", "label": "t:options.cards_per_row.6" }
