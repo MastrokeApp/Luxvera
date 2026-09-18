@@ -101,7 +101,7 @@
 }
 
 .testimonials-section .reviews-head-left h2 {
-  font-size: var(--ts-heading-size, 28px);
+  font-size: calc(var(--lv-heading-scale, 1) * var(--ts-heading-size, 28px));
   font-weight: 700;
   color: rgb(var(--color-foreground));
   margin-bottom: 4px;
@@ -109,7 +109,7 @@
 }
 
 .testimonials-section .reviews-head-left p {
-  font-size: var(--ts-subheading-size, 13px);
+  font-size: calc(var(--lv-font-scale, 1) * var(--ts-subheading-size, 13px));
   color: rgba(var(--color-foreground), 0.65);
 }
 
@@ -260,7 +260,7 @@
 }
 
 .testimonials-section .review-text {
-  font-size: 13px;
+  font-size: calc(var(--lv-font-scale, 1) * 13px);
   color: rgba(var(--color-foreground), 0.78);
   line-height: 1.75;
   flex: 1;
@@ -329,7 +329,7 @@
   }
 
   .testimonials-section .reviews-head-left h2 {
-    font-size: var(--ts-heading-size-t, 22px);
+    font-size: calc(var(--lv-heading-scale, 1) * var(--ts-heading-size-t, 22px));
   }
 }
 

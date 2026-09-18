@@ -99,7 +99,7 @@
 
 .image-with-text-section .image-text-heading {
   margin: 0;
-  font-size: var(--iwt-heading-size);
+  font-size: calc(var(--lv-heading-scale, 1) * var(--iwt-heading-size));
   line-height: 1.15;
 }
 
@@ -234,7 +234,7 @@
   }
 
   .image-with-text-section .image-text-heading {
-    font-size: calc(var(--iwt-heading-size) * 0.7);
+    font-size: calc(var(--lv-heading-scale, 1) * calc(var(--iwt-heading-size) * 0.7));
   }
 
   .image-with-text-section .image-text-block--button {

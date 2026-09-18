@@ -427,7 +427,7 @@
 
 .lv-col-page .lv-sidebar__heading {
   margin: 0 0 16px;
-  font-size: 11px;
+  font-size: calc(var(--lv-heading-scale, 1) * 11px);
   font-weight: 700;
   letter-spacing: .12em;
   color: rgb(var(--color-foreground));
@@ -548,7 +548,7 @@
 
 .lv-col-page .lv-no-filters-msg {
   margin: 0;
-  font-size: 13px;
+  font-size: calc(var(--lv-font-scale, 1) * 13px);
   opacity: .65;
 }
 
@@ -613,7 +613,7 @@
 }
 
 .lv-col-page .product-name {
-  font-size: 14px;
+  font-size: calc(var(--lv-heading-scale, 1) * 14px);
   font-weight: 400;
   line-height: 1.45;
   color: rgb(var(--color-foreground));
@@ -723,7 +723,7 @@
 }
 
 .lv-col-page .lv-product-grid.list-view .product-name {
-  font-size: 16px;
+  font-size: calc(var(--lv-heading-scale, 1) * 16px);
 }
 
 .lv-col-page .lv-product-grid.list-view .add-to-cart {
@@ -735,7 +735,7 @@
 .lv-col-page .lv-col-empty {
   text-align: center;
   padding: 60px 0;
-  font-size: 15px;
+  font-size: calc(var(--lv-font-scale, 1) * 15px);
   color: rgb(var(--color-foreground));
   opacity: .65;
 }
@@ -819,7 +819,7 @@
 
 .lv-col-page .lv-mobile-filter-head p {
   margin: 0;
-  font-size: 13px;
+  font-size: calc(var(--lv-heading-scale, 1) * 13px);
   font-weight: 700;
   letter-spacing: .12em;
 }
@@ -929,7 +929,7 @@
   }
 
   .lv-col-page .product-name {
-    font-size: 13px;
+    font-size: calc(var(--lv-heading-scale, 1) * 13px);
   }
 }
 {% endstylesheet %}

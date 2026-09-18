@@ -18,11 +18,11 @@
     text-align: var(--text-align);
   }
   .text--title {
-    font-size: 2rem;
+    font-size: calc(var(--lv-heading-scale, 1) * 2rem);
     font-weight: 700;
   }
   .text--subtitle {
-    font-size: 1.5rem;
+    font-size: calc(var(--lv-font-scale, 1) * 1.5rem);
   }
 {% endstylesheet %}
 

@@ -155,7 +155,7 @@
 }
 
 .lv-popup__heading {
-  font-size: clamp(32px, 5vw, 44px);
+  font-size: calc(var(--lv-heading-scale, 1) * clamp(32px, 5vw, 44px));
   font-weight: 700;
   letter-spacing: 10px;
   text-transform: uppercase;
@@ -171,7 +171,7 @@
   font-weight: 500;
   line-height: 19px; /* 126.667% */
   text-transform: capitalize;
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   color: #636363;
   margin-bottom: 20px;
 }
@@ -227,13 +227,13 @@
 }
 
 .lv-popup__success {
-  font-size: 15px;
+  font-size: calc(var(--lv-font-scale, 1) * 15px);
   color: var(--color-success, #2a7a2a);
   margin: 0;
 }
 
 .lv-popup__error {
-  font-size: 13px;
+  font-size: calc(var(--lv-font-scale, 1) * 13px);
   color: var(--color-error, #b3261e);
   margin: 0 0 16px;
 }

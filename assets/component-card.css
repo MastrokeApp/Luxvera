@@ -41,24 +41,24 @@
 
   .lv-main-collection-list__heading {
   margin: 0;
-  font-size: {{ section.settings.heading_font_size }}px !important;
+  font-size: calc(var(--lv-heading-scale, 1) * {{ section.settings.heading_font_size }}px) !important;
   line-height: 1.2;
   font-weight: 600;
 }
 
 .lv-main-collection-list__subtitle {
   margin-top: 10px;
-  font-size: {{ section.settings.subtitle_font_size }}px !important;
+  font-size: calc(var(--lv-font-scale, 1) * {{ section.settings.subtitle_font_size }}px) !important;
   line-height: 1.5;
 }
 
 @media screen and (max-width: 749px) {
   .lv-main-collection-list__heading {
-    font-size: {{ section.settings.heading_font_size_mobile }}px !important;
+    font-size: calc(var(--lv-heading-scale, 1) * {{ section.settings.heading_font_size_mobile }}px) !important;
   }
 
   .lv-main-collection-list__subtitle {
-    font-size: {{ section.settings.subtitle_font_size_mobile }}px !important;
+    font-size: calc(var(--lv-font-scale, 1) * {{ section.settings.subtitle_font_size_mobile }}px) !important;
   }
 }
 
@@ -220,7 +220,7 @@
   .lv-main-collection-card__title {
     margin: 0;
 
-    font-size: {{ section.settings.card_title_font_size }}px;
+    font-size: calc(var(--lv-heading-scale, 1) * {{ section.settings.card_title_font_size }}px);
     line-height: 1.25;
     font-weight: 600;
 
@@ -514,11 +514,11 @@
     }
 
     .lv-main-collection-list__heading {
-      font-size: {{ section.settings.heading_font_size_mobile }}px;
+      font-size: calc(var(--lv-heading-scale, 1) * {{ section.settings.heading_font_size_mobile }}px);
     }
 
     .lv-main-collection-list__subtitle {
-      font-size: {{ section.settings.subtitle_font_size_mobile }}px;
+      font-size: calc(var(--lv-font-scale, 1) * {{ section.settings.subtitle_font_size_mobile }}px);
     }
 
     .lv-main-collection-list__grid {
@@ -550,7 +550,7 @@
     }
 
     .lv-main-collection-card__title {
-      font-size: {{ section.settings.card_title_font_size_mobile }}px;
+      font-size: calc(var(--lv-heading-scale, 1) * {{ section.settings.card_title_font_size_mobile }}px);
     }
 
     .lv-main-collection-card__count {

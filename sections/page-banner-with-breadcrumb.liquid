@@ -217,7 +217,7 @@
     animation: lv-page-banner-fade-up .7s ease both;
     animation-delay: .38s;
     color: rgb(var(--color-foreground));
-    font-size: {{ section.settings.heading_size }}px;
+    font-size: calc(var(--lv-heading-scale, 1) * {{ section.settings.heading_size }}px);
     font-weight: 500;
     line-height: 1.15;
     margin: 0 0 20px;
@@ -228,7 +228,7 @@
     animation: lv-page-banner-fade-up .7s ease both;
     animation-delay: .52s;
     color: rgb(var(--color-foreground));
-    font-size: 18px;
+    font-size: calc(var(--lv-font-scale, 1) * 18px);
     font-weight: 400;
     margin: 0;
     max-width: 480px;
@@ -347,12 +347,12 @@
     }
 
     #lv-page-banner-{{ section.id }} .lv-page-banner__heading {
-      font-size: {{ section.settings.heading_size | times: 0.65 | round }}px;
+      font-size: calc(var(--lv-heading-scale, 1) * {{ section.settings.heading_size | times: 0.65 | round }}px);
       margin-bottom: 16px;
     }
 
     #lv-page-banner-{{ section.id }} .lv-page-banner__subtext {
-      font-size: 15px;
+      font-size: calc(var(--lv-font-scale, 1) * 15px);
       line-height: 1.6;
     }
 

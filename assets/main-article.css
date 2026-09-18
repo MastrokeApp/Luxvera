@@ -44,7 +44,7 @@
 
 .lv-article__title {
   font-family: var(--lv-font-heading, serif);
-  font-size: clamp(28px, 4.5vw, 44px);
+  font-size: calc(var(--lv-heading-scale, 1) * clamp(28px, 4.5vw, 44px));
   font-weight: 700;
   line-height: 1.2;
   margin: 0 0 16px;
@@ -67,7 +67,7 @@
 
 /* Rich content -- must display images/links exactly as entered in the RTE */
 .lv-article__content {
-  font-size: 16px;
+  font-size: calc(var(--lv-font-scale, 1) * 16px);
   line-height: 1.8;
   color: rgb(var(--color-foreground));
 }
@@ -169,7 +169,7 @@
 }
 
 .lv-article__comments-heading {
-  font-size: 22px;
+  font-size: calc(var(--lv-heading-scale, 1) * 22px);
   font-weight: 700;
   margin: 0 0 24px;
 }
@@ -197,14 +197,14 @@
 }
 
 .lv-comment__body {
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   line-height: 1.7;
   color: rgba(var(--color-foreground), 0.85);
   margin: 0;
 }
 
 .lv-article__comments-empty {
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   color: rgba(var(--color-foreground), 0.6);
   padding: 12px 0;
 }
@@ -241,7 +241,7 @@
 
 /* Moderated / pending comment notice */
 .lv-comment-notice {
-  font-size: 13px;
+  font-size: calc(var(--lv-font-scale, 1) * 13px);
   padding: 12px 16px;
   border-radius: 6px;
   margin-bottom: 20px;
@@ -258,7 +258,7 @@
 }
 
 .lv-comment-form__heading {
-  font-size: 20px;
+  font-size: calc(var(--lv-heading-scale, 1) * 20px);
   font-weight: 700;
   margin: 0 0 20px;
 }
@@ -266,7 +266,7 @@
 .lv-comment-form__errors {
   background: rgba(230, 57, 70, 0.08);
   color: #c0392b;
-  font-size: 13px;
+  font-size: calc(var(--lv-font-scale, 1) * 13px);
   padding: 14px 16px;
   border-radius: 6px;
   margin-bottom: 20px;

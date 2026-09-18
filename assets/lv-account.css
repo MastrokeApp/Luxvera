@@ -24,14 +24,14 @@
 }
 
 .lv-acct-title {
-  font-size: 28px;
+  font-size: calc(var(--lv-heading-scale, 1) * 28px);
   font-weight: 700;
   font-family: var(--lv-font-heading, serif);
   margin: 0 0 28px;
 }
 
 .lv-acct-lede {
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   line-height: 1.7;
   opacity: .75;
   margin: -12px 0 28px;
@@ -159,7 +159,7 @@
   border: 1px solid rgba(179, 38, 30, 0.4);
   border-radius: 4px;
   padding: 16px 20px;
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   color: var(--color-error, #b3261e);
 }
 
@@ -173,7 +173,7 @@
   border: 1px solid rgba(42, 122, 42, 0.4);
   border-radius: 4px;
   padding: 16px 20px;
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   color: var(--color-success, #2a7a2a);
 }
 
@@ -203,7 +203,7 @@
 }
 
 .lv-acct-section__heading {
-  font-size: 16px;
+  font-size: calc(var(--lv-heading-scale, 1) * 16px);
   font-weight: 700;
   margin: 0 0 16px;
   font-family: var(--lv-font-heading, serif);
@@ -239,7 +239,7 @@
 }
 
 .lv-acct-empty {
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   opacity: .65;
 }
 
@@ -270,7 +270,7 @@
 
 .lv-acct-address-card p {
   margin: 0 0 4px;
-  font-size: 13px;
+  font-size: calc(var(--lv-font-scale, 1) * 13px);
   line-height: 1.6;
 }
 

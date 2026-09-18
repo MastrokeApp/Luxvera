@@ -87,7 +87,7 @@
 
 .faq-accordion-section .faq-item__answer {
   padding: 0 0 20px;
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   line-height: 1.6;
   color: rgb(var(--color-foreground));
   opacity: 0.8;

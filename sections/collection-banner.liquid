@@ -179,7 +179,7 @@
   animation: lv-collection-banner-fade-up .7s ease both;
   animation-delay: .38s;
   color: rgb(var(--color-foreground));
-  font-size: var(--lv-cb-heading-size, 42px);
+  font-size: calc(var(--lv-heading-scale, 1) * var(--lv-cb-heading-size, 42px));
   font-weight: 500;
   line-height: 1.15;
   margin: 0 0 20px;
@@ -190,7 +190,7 @@
   animation: lv-collection-banner-fade-up .7s ease both;
   animation-delay: .52s;
   color: rgb(var(--color-foreground));
-  font-size: 18px;
+  font-size: calc(var(--lv-font-scale, 1) * 18px);
   font-weight: 400;
   margin: 0;
   max-width: 550px;
@@ -282,12 +282,12 @@
   }
 
   .lv-collection-banner .lv-collection-banner__heading {
-    font-size: var(--lv-cb-heading-size-mobile, 27px);
+    font-size: calc(var(--lv-heading-scale, 1) * var(--lv-cb-heading-size-mobile, 27px));
     margin-bottom: 16px;
   }
 
   .lv-collection-banner .lv-collection-banner__subtext {
-    font-size: 15px;
+    font-size: calc(var(--lv-font-scale, 1) * 15px);
     line-height: 1.6;
   }
 }

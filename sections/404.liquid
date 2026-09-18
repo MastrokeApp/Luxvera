@@ -67,14 +67,14 @@
 }
 
 .lv-404-title {
-  font-size: clamp(22px, 3vw, 28px);
+  font-size: calc(var(--lv-heading-scale, 1) * clamp(22px, 3vw, 28px));
   font-weight: 700;
   font-family: var(--lv-font-heading, serif);
   margin: 8px 0 12px;
 }
 
 .lv-404-text {
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   line-height: 1.7;
   opacity: 0.7;
   margin: 0 0 32px;

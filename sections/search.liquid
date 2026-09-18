@@ -233,7 +233,7 @@
 }
 
 .lv-search .lv-search-title {
-  font-size: clamp(24px, 4vw, 36px);
+  font-size: calc(var(--lv-heading-scale, 1) * clamp(24px, 4vw, 36px));
   font-weight: 700;
   font-family: var(--lv-font-heading, serif);
   color: rgb(var(--color-foreground));
@@ -326,7 +326,7 @@
 }
 
 .lv-search .lv-search-empty {
-  font-size: 15px;
+  font-size: calc(var(--lv-font-scale, 1) * 15px);
   color: rgb(var(--color-foreground));
   opacity: .7;
   padding: 32px 0;
@@ -356,7 +356,7 @@
 
 .lv-search .lv-sidebar__heading {
   margin: 0 0 16px;
-  font-size: 11px;
+  font-size: calc(var(--lv-heading-scale, 1) * 11px);
   font-weight: 700;
   letter-spacing: .12em;
   color: rgb(var(--color-foreground));
@@ -477,7 +477,7 @@
 
 .lv-search .lv-no-filters-msg {
   margin: 0;
-  font-size: 13px;
+  font-size: calc(var(--lv-font-scale, 1) * 13px);
   opacity: .65;
 }
 
@@ -527,7 +527,7 @@
 
 .lv-search .lv-search-grid.list-view .product-name,
 .lv-search .lv-search-grid.list-view .lv-search-card__title {
-  font-size: 16px;
+  font-size: calc(var(--lv-heading-scale, 1) * 16px);
 }
 
 .lv-search .lv-search-grid.list-view .add-to-cart {
@@ -603,7 +603,7 @@
 }
 
 .lv-search .product-name {
-  font-size: 14px;
+  font-size: calc(var(--lv-heading-scale, 1) * 14px);
   font-weight: 400;
   line-height: 1.45;
   color: rgb(var(--color-foreground));
@@ -721,7 +721,7 @@
   padding: 20px;
   box-sizing: border-box;
   text-align: center;
-  font-size: 16px;
+  font-size: calc(var(--lv-heading-scale, 1) * 16px);
   font-weight: 600;
   line-height: 1.3;
   color: rgb(var(--color-foreground));
@@ -749,7 +749,7 @@
 }
 
 .lv-search .lv-search-card__title {
-  font-size: 14px;
+  font-size: calc(var(--lv-heading-scale, 1) * 14px);
   font-weight: 400;
   line-height: 1.45;
   color: rgb(var(--color-foreground));

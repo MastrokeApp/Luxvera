@@ -159,7 +159,7 @@
 }
 
 .lv-cart .lv-cart-title {
-  font-size: clamp(22px, 3vw, 32px);
+  font-size: calc(var(--lv-heading-scale, 1) * clamp(22px, 3vw, 32px));
   font-weight: 700;
   font-family: var(--lv-font-heading, serif);
   margin: 0 0 36px;
@@ -206,7 +206,7 @@
 }
 
 .lv-cart .lv-cart-item-title {
-  font-size: 14px;
+  font-size: calc(var(--lv-heading-scale, 1) * 14px);
   font-weight: 600;
   color: var(--lv-color-text, #1a1a1a);
   margin: 0 0 4px;
@@ -323,7 +323,7 @@
 }
 
 .lv-cart .lv-cart-summary-title {
-  font-size: 16px;
+  font-size: calc(var(--lv-heading-scale, 1) * 16px);
   font-weight: 700;
   margin: 0 0 20px;
   font-family: var(--lv-font-heading, serif);
@@ -430,14 +430,14 @@
 }
 
 .lv-cart .lv-cart-empty h2 {
-  font-size: 22px;
+  font-size: calc(var(--lv-heading-scale, 1) * 22px);
   font-weight: 700;
   margin: 0 0 10px;
   font-family: var(--lv-font-heading, serif);
 }
 
 .lv-cart .lv-cart-empty p {
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   color: #888;
   margin: 0 0 28px;
 }

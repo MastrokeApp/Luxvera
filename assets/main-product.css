@@ -451,7 +451,7 @@
 
 .lv-pdp-title {
   font-family: var(--lv-font-heading, serif);
-  font-size: clamp(22px, 3.2vw, 32px);
+  font-size: calc(var(--lv-heading-scale, 1) * clamp(22px, 3.2vw, 32px));
   font-weight: 700;
   line-height: 1.18;
   margin: 0;
@@ -778,7 +778,7 @@
 
 .lv-pdp-buy__error {
   display: none;
-  font-size: 13px;
+  font-size: calc(var(--lv-font-scale, 1) * 13px);
   color: var(--lv-pdp-sale);
 }
 
@@ -934,7 +934,7 @@
 
 .lv-pdp-collapsible__body {
   padding: 0 0 18px;
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   line-height: 1.7;
   color: var(--lv-pdp-muted);
 }
@@ -945,7 +945,7 @@
 
 /* Description */
 .lv-pdp-description {
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   line-height: 1.75;
   color: var(--lv-pdp-muted);
 }

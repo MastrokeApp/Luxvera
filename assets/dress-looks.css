@@ -20,7 +20,7 @@
 }
 
 .dress-section .sec-title {
-  font-size: var(--dl-heading-size, 32px);
+  font-size: calc(var(--lv-heading-scale, 1) * var(--dl-heading-size, 32px));
   font-weight: 700;
   color: var(--lv-color-text, #1a1a1a);
   line-height: 1.15;
@@ -28,7 +28,7 @@
 }
 
 .dress-section .sec-sub {
-  font-size: var(--dl-subtitle-size, 13px);
+  font-size: calc(var(--lv-font-scale, 1) * var(--dl-subtitle-size, 13px));
   color: var(--lv-color-text, #1a1a1a);
   opacity: 0.55;
 }
@@ -270,7 +270,7 @@
   }
 
   .dress-section .sec-title {
-    font-size: var(--dl-heading-size-mobile, 23px);
+    font-size: calc(var(--lv-heading-scale, 1) * var(--dl-heading-size-mobile, 23px));
   }
 }
 

@@ -37,6 +37,8 @@
     --lv-font-heading: '{{ font_heading_family }}', {{ font_heading_fallback }};
     --lv-font-body: '{{ font_body_family }}', {{ font_body_fallback }};
     --lv-font-body-size: {{ settings.font_body_size | default: 15 }}px;
+    --lv-heading-scale: {{ settings.font_heading_scale | default: 100 | divided_by: 100.0 }};
+    --lv-font-scale: {{ settings.font_body_size | default: 15 | divided_by: 15.0 }};
     --lv-btn-radius: {{ btn_radius }};
   }
 

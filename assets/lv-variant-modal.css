@@ -155,7 +155,7 @@
   padding: 60px 20px 25px;
   text-align: center;
   color: #777;
-  font-size: 16px;
+  font-size: calc(var(--lv-font-scale, 1) * 16px);
   line-height: 1.5;
 }
 
@@ -207,7 +207,7 @@
 @media screen and (max-width: 749px) {
   .lv-col-empty {
     padding: 20px 20px 20px;
-    font-size: 15px;
+    font-size: calc(var(--lv-font-scale, 1) * 15px);
   }
 
   .lv-empty-btn {

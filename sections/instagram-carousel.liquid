@@ -19,7 +19,7 @@
 }
 
 #instagram-{{ section.id }} .sec-title {
-  font-size: {{ section.settings.heading_size | default: 32 }}px;
+  font-size: calc(var(--lv-heading-scale, 1) * {{ section.settings.heading_size | default: 32 }}px);
   font-weight: 700;
   color: rgb(var(--color-foreground));
   line-height: 1.15;
@@ -27,7 +27,7 @@
 }
 
 #instagram-{{ section.id }} .sec-sub {
-  font-size: {{ section.settings.subtitle_size | default: 13 }}px;
+  font-size: calc(var(--lv-font-scale, 1) * {{ section.settings.subtitle_size | default: 13 }}px);
   color: rgba(var(--color-foreground), 0.7);
 }
 
@@ -174,7 +174,7 @@
   }
 
   #instagram-{{ section.id }} .sec-title {
-    font-size: {{ section.settings.heading_size | default: 32 | times: 0.72 | round }}px;
+    font-size: calc(var(--lv-heading-scale, 1) * {{ section.settings.heading_size | default: 32 | times: 0.72 | round }}px);
   }
 }
 
@@ -189,7 +189,7 @@
   }
 
   #instagram-{{ section.id }} .sec-title {
-    font-size: {{ section.settings.heading_size | default: 32 | times: 0.62 | round }}px;
+    font-size: calc(var(--lv-heading-scale, 1) * {{ section.settings.heading_size | default: 32 | times: 0.62 | round }}px);
   }
 }
 

@@ -328,7 +328,7 @@
 
 .hero-slideshow .hero-slide__heading {
   color: rgb(var(--color-foreground));
-  font-size: var(--hero-heading-size, 48px);
+  font-size: calc(var(--lv-heading-scale, 1) * var(--hero-heading-size, 48px));
   font-weight: 500;
   line-height: 1.15;
   margin: 0 0 20px;
@@ -337,7 +337,7 @@
 
 .hero-slideshow .hero-slide__subtext {
   color: rgb(var(--color-foreground));
-  font-size: 18px;
+  font-size: calc(var(--lv-font-scale, 1) * 18px);
   margin: 0;
   max-width: 480px;
   opacity: 0.88;
@@ -454,12 +454,12 @@
   }
 
   .hero-slideshow .hero-slide__heading {
-    font-size: var(--hero-heading-size-mobile, 31px);
+    font-size: calc(var(--lv-heading-scale, 1) * var(--hero-heading-size-mobile, 31px));
     margin-bottom: 16px;
   }
 
   .hero-slideshow .hero-slide__subtext {
-    font-size: 15px;
+    font-size: calc(var(--lv-font-scale, 1) * 15px);
     line-height: 1.6;
   }
 

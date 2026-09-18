@@ -160,7 +160,7 @@
 }
 
 .lv-contact .lv-contact-info__label {
-  font-size: 16px;
+  font-size: calc(var(--lv-heading-scale, 1) * 16px);
   font-weight: 700;
   color: rgb(var(--color-foreground));
   margin: 0 0 8px;
@@ -168,7 +168,7 @@
 }
 
 .lv-contact .lv-contact-info__value {
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   line-height: 1.75;
   color: rgb(var(--color-foreground));
   opacity: 0.75;
@@ -209,7 +209,7 @@
 }
 
 .lv-contact .lv-contact-cta h3 {
-  font-size: 17px;
+  font-size: calc(var(--lv-heading-scale, 1) * 17px);
   font-weight: 700;
   margin: 0 0 10px;
   color: rgb(var(--color-foreground));
@@ -217,7 +217,7 @@
 }
 
 .lv-contact .lv-contact-cta p {
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   line-height: 1.75;
   color: rgb(var(--color-foreground));
   opacity: 0.7;
@@ -226,7 +226,7 @@
 
 /* Right: form */
 .lv-contact .lv-contact-form__heading {
-  font-size: 22px;
+  font-size: calc(var(--lv-heading-scale, 1) * 22px);
   font-weight: 700;
   color: rgb(var(--color-foreground));
   margin: 0 0 28px;
@@ -332,7 +332,7 @@
   border: 1px solid rgba(42, 122, 42, 0.4);
   border-radius: 4px;
   padding: 16px 20px;
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   color: var(--color-success, #2a7a2a);
   margin-top: 16px;
   text-align: center;
@@ -348,7 +348,7 @@
   border: 1px solid rgba(179, 38, 30, 0.4);
   border-radius: 4px;
   padding: 16px 20px;
-  font-size: 14px;
+  font-size: calc(var(--lv-font-scale, 1) * 14px);
   color: var(--color-error, #b3261e);
   margin-top: 16px;
 }
@@ -383,7 +383,7 @@
   gap: 10px;
   color: rgb(var(--color-foreground));
   opacity: 0.4;
-  font-size: 13px;
+  font-size: calc(var(--lv-font-scale, 1) * 13px);
 }
 
 .lv-contact .lv-contact-map__placeholder svg {

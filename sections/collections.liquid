@@ -235,7 +235,7 @@
 .lv-collections-list .lv-cl-title {
   font-family: var(--lv-font-heading, serif);
 
-  font-size: var(--lv-cl-heading-size, 32px);
+  font-size: calc(var(--lv-heading-scale, 1) * var(--lv-cl-heading-size, 32px));
 
   font-weight: 600;
 
@@ -248,7 +248,7 @@
 
 
 .lv-collections-list .lv-cl-sub {
-  font-size: var(--lv-cl-subtitle-size, 15px);
+  font-size: calc(var(--lv-font-scale, 1) * var(--lv-cl-subtitle-size, 15px));
 
   color: rgb(var(--color-foreground));
 
@@ -402,7 +402,7 @@
 
   padding: 60px 0;
 
-  font-size: 15px;
+  font-size: calc(var(--lv-font-scale, 1) * 15px);
 
   color: rgb(var(--color-foreground));
 
@@ -672,7 +672,7 @@
   .lv-collections-list .lv-cl-title {
 
     font-size:
-      var(--lv-cl-heading-size-mobile, 25px);
+      calc(var(--lv-heading-scale, 1) * var(--lv-cl-heading-size-mobile, 25px));
 
   }
 

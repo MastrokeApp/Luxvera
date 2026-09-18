@@ -322,7 +322,7 @@
 }
 
 .brand-section .brand-heading {
-  font-size: var(--bs-heading-size, 26px);
+  font-size: calc(var(--lv-heading-scale, 1) * var(--bs-heading-size, 26px));
   font-weight: 700;
   margin: 22px 0 12px;
   line-height: 1.3;
@@ -330,7 +330,7 @@
 }
 
 .brand-section .brand-body {
-  font-size: var(--bs-body-size, 13px);
+  font-size: calc(var(--lv-font-scale, 1) * var(--bs-body-size, 13px));
   color: rgba(var(--color-foreground), 0.6);
   line-height: 1.9;
   margin-bottom: 28px;
