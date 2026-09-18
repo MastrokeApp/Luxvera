@@ -138,16 +138,6 @@
         "default": 1920
       },
       {
-        "type": "range",
-        "id": "grid_gutter",
-        "label": "t:labels.grid_gutter",
-        "min": 8,
-        "max": 48,
-        "step": 4,
-        "unit": "px",
-        "default": 24
-      },
-      {
         "type": "header",
         "content": "t:labels.logo"
       },
