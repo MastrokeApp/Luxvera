@@ -149,7 +149,7 @@
 
         <div class="hero-slide__content">
           {%- if block.settings.heading != blank -%}
-            {%- if template.name == 'index' -%}
+            {%- if template.name == 'index' and is_first -%}
               <h1 class="hero-slide__heading">{{ block.settings.heading | escape }}</h1>
             {%- else -%}
               <h2 class="hero-slide__heading">{{ block.settings.heading | escape }}</h2>
@@ -193,7 +193,7 @@
             type="button"
             role="tab"
             aria-selected="{% if forloop.index0 == 0 %}true{% else %}false{% endif %}"
-            aria-label="Go to slide {{ forloop.index }}"
+            aria-label="{{ 'accessibility.go_to_slide' | t: index: forloop.index }}"
             data-index="{{ forloop.index0 }}"
           ></button>
         {%- endfor -%}
@@ -710,13 +710,13 @@
     },
     {
       "type": "header",
-      "content": "Accessibility"
+      "content": "t:labels.accessibility"
     },
     {
       "type": "text",
       "id": "slideshow_description",
-      "label": "Slideshow description",
-      "info": "Describe the slideshow for those using screen readers."
+      "label": "t:labels.slideshow_description",
+      "info": "t:labels.describe_the_slideshow_for_screen_readers"
     }
   ],
   "blocks": [
@@ -784,7 +784,7 @@
           "type": "text",
           "id": "button_label",
           "label": "t:labels.button_label",
-          "info": "Leave blank to hide the button.",
+          "info": "t:labels.leave_blank_to_hide_the_button",
           "default": "Shop the Collection"
         },
         {
@@ -795,7 +795,7 @@
         {
           "type": "checkbox",
           "id": "button_outline",
-          "label": "Outline style",
+          "label": "t:labels.outline_style",
           "default": false
         },
         {
@@ -834,7 +834,7 @@
         {
           "type": "select",
           "id": "mobile_content_alignment",
-          "label": "Mobile content alignment",
+          "label": "t:labels.mobile_content_alignment",
           "options": [
             { "value": "left", "label": "t:options.text_alignment.left" },
             { "value": "center", "label": "t:options.text_alignment.center" },

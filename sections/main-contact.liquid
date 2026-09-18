@@ -27,7 +27,9 @@
         <div class="lv-contact-info__block">
           <div class="lv-contact-info__icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            <p class="lv-contact-info__label" style="margin:0">{{ section.settings.email_label | default: 'Email Us' | escape }}</p>
+            <p class="lv-contact-info__label" style="margin:0">
+              {%- if section.settings.email_label != blank -%}{{ section.settings.email_label | escape }}{%- else -%}{{ 'contact.info.email_us' | t }}{%- endif -%}
+            </p>
           </div>
           <p class="lv-contact-info__value"><a href="mailto:{{ section.settings.email_value }}">{{ section.settings.email_value | escape }}</a></p>
         </div>
@@ -37,7 +39,9 @@
         <div class="lv-contact-info__block">
           <div class="lv-contact-info__icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.9 10.82a19.79 19.79 0 01-3.07-8.67A2 2 0 012.81 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.78a16 16 0 006.07 6.07l1.14-1.14a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-            <p class="lv-contact-info__label" style="margin:0">{{ section.settings.phone_label | default: 'Call Us' | escape }}</p>
+            <p class="lv-contact-info__label" style="margin:0">
+              {%- if section.settings.phone_label != blank -%}{{ section.settings.phone_label | escape }}{%- else -%}{{ 'contact.info.call_us' | t }}{%- endif -%}
+            </p>
           </div>
           <p class="lv-contact-info__value"><a href="tel:{{ section.settings.phone_value | remove: ' ' }}">{{ section.settings.phone_value | escape }}</a></p>
         </div>
@@ -47,7 +51,9 @@
         <div class="lv-contact-info__block">
           <div class="lv-contact-info__icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <p class="lv-contact-info__label" style="margin:0">{{ section.settings.location_label | default: 'Our Location' | escape }}</p>
+            <p class="lv-contact-info__label" style="margin:0">
+              {%- if section.settings.location_label != blank -%}{{ section.settings.location_label | escape }}{%- else -%}{{ 'contact.info.our_location' | t }}{%- endif -%}
+            </p>
           </div>
           <p class="lv-contact-info__value">{{ section.settings.location_line1 | escape }}<br>{{ section.settings.location_line2 | escape }}</p>
         </div>
@@ -55,7 +61,9 @@
 
       {%- if section.settings.response_text != blank -%}
         <div class="lv-contact-info__block">
-          <p class="lv-contact-info__label">{{ section.settings.response_label | default: 'Response Time' | escape }}</p>
+          <p class="lv-contact-info__label">
+            {%- if section.settings.response_label != blank -%}{{ section.settings.response_label | escape }}{%- else -%}{{ 'contact.info.response_time' | t }}{%- endif -%}
+          </p>
           <p class="lv-contact-info__value">{{ section.settings.response_text | escape }}</p>
         </div>
       {%- endif -%}
@@ -109,7 +117,7 @@
         </div>
 
         <button type="submit" class="lv-contact-form-submit">
-          {{ section.settings.btn_label | default: 'Send Message' | escape }}
+          {%- if section.settings.btn_label != blank -%}{{ section.settings.btn_label | escape }}{%- else -%}{{ 'contact.form.send_message' | t }}{%- endif -%}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       {%- endform -%}
@@ -458,8 +466,7 @@
     {
       "type": "text",
       "id": "email_value",
-      "label": "t:labels.email_address",
-      "default": "support@luxvera.com"
+      "label": "t:labels.email_address"
     },
     {
       "type": "text",
@@ -470,8 +477,7 @@
     {
       "type": "text",
       "id": "phone_value",
-      "label": "t:labels.phone_number",
-      "default": "+1 (415) 555-0172"
+      "label": "t:labels.phone_number"
     },
     {
       "type": "text",
@@ -482,14 +488,12 @@
     {
       "type": "text",
       "id": "location_line1",
-      "label": "t:labels.address_line_1",
-      "default": "123 Fashion Boulevard, Suite 200"
+      "label": "t:labels.address_line_1"
     },
     {
       "type": "text",
       "id": "location_line2",
-      "label": "t:labels.address_line_2",
-      "default": "Los Angeles, California 90210"
+      "label": "t:labels.address_line_2"
     },
     {
       "type": "text",

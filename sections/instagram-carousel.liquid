@@ -249,14 +249,14 @@
               {%- if block.settings.image != blank -%}
                 <img
                   src="{{ block.settings.image | image_url: width: 500, height: 660, crop: 'center' }}"
-                  alt="{{ block.settings.alt | default: 'Media post' | escape }}"
+                  alt="{%- if block.settings.alt != blank -%}{{ block.settings.alt | escape }}{%- else -%}{{ 'instagram_carousel.media_alt_default' | t }}{%- endif -%}"
                   width="500"
                   height="660"
                   loading="lazy"
                 >
               {%- elsif block.settings.video != blank -%}
                 {%- assign source = block.settings.video.sources | first -%}
-                <video autoplay muted loop playsinline preload="none" class="insta-video">
+                <video muted loop playsinline preload="none" class="insta-video">
                   <source src="{{ source.url }}" type="{{ source.mime_type }}">
                 </video>
               {%- else -%}
@@ -368,6 +368,13 @@
     }
 
     var sw = new Swiper(el, config);
+
+    if (!prefersReducedMotion) {
+      var videos = el.querySelectorAll('.insta-video');
+      videos.forEach(function (v) {
+        v.play().catch(function () {});
+      });
+    }
 
     var prevBtn = document.getElementById('lv-insta-prev-' + sid);
     var nextBtn = document.getElementById('lv-insta-next-' + sid);

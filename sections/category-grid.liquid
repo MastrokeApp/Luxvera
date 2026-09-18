@@ -55,7 +55,8 @@
                   alt="{{ card_label | escape }}"
                   width="600"
                   height="600"
-                  loading="lazy"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                  {% if forloop.first %}fetchpriority="high"{% endif %}
                 >
               {%- elsif col != nil and col.featured_image != nil -%}
                 <img
@@ -63,7 +64,8 @@
                   alt="{{ card_label | escape }}"
                   width="600"
                   height="600"
-                  loading="lazy"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                  {% if forloop.first %}fetchpriority="high"{% endif %}
                 >
               {%- elsif col != nil and col.products.first.featured_image != blank -%}
                 <img
@@ -71,7 +73,8 @@
                   alt="{{ card_label | escape }}"
                   width="600"
                   height="600"
-                  loading="lazy"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                  {% if forloop.first %}fetchpriority="high"{% endif %}
                 >
               {%- elsif card_label != blank -%}
                 <div class="cat-card__title-fallback">{{ card_label | escape }}</div>

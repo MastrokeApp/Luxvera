@@ -83,7 +83,7 @@ body:has(.lv-collection-banner) .breadcrumbsection {
     <nav class="breadcrumbs container" role="navigation" aria-label="breadcrumbs">
       <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="/">Home</a>
+          <a class="breadcrumbs__link" href="{{ routes.root_url }}">{{ 'accessibility.home' | t }}</a>
         </li>
 
         {%- case t -%}

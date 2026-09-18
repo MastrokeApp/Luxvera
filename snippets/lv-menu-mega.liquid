@@ -9,27 +9,11 @@
   no item list under it (still occupies its own column).
 
   @param {link} link - the top-level navigation link whose mega-menu columns to render
+  @param blocks - the section's blocks, filtered for type 'mega_menu_image'
 
   @example
-  {% render 'lv-menu-mega', link: link %}
+  {% render 'lv-menu-mega', link: link, blocks: section.blocks %}
 {% enddoc %}
-{% comment %} 
-<div class="lv-dropdown lv-dropdown--mega" style="--lv-mega-cols: {{ link.links.size }};">
-  {%- for column in link.links -%}
-    <div class="lv-mega-col">
-      <div class="lv-mega-heading{% if column.links.size == 0 %} lv-mega-heading--link{% endif %}">
-        <a href="{{ column.url }}">{{ column.title }}</a>
-      </div>
-      {%- if column.links.size > 0 -%}
-        <ul class="lv-mega-list">
-          {%- for grandchild in column.links -%}
-            <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
-          {%- endfor -%}
-        </ul>
-      {%- endif -%}
-    </div>
-  {%- endfor -%}
-</div> {% endcomment %}
 <div
   class="lv-dropdown lv-dropdown--mega"
   style="--lv-mega-cols: {{ link.links.size }};"

@@ -29,6 +29,7 @@
     "account": "Account",
     "cart": "Cart",
     "quantity": "Quantity",
+    "quantity_for": "Quantity for {{ product }}",
     "decrease_quantity": "Decrease quantity",
     "increase_quantity": "Increase quantity",
     "product_media": "Product media",
@@ -45,6 +46,7 @@
     "close_filter": "Close filter",
     "select_size": "Select size",
     "verified_purchase": "Verified purchase",
+    "rating": "{{ rating }} out of 5 stars",
     "share_on_facebook": "Share on Facebook",
     "share_on_pinterest": "Share on Pinterest",
     "share_by_email": "Share by email",
@@ -58,7 +60,19 @@
     "pinterest": "Pinterest",
     "tiktok": "TikTok",
     "youtube": "YouTube",
-    "home": "Home"
+    "home": "Home",
+    "view_image": "View image {{ index }}",
+    "view_image_of_total": "View image {{ index }} of {{ total }}",
+    "previous_collections": "Previous collections",
+    "next_collections": "Next collections",
+    "previous_page": "Previous page",
+    "next_page": "Next page",
+    "collection_pagination": "Collection pagination",
+    "page_number": "Page {{ page }}",
+    "go_to_slide": "Go to slide {{ index }}",
+    "toggle_submenu": "Toggle submenu",
+    "toggle_submenu_for": "Toggle {{ title }} submenu",
+    "filter_by_tag": "Filter by tag"
   },
   "blog": {
     "article_comments": "Comments",
@@ -67,11 +81,30 @@
     "comment_form_email": "Email",
     "comment_form_name": "Name",
     "comment_form_submit": "Post",
-    "comment_form_title": "Add a comment"
+    "comment_form_title": "Add a comment",
+    "read_more": "Read more",
+    "no_articles_found": "No articles found.",
+    "all": "All",
+    "by_author_html": "By {{ author }}",
+    "by_author": "By {{ author }}",
+    "back_to_blog": "Back to {{ title }}",
+    "share": "Share",
+    "no_comments": "Be the first to comment.",
+    "comment_posted_pending": "Your comment was posted successfully. It's awaiting approval by the blog owner before it appears.",
+    "comment_posted_success": "Your comment was posted successfully.",
+    "comment_count": {
+      "one": "{{ count }} comment",
+      "other": "{{ count }} comments"
+    },
+    "comments_count": {
+      "one": "{{ count }} comment",
+      "other": "{{ count }} comments"
+    }
   },
   "cart": {
     "checkout": "Checkout",
     "title": "Cart",
+    "title_with_count_html": "Your cart ({{ count }})",
     "update": "Update",
     "remove": "Remove",
     "empty_title": "Your cart is empty",
@@ -82,7 +115,11 @@
     "added_to_cart": "Added to cart",
     "continue_shopping": "Continue Shopping",
     "free_shipping_remaining_template": "You're {{amount}} away from free shipping!",
-    "free_shipping_qualified": "🎉 You qualify for free shipping!"
+    "free_shipping_qualified": "🎉 You qualify for free shipping!",
+    "savings": "Savings",
+    "gift_message": "Gift Message",
+    "gift_message_placeholder": "Add a gift message (optional)",
+    "proceed_to_checkout": "Proceed to Checkout"
   },
   "contact": {
     "form": {
@@ -95,8 +132,39 @@
       "message": "Message",
       "message_placeholder": "Write your message here…",
       "success": "Thanks for reaching out! We'll get back to you within 24-48 hours.",
-      "map_placeholder": "Add your Google Maps embed URL in Theme Editor"
+      "map_placeholder": "Add your Google Maps embed URL in Theme Editor",
+      "send_message": "Send Message"
+    },
+    "info": {
+      "email_us": "Email Us",
+      "call_us": "Call Us",
+      "our_location": "Our Location",
+      "response_time": "Response Time"
     }
+  },
+  "footer": {
+    "brand_sub_default": "Fashion",
+    "rights_reserved_default": "Fashion. All rights reserved."
+  },
+  "product_tabs": {
+    "tab_default": "Tab"
+  },
+  "testimonials": {
+    "heading_default": "What They're Saying",
+    "subheading_default": "Loved by 17k+ Customers",
+    "reviewer_default": "Customer"
+  },
+  "countdown": {
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
+  },
+  "instagram_carousel": {
+    "media_alt_default": "Media post"
+  },
+  "page_banner": {
+    "description_placeholder": "Add a short description for this page banner."
   },
   "customers": {
     "login": {
@@ -171,7 +239,8 @@
       "discount": "Discount",
       "grand_total": "Total",
       "tracking_number_html": "Tracking number: {{ number }}",
-      "fulfilled_on_html": "Fulfilled on {{ date }}"
+      "fulfilled_on_html": "Fulfilled on {{ date }}",
+      "unfulfilled": "Unfulfilled"
     },
     "addresses": {
       "title": "Addresses",
@@ -205,7 +274,14 @@
     "filter_min": "Min",
     "filter_max": "Max",
     "filters_unavailable": "Filters are not available for this collection.",
-    "continue_shopping": "Continue Shopping"
+    "continue_shopping": "Continue Shopping",
+    "filter_by": "Filter by",
+    "product_count": {
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
+    },
+    "no_results_hint": "Create collections in Shopify admin and they will automatically appear here.",
+    "add_collection_block_hint": "Add a Collection block to get started."
   },
   "header": {
     "my_account": "My Account"
@@ -230,7 +306,21 @@
     "count": {
       "one": "{{ count }} item",
       "other": "{{ count }} items"
-    }
+    },
+    "description": "Description",
+    "share": "Share",
+    "example_brand": "Example Brand",
+    "size": "Size",
+    "size_small": "Small",
+    "size_medium": "Medium",
+    "size_large": "Large",
+    "select_product_placeholder": "Select a product in the Theme Editor to display the product description.",
+    "add_additional_info_placeholder": "Add additional product information here.",
+    "minimum_order": "Minimum order: {{ count }}",
+    "maximum_order": "Maximum order: {{ count }}",
+    "sold_in_multiples_of": "Sold in multiples of {{ count }}",
+    "featured_product": "Featured product",
+    "buy_it_now": "Buy it now"
   },
   "pickup_availability": {
     "available_at": "Pickup available at {{ location }}",
@@ -267,6 +357,12 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}",
-    "view_all_results_html": "View all results for {{ terms }}"
+    "view_all_results_html": "View all results for {{ terms }}",
+    "store_placeholder": "Search our store"
+  },
+  "page": {
+    "title_placeholder": "Page title",
+    "editor_preview_notice": "This is a preview of the page content area.",
+    "editor_setup_hint_html": "Add content to the selected Shopify page from <strong>Online Store &rarr; Pages</strong>, or set a default message in this section's settings, and it will appear here."
   }
 }

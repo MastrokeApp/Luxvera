@@ -212,12 +212,7 @@
           })
         );
       })
-      .catch(function (err) {
-        console.error(
-          'Cart item removal error:',
-          err
-        );
-
+      .catch(function () {
         button.disabled = false;
         button.textContent = 'Remove';
       });
@@ -416,12 +411,7 @@
             window.location.href = drawer.dataset.cartUrl || '/cart';
           }
         })
-        .catch(function (err) {
-          console.error(
-            'Cart notification error:',
-            err
-          );
-        });
+        .catch(function () {});
     }
   );
 })();

@@ -38,6 +38,17 @@
 
   {{ content_for_header }}
 
+  {%- comment -%}
+    Skip Swiper on real storefront pages that don't render any swiper-based
+    section. Always load it inside the theme editor (request.design_mode) so
+    a merchant adding a swiper section via live AJAX re-render isn't left
+    waiting on a library that never loads.
+  {%- endcomment -%}
+  {%- assign uses_swiper = false -%}
+  {%- if content_for_layout contains 'class="swiper ' or request.design_mode -%}
+    {%- assign uses_swiper = true -%}
+  {%- endif -%}
+
   {%- assign btn_radius = '0px' -%}
   {%- if settings.button_style == 'soft' -%}{%- assign btn_radius = '4px' -%}{%- endif -%}
   {%- if settings.button_style == 'rounded' -%}{%- assign btn_radius = '24px' -%}{%- endif -%}
@@ -106,7 +117,7 @@
         {%- endif %}
         .color-{{ scheme.id }} {
           --color-background: {{ scheme.settings.background.red }},{{ scheme.settings.background.green }},{{ scheme.settings.background.blue }};
-        {% if scheme.settings.background_gradient != empty %}
+        {% if scheme.settings.background_gradient != blank %}
           --gradient-background: {{ scheme.settings.background_gradient }};
         {% else %}
           --gradient-background: {{ scheme.settings.background }};
@@ -149,15 +160,17 @@
   {{ 'luxvera.css' | asset_url | stylesheet_tag }}
   {{ 'component-button.css' | asset_url | stylesheet_tag }}
 
-  {%- comment -%} Swiper stylesheet (self-hosted), loaded non-render-blocking. {%- endcomment -%}
-  <link
-    rel="stylesheet"
-    href="{{ 'swiper-bundle.min.css' | asset_url }}"
-    media="print"
-    onload="this.media='all'">
-  <noscript>
-    <link rel="stylesheet" href="{{ 'swiper-bundle.min.css' | asset_url }}">
-  </noscript>
+  {%- if uses_swiper -%}
+    {%- comment -%} Swiper stylesheet (self-hosted), loaded non-render-blocking, only when a rendered section actually uses it. {%- endcomment -%}
+    <link
+      rel="stylesheet"
+      href="{{ 'swiper-bundle.min.css' | asset_url }}"
+      media="print"
+      onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="{{ 'swiper-bundle.min.css' | asset_url }}">
+    </noscript>
+  {%- endif -%}
 </head>
 
 <body class="template-{{ template.name }}">
@@ -175,8 +188,10 @@
 
   {%- sections 'footer-group' -%}
 
-  {%- comment -%} Swiper library (self-hosted) {%- endcomment -%}
-  <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
+  {%- if uses_swiper -%}
+    {%- comment -%} Swiper library (self-hosted), only when a rendered section actually uses it. {%- endcomment -%}
+    <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
+  {%- endif -%}
   <script src="{{ 'luxvera-global.js' | asset_url }}" defer></script>
   <script src="{{ 'luxvera.js' | asset_url }}" defer></script>
 

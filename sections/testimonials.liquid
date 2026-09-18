@@ -25,8 +25,12 @@
   <div class="container">
     <div class="reviews-head">
       <div class="reviews-head-left">
-        <h2>{{ section.settings.heading | default: "What They're Saying" | escape }}</h2>
-        <p>{{ section.settings.subheading | default: 'Loved by 17k+ Customers' | escape }}</p>
+        <h2>
+          {%- if section.settings.heading != blank -%}{{ section.settings.heading | escape }}{%- else -%}{{ 'testimonials.heading_default' | t }}{%- endif -%}
+        </h2>
+        <p>
+          {%- if section.settings.subheading != blank -%}{{ section.settings.subheading | escape }}{%- else -%}{{ 'testimonials.subheading_default' | t }}{%- endif -%}
+        </p>
       </div>
     </div>
 
@@ -36,18 +40,20 @@
           <div class="swiper-slide" {{ block.shopify_attributes }}>
             <div class="review-card">
               <div class="review-card-top">
-                <div class="review-stars">
-                  {%- assign stars = block.settings.stars | default: 5 -%}
-                  {%- for i in (1..stars) -%}★{%- endfor -%}
+                {%- assign stars = block.settings.stars | default: 5 -%}
+                <div class="review-stars" role="img" aria-label="{{ 'accessibility.rating' | t: rating: stars }}">
+                  {%- for i in (1..stars) -%}<span aria-hidden="true">★</span>{%- endfor -%}
                 </div>
-               
+
               </div>
 
               <div class="review-author-row">
-                <span class="review-name">{{ block.settings.name | default: 'Customer' | escape }}</span>
+                <span class="review-name">
+                  {%- if block.settings.name != blank -%}{{ block.settings.name | escape }}{%- else -%}{{ 'testimonials.reviewer_default' | t }}{%- endif -%}
+                </span>
                 {%- if block.settings.verified -%}
-                  <span class="review-verified" title="{{ 'accessibility.verified_purchase' | t }}">
-                    <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <span class="review-verified" role="img" aria-label="{{ 'accessibility.verified_purchase' | t }}">
+                    <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
                       <polyline points="2 5 4 7.5 8 3"/>
                     </svg>
                   </span>

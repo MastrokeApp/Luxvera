@@ -36,7 +36,7 @@
                   <div class="lv-footer-brand-name">
                     <a href="{{ routes.root_url }}" class="lv-footer-brand-link">
                       {{ block.settings.brand_name | default: shop.name | upcase }}
-                      <div class="lv-logo__sub-row"><span class="lv-logo__line"></span><span class="lv-logo__sub">{{ section.settings.brand_sub | default: 'Fashion' }}</span><span class="lv-logo__line"></span></div>
+                      <div class="lv-logo__sub-row"><span class="lv-logo__line"></span><span class="lv-logo__sub">{%- if section.settings.brand_sub != blank -%}{{ section.settings.brand_sub }}{%- else -%}{{ 'footer.brand_sub_default' | t }}{%- endif -%}</span><span class="lv-logo__line"></span></div>
                     </a>
                   </div>
                 {% endif %}
@@ -156,6 +156,12 @@
       {% endif %}
     {% endfor %}
 
+    {% for block in section.blocks %}
+      {% if block.type == '@app' %}
+        {% render block %}
+      {% endif %}
+    {% endfor %}
+
   </div>
 
   <div class="lv-footer-bottom">
@@ -168,7 +174,7 @@
           {% break %}
         {% endif %}
       {% endfor %}
-      {{ footer_brand_name }} {{ section.settings.bottom_tagline | default: 'Fashion. All rights reserved.' }}
+      {{ footer_brand_name }} {%- if section.settings.bottom_tagline != blank -%}{{ section.settings.bottom_tagline }}{%- else -%}{{ 'footer.rights_reserved_default' | t }}{%- endif -%}
     </p>
      <p class="footer__powered-by">
     {{ powered_by_link }}
@@ -332,6 +338,9 @@
     }
   ],
   "blocks": [
+    {
+      "type": "@app"
+    },
     {
       "type": "brand",
       "name": "t:general.brand",

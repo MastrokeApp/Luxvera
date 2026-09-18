@@ -95,12 +95,15 @@
             {%- for p in rec_products -%}
               {%- if rec_source != 'recommendations' and p.id == product.id -%}{%- continue -%}{%- endif -%}
               {%- if shown >= section.settings.products_to_show -%}{%- break -%}{%- endif -%}
+              {%- assign is_first_shown = false -%}
+              {%- if shown == 0 -%}{%- assign is_first_shown = true -%}{%- endif -%}
               <div class="swiper-slide">
                 {% render 'product-card',
                   product: p,
                   card_context: 'dress-looks',
                   atc_label: section.settings.atc_label,
-                  image_ratio: 'portrait'
+                  image_ratio: 'portrait',
+                  priority: is_first_shown
                 %}
               </div>
               {%- assign shown = shown | plus: 1 -%}
@@ -249,8 +252,7 @@
           document.dispatchEvent(new CustomEvent('cart:open'));
           closeModal();
         })
-        .catch(function (err) {
-          console.warn('[Recs ATC]', err);
+        .catch(function () {
           if (btn) { btn.classList.remove('adding'); btn.innerHTML = origHTML; }
           closeModal();
         });

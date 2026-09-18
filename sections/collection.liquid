@@ -85,18 +85,21 @@
         {% if collection.products_count > 0 %}
         <aside class="lv-col-sidebar" id="lv-col-sidebar-{{ section.id }}">
           <div class="lv-sidebar-inner">
-            <p class="lv-sidebar__heading">{{ section.settings.filter_heading | default: 'FILTER BY' }}</p>
+            <p class="lv-sidebar__heading">
+              {%- if section.settings.filter_heading != blank -%}{{ section.settings.filter_heading }}{%- else -%}{{ 'collections.filter_by' | t }}{%- endif -%}
+            </p>
 
             {%- if collection.filters != empty -%}
               <form class="lv-filters-form" id="lv-filters-form-{{ section.id }}">
                 {%- for filter in collection.filters -%}
+                  {%- assign filter_body_id = 'lv-filter-body-' | append: section.id | append: '-' | append: forloop.index0 -%}
                   <div class="lv-filter-group" data-filter-type="{{ filter.type }}">
-                    <button type="button" class="lv-filter-group__toggle">
+                    <button type="button" class="lv-filter-group__toggle" aria-expanded="true" aria-controls="{{ filter_body_id }}">
                       {{ filter.label | upcase }}
                       <span class="lv-fg-arrow" aria-hidden="true">&#8722;</span>
                     </button>
 
-                    <div class="lv-filter-group__body">
+                    <div class="lv-filter-group__body" id="{{ filter_body_id }}">
                       {%- case filter.type -%}
                         {%- when 'boolean' or 'list' -%}
                           {%- for filter_value in filter.values -%}
@@ -115,7 +118,9 @@
 
                         {%- when 'price_range' -%}
                           <div class="lv-price-range">
+                            <label class="visually-hidden" for="{{ filter_body_id }}-min">{{ 'collections.filter_min' | t }}</label>
                             <input
+                              id="{{ filter_body_id }}-min"
                               class="lv-price-input"
                               type="number"
                               name="{{ filter.min_value.param_name }}"
@@ -123,7 +128,9 @@
                               placeholder="{{ 'collections.filter_min' | t }}"
                               min="0"
                             >
+                            <label class="visually-hidden" for="{{ filter_body_id }}-max">{{ 'collections.filter_max' | t }}</label>
                             <input
+                              id="{{ filter_body_id }}-max"
                               class="lv-price-input"
                               type="number"
                               name="{{ filter.max_value.param_name }}"
@@ -154,20 +161,23 @@
             <div class="lv-mobile-filter-overlay" data-close-mobile-filter></div>
             <div class="lv-mobile-filter-panel">
               <div class="lv-mobile-filter-head">
-                <p>{{ section.settings.filter_heading | default: 'FILTER BY' }}</p>
+                <p>
+                  {%- if section.settings.filter_heading != blank -%}{{ section.settings.filter_heading }}{%- else -%}{{ 'collections.filter_by' | t }}{%- endif -%}
+                </p>
                 <button type="button" class="lv-mobile-filter-close" data-close-mobile-filter aria-label="{{ 'accessibility.close_filter' | t }}">&times;</button>
               </div>
 
               {%- if collection.filters != empty -%}
                 <form class="lv-filters-form lv-filters-form--mobile" id="lv-filters-form-mobile-{{ section.id }}">
                   {%- for filter in collection.filters -%}
+                    {%- assign filter_body_id = 'lv-filter-body-mobile-' | append: section.id | append: '-' | append: forloop.index0 -%}
                     <div class="lv-filter-group" data-filter-type="{{ filter.type }}">
-                      <button type="button" class="lv-filter-group__toggle">
+                      <button type="button" class="lv-filter-group__toggle" aria-expanded="true" aria-controls="{{ filter_body_id }}">
                         {{ filter.label | upcase }}
                         <span class="lv-fg-arrow" aria-hidden="true">&#8722;</span>
                       </button>
 
-                      <div class="lv-filter-group__body">
+                      <div class="lv-filter-group__body" id="{{ filter_body_id }}">
                         {%- case filter.type -%}
                           {%- when 'boolean' or 'list' -%}
                             {%- for filter_value in filter.values -%}
@@ -186,7 +196,9 @@
 
                           {%- when 'price_range' -%}
                             <div class="lv-price-range">
+                              <label class="visually-hidden" for="{{ filter_body_id }}-min">{{ 'collections.filter_min' | t }}</label>
                               <input
+                                id="{{ filter_body_id }}-min"
                                 class="lv-price-input"
                                 type="number"
                                 name="{{ filter.min_value.param_name }}"
@@ -194,7 +206,9 @@
                                 placeholder="{{ 'collections.filter_min' | t }}"
                                 min="0"
                               >
+                              <label class="visually-hidden" for="{{ filter_body_id }}-max">{{ 'collections.filter_max' | t }}</label>
                               <input
+                                id="{{ filter_body_id }}-max"
                                 class="lv-price-input"
                                 type="number"
                                 name="{{ filter.max_value.param_name }}"
@@ -236,7 +250,8 @@
                 product: product,
                 card_context: 'collection',
                 atc_label: section.settings.atc_label,
-                image_ratio: section.settings.image_ratio
+                image_ratio: section.settings.image_ratio,
+                priority: forloop.first
               %}
             {%- endfor -%}
           </div>
@@ -271,6 +286,12 @@
     </div>
   </div>
 {% endpaginate %}
+
+{%- for block in section.blocks -%}
+  {%- if block.type == '@app' -%}
+    {% render block %}
+  {%- endif -%}
+{%- endfor -%}
 
 {% stylesheet %}
 .lv-col-page {
@@ -984,7 +1005,9 @@
       var arrow = btn.querySelector('.lv-fg-arrow');
       if (!body) return;
       body.classList.toggle('collapsed');
-      if (arrow) arrow.innerHTML = body.classList.contains('collapsed') ? '+' : '&#8722;';
+      var isCollapsed = body.classList.contains('collapsed');
+      btn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+      if (arrow) arrow.innerHTML = isCollapsed ? '+' : '&#8722;';
     }
 
     function serializeFilterForm(form) {
@@ -1143,9 +1166,7 @@
     closeModal();
 
   })
-  .catch(function (err) {
-
-    console.warn('[Collection ATC]', err);
+  .catch(function () {
 
     if (btn) {
       btn.classList.remove('adding');
@@ -1529,6 +1550,11 @@
     {
       "type": "header",
       "content": "t:labels.colors"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
     }
   ]
 }

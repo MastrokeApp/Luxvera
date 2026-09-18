@@ -37,7 +37,9 @@
 >
   <div class="lv-search-inner">
     
-    <h1 class="lv-search-title">{{ section.settings.heading | default: 'Search' | escape }}</h1>
+    <h1 class="lv-search-title">
+      {%- if section.settings.heading != blank -%}{{ section.settings.heading | escape }}{%- else -%}{{ 'search.title' | t }}{%- endif -%}
+    </h1>
 
     <form action="{{ routes.search_url }}" method="get" role="search" class="lv-search-form">
       <input type="hidden" name="type" value="product,page,article">
@@ -45,11 +47,13 @@
         type="search"
         name="q"
         value="{{ search.terms | escape }}"
-        placeholder="{{ section.settings.placeholder | default: 'Search our store' | escape }}"
+        placeholder="{%- if section.settings.placeholder != blank -%}{{ section.settings.placeholder | escape }}{%- else -%}{{ 'search.store_placeholder' | t }}{%- endif -%}"
         class="lv-search-input"
         aria-label="{{ 'accessibility.search' | t }}"
       >
-      <button type="submit" class="lv-search-submit">{{ section.settings.submit_label | default: 'Search' | escape }}</button>
+      <button type="submit" class="lv-search-submit">
+        {%- if section.settings.submit_label != blank -%}{{ section.settings.submit_label | escape }}{%- else -%}{{ 'search.submit' | t }}{%- endif -%}
+      </button>
     </form>
 
     {%- if search.performed -%}
@@ -75,7 +79,9 @@
           {%- if section.settings.show_filters -%}
             <aside class="lv-search-sidebar">
               <div class="lv-sidebar-inner">
-                <p class="lv-sidebar__heading">{{ section.settings.filter_heading | default: 'FILTER BY' }}</p>
+                <p class="lv-sidebar__heading">
+                  {%- if section.settings.filter_heading != blank -%}{{ section.settings.filter_heading }}{%- else -%}{{ 'collections.filter_by' | t }}{%- endif -%}
+                </p>
 
                 {%- if search.filters != empty -%}
                   <form class="lv-filters-form" id="lv-filters-form-{{ section.id }}">
@@ -150,7 +156,8 @@
                         product: result,
                         card_context: 'collection',
                         atc_label: section.settings.atc_label,
-                        image_ratio: section.settings.image_ratio
+                        image_ratio: section.settings.image_ratio,
+                        priority: forloop.first
                       %}
 
                     {%- else -%}
@@ -196,6 +203,12 @@
       {%- endif -%}
     {%- endif -%}
   </div>
+
+  {%- for block in section.blocks -%}
+    {%- if block.type == '@app' -%}
+      {% render block %}
+    {%- endif -%}
+  {%- endfor -%}
 
   {%- comment -%} Size picker for multi-variant products {%- endcomment -%}
   <div class="lv-variant-modal" id="lv-vm-search-{{ section.id }}" role="dialog" aria-modal="true" aria-label="{{ 'products.select_size' | t }}">
@@ -953,8 +966,7 @@
         document.dispatchEvent(new CustomEvent('cart:open'));
         closeModal();
       })
-      .catch(function (err) {
-        console.warn('[Search ATC]', err);
+      .catch(function () {
         if (btn) { btn.classList.remove('adding'); btn.innerHTML = origHTML; }
         closeModal();
       });
@@ -1242,6 +1254,11 @@
       "max": 120,
       "step": 4,
       "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
     }
   ]
 }

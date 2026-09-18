@@ -28,17 +28,23 @@
       {%- elsif request.design_mode -%}
         {%- comment -%} Page is empty and no fallback set: show a setup hint (editor only). {%- endcomment -%}
         <div class="lv-main-page-content__placeholder">
-          <h2>{{ page.title | default: 'Page title' }}</h2>
-          <p>This is a preview of the page content area.</p>
-          <p>
-            Add content to the selected Shopify page from
-            <strong>Online Store &rarr; Pages</strong>, or set a default message in this
-            section's settings, and it will appear here.
-          </p>
+          {%- if page.title != blank -%}
+            <h2>{{ page.title }}</h2>
+          {%- else -%}
+            <h2>{{ 'page.title_placeholder' | t }}</h2>
+          {%- endif -%}
+          <p>{{ 'page.editor_preview_notice' | t }}</p>
+          <p>{{ 'page.editor_setup_hint_html' | t }}</p>
         </div>
       {%- endif -%}
     </div>
   </div>
+
+  {%- for block in section.blocks -%}
+    {%- if block.type == '@app' -%}
+      {% render block %}
+    {%- endif -%}
+  {%- endfor -%}
 </div>
 
 {% stylesheet %}
@@ -233,6 +239,11 @@
       "step": 4,
       "unit": "px",
       "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
     }
   ],
   "presets": [

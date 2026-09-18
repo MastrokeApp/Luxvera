@@ -9,9 +9,10 @@
   @param {string} [card_context] - 'collection' | 'product-tabs' | 'dress-looks' (adds a modifier class)
   @param {string} [atc_label] - button label for single-variant products (default: 'Add To Cart')
   @param {string} [image_ratio] - image aspect-ratio modifier (default: 'portrait')
+  @param {boolean} [priority] - true for the first card in a grid (likely the LCP element); renders the image eager with fetchpriority="high" instead of lazy
 
   @example
-  {% render 'product-card', product: product, card_context: 'collection' %}
+  {% render 'product-card', product: product, card_context: 'collection', priority: forloop.first %}
 {% enddoc %}
 
 {%- liquid
@@ -56,7 +57,8 @@
         alt="{{ product.title | escape }}"
         width="{{ product.featured_image.width }}"
         height="{{ product.featured_image.height }}"
-        loading="lazy"
+        loading="{% if priority %}eager{% else %}lazy{% endif %}"
+        {% if priority %}fetchpriority="high"{% endif %}
       >
     {%- else -%}
       {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}

@@ -112,6 +112,7 @@
     if (!els.predictiveResults) return;
     els.predictiveResults.innerHTML = '';
     els.predictiveResults.hidden = true;
+    if (els.searchInput) els.searchInput.setAttribute('aria-expanded', 'false');
   }
 
   function runPredictiveSearch(term) {
@@ -129,6 +130,7 @@
         var content = section ? section.innerHTML.trim() : '';
         els.predictiveResults.innerHTML = content;
         els.predictiveResults.hidden = content === '';
+        if (els.searchInput) els.searchInput.setAttribute('aria-expanded', content === '' ? 'false' : 'true');
       })
       .catch(function () {});
   }

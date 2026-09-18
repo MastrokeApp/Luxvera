@@ -34,7 +34,7 @@
             <span class="price-old">{{ placeholder_old[i] }}</span>
           </div>
           <button class="add-to-cart" disabled aria-disabled="true">
-            {{ section.settings.atc_label | default: 'Add To Cart' }}
+            {%- if section.settings.atc_label != blank -%}{{ section.settings.atc_label }}{%- else -%}{{ 'products.add_to_cart' | t }}{%- endif -%}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
               <line x1="3" y1="6" x2="21" y2="6"/>
@@ -105,7 +105,8 @@
                 product: product,
                 card_context: 'dress-looks',
                 atc_label: section.settings.atc_label,
-                image_ratio: 'portrait'
+                image_ratio: 'portrait',
+                priority: forloop.first
               %}
             </div>
           {%- endfor -%}
@@ -271,8 +272,7 @@
 
         closeModal();
       })
-      .catch(function (err) {
-        console.warn('[Dress Looks ATC]', err);
+      .catch(function () {
         if (btn) {
           btn.classList.remove('adding');
           btn.innerHTML = origHTML;

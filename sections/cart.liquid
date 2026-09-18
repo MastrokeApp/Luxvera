@@ -17,8 +17,9 @@
   data-currency="{{ cart.currency.iso_code }}"
 >
   {%- if cart.item_count > 0 -%}
+    {%- capture cart_item_count_html -%}<span class="lv-cart-count" data-cart-count>{{ cart.item_count }}</span>{%- endcapture -%}
     <h1 class="lv-cart-title">
-      Your Cart (<span class="lv-cart-count" data-cart-count>{{ cart.item_count }}</span>)
+      {{ 'cart.title_with_count_html' | t: count: cart_item_count_html }}
     </h1>
 
     <form action="{{ routes.cart_url }}" method="post" class="lv-cart-form" data-cart-form>
@@ -53,7 +54,7 @@
                       name="updates[{{ item.key }}]"
                       value="{{ item.quantity }}"
                       min="0"
-                      aria-label="Quantity for {{ item.title | escape }}"
+                      aria-label="{{ 'accessibility.quantity_for' | t: product: item.title | escape }}"
                       data-qty-input
                     >
                     <button class="lv-cart-qty-btn" type="button" data-action="increase" aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
@@ -75,7 +76,9 @@
           </div>
 
           <div class="lv-cart-summary-row" data-savings-row {% if cart.total_discount == 0 %}hidden{% endif %}>
-            <span>{{ settings.savings_label | default: 'Savings' }}</span>
+            <span>
+              {%- if settings.savings_label != blank -%}{{ settings.savings_label }}{%- else -%}{{ 'cart.savings' | t }}{%- endif -%}
+            </span>
             <span data-savings>-{{ cart.total_discount | money }}</span>
           </div>
 
@@ -111,18 +114,20 @@
 
           {%- if settings.cart_gift_notes -%}
             <div class="lv-cart-note">
-              <label for="lv-cart-gift-note-{{ section.id }}">{{ settings.gift_note_label | default: 'Gift Message' }}</label>
+              <label for="lv-cart-gift-note-{{ section.id }}">
+                {%- if settings.gift_note_label != blank -%}{{ settings.gift_note_label }}{%- else -%}{{ 'cart.gift_message' | t }}{%- endif -%}
+              </label>
               <textarea
                 id="lv-cart-gift-note-{{ section.id }}"
                 name="attributes[Gift Message]"
-                placeholder="{{ settings.gift_note_placeholder | default: 'Add a gift message (optional)' }}"
+                placeholder="{%- if settings.gift_note_placeholder != blank -%}{{ settings.gift_note_placeholder | escape }}{%- else -%}{{ 'cart.gift_message_placeholder' | t }}{%- endif -%}"
                 data-cart-gift-note
               >{{ cart.attributes['Gift Message'] }}</textarea>
             </div>
           {%- endif -%}
 
           <button type="submit" name="checkout" class="lv-cart-checkout">
-            {{ settings.checkout_button_text | default: 'Proceed to Checkout' }}
+            {%- if settings.checkout_button_text != blank -%}{{ settings.checkout_button_text }}{%- else -%}{{ 'cart.proceed_to_checkout' | t }}{%- endif -%}
           </button>
           {%- if settings.cart_show_dynamic_checkout and additional_checkout_buttons -%}
             <div class="lv-cart-accelerated-checkout additional-checkout-buttons--vertical">
@@ -130,7 +135,7 @@
             </div>
           {%- endif -%}
           <a href="{{ routes.all_products_collection_url }}" class="lv-cart-continue">
-            {{ settings.continue_shopping_text | default: 'Continue Shopping' }}
+            {%- if settings.continue_shopping_text != blank -%}{{ settings.continue_shopping_text }}{%- else -%}{{ 'cart.continue_shopping' | t }}{%- endif -%}
           </a>
         </aside>
       </div>
@@ -148,6 +153,12 @@
       <a class="lv-cart-empty-btn" href="{{ routes.all_products_collection_url }}">{{ 'cart.start_shopping' | t }}</a>
     </div>
   {%- endif -%}
+
+  {%- for block in section.blocks -%}
+    {%- if block.type == '@app' -%}
+      {% render block %}
+    {%- endif -%}
+  {%- endfor -%}
 </div>
 
 {% stylesheet %}
@@ -704,6 +715,11 @@
   "tag": "section",
   "disabled_on": {
     "groups": ["header", "footer"]
-  }
+  },
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ]
 }
 {% endschema %}

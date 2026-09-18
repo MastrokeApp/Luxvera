@@ -14,43 +14,6 @@
   {% render 'lv-menu-dropdown', link: link %}
 {% enddoc %}
 
-{% comment %} <div class="lv-dropdown">
-  {%- for child in link.links -%}
-    {%- if child.links.size > 0 -%}
-      <div class="lv-dropdown__item" data-lv-submenu>
-        <span class="lv-dropdown__link-group">
-          <a class="lv-dropdown__link lv-dropdown__link--has-sub" href="{{ child.url }}">{{ child.title }}</a>
-          <button type="button" class="lv-dropdown__caret" aria-haspopup="true" aria-expanded="false" aria-label="Toggle submenu">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 6 15 12 9 18"/></svg>
-          </button>
-        </span>
-        <div class="lv-dropdown__flyout">
-          {%- for grandchild in child.links -%}
-            <a href="{{ grandchild.url }}">{{ grandchild.title }}</a>
-          {%- endfor -%}
-        </div>
-      </div>
-    {%- else -%}
-      <a class="lv-dropdown__link" href="{{ child.url }}">{{ child.title }}</a>
-    {%- endif -%}
-  {%- endfor -%}
-</div> {% endcomment %}
-
-{% doc %}
-  3-level standard dropdown menu.
-
-  Level 1:
-  Top-level navigation link is rendered by the caller.
-
-  Level 2:
-  link.links are rendered as dropdown items.
-
-  Level 3:
-  child.links are rendered as flyout items on hover.
-
-  @param {link} link
-{% enddoc %}
-
 <div class="lv-dropdown">
 
   {%- for child in link.links -%}
@@ -75,7 +38,7 @@
             class="lv-dropdown__caret"
             aria-haspopup="true"
             aria-expanded="false"
-            aria-label="Toggle {{ child.title }} submenu"
+            aria-label="{{ 'accessibility.toggle_submenu_for' | t: title: child.title }}"
           >
             <svg
               viewBox="0 0 24 24"

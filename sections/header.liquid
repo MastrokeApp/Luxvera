@@ -258,6 +258,12 @@
   </header>
 </div>
 
+{%- for block in section.blocks -%}
+  {%- if block.type == '@app' -%}
+    {% render block %}
+  {%- endif -%}
+{%- endfor -%}
+
 {%- comment -%} Mobile drawer {%- endcomment -%}
 <div class="lv-mobile-menu" id="lvMobileMenu" aria-hidden="true">
   <div
@@ -380,6 +386,10 @@
             id="lvSearchInput"
             autocomplete="off"
             aria-label="{{ 'accessibility.search' | t }}"
+            role="combobox"
+            aria-expanded="false"
+            aria-controls="lvPredictiveResults"
+            aria-autocomplete="list"
           >
           <button
             type="submit"
@@ -391,7 +401,7 @@
           <span aria-hidden="true">&#10005;</span>
         </button>
       </div>
-      <div class="lv-predictive color-{{ section.settings.header_color_scheme }}" id="lvPredictiveResults" hidden></div>
+      <div class="lv-predictive color-{{ section.settings.header_color_scheme }}" id="lvPredictiveResults" role="listbox" aria-live="polite" hidden></div>
     </div>
   </div>
 {%- endif -%}
@@ -449,7 +459,7 @@
       "id": "brand_name",
       "label": "t:labels.brand_name",
       "default": "LUXVERA",
-      "info": "Used only when no logo image is set in Theme settings → Branding."
+      "info": "t:labels.used_only_when_no_logo_image_is_set"
     },
     {
       "type": "text",
@@ -466,7 +476,7 @@
       "step": 2,
       "unit": "px",
       "default": 48,
-      "info": "Logo height on desktop. Width is capped by Theme settings → Layout → Logo max width."
+      "info": "t:labels.logo_height_on_desktop_width_is_capped"
     },
     {
       "type": "range",
@@ -499,7 +509,7 @@
       ],
       "default": "left",
       "visible_if": "{{ section.settings.logo_position == 'left' }}",
-      "info": "Applies only when the logo is positioned left."
+      "info": "t:labels.applies_only_when_the_logo_is_positioned_left"
     },
     {
       "type": "range",
@@ -530,16 +540,16 @@
     {
       "type": "checkbox",
       "id": "show_home_icon",
-      "label": "Show first menu item as a home icon",
+      "label": "t:labels.show_first_menu_item_as_home_icon",
       "default": true,
-      "info": "Only applies when the first menu item has no sub-items."
+      "info": "t:labels.only_applies_when_the_first_menu_item_has_no_subitems"
     },
     {
       "type": "checkbox",
       "id": "enable_mega_menu",
       "label": "t:labels.enable_mega_menu",
       "default": false,
-      "info": "Menu items become mega menus when a Mega menu image block targets them."
+      "info": "t:labels.menu_items_become_mega_menus_when_a_mega_menu_image"
     },
     {
       "type": "header",
@@ -585,47 +595,50 @@
   ],
   "blocks": [
     {
+      "type": "@app"
+    },
+    {
       "type": "mega_menu_image",
-      "name": "Mega menu image",
+      "name": "t:general.mega_menu_image",
       "settings": [
         {
           "type": "text",
           "id": "menu_item",
-          "label": "Menu item",
-          "info": "Enter the parent menu item name this image should appear under. Leave blank to show in all mega menus."
+          "label": "t:labels.menu_item",
+          "info": "t:labels.enter_the_parent_menu_item_name"
         },
         {
           "type": "image_picker",
           "id": "image",
-          "label": "Image",
-          "info": "For best results upload a 350×300 image."
+          "label": "t:labels.image",
+          "info": "t:labels.for_best_results_upload_a_350x300_image"
         },
         {
           "type": "text",
           "id": "title",
-          "label": "Title",
+          "label": "t:labels.title",
           "default": "Discover the collection"
         },
         {
           "type": "textarea",
           "id": "text",
-          "label": "Text"
+          "label": "t:labels.text"
         },
         {
           "type": "url",
           "id": "image_link",
-          "label": "Image link"
+          "label": "t:labels.image_link"
         },
         {
           "type": "text",
           "id": "button_label",
-          "label": "Button label",
+          "label": "t:labels.button_label_2",
           "default": "Shop now"
         },
         {
           "type": "url",
           "id": "button_link",
-          "label": "Button link"
+          "label": "t:labels.button_link"
         }
       ]
     }

@@ -31,12 +31,12 @@
     </div>
 
     {%- if section.settings.enable_tag_filter and blog.tags.size > 0 -%}
-      <nav class="lv-blog__tags" aria-label="Filter by tag">
+      <nav class="lv-blog__tags" aria-label="{{ 'accessibility.filter_by_tag' | t }}">
         <a href="{{ blog.url }}" class="lv-blog__tag{% unless current_tags %} is-active{% endunless %}">
-          All
+          {{ 'blog.all' | t }}
         </a>
         {%- for tag in blog.all_tags -%}
-          
+          <a
             href="{{ blog.url }}/tagged/{{ tag | handle }}"
             class="lv-blog__tag{% if current_tags contains tag %} is-active{% endif %}"
           >
@@ -77,11 +77,11 @@
                     </time>
                   {%- endif -%}
                   {%- if section.settings.show_author and article.author != blank -%}
-                    <span class="lv-blog-card__author">By {{ article.author }}</span>
+                    <span class="lv-blog-card__author">{{ 'blog.by_author_html' | t: author: article.author }}</span>
                   {%- endif -%}
                   {%- if section.settings.show_comment_count and article.comments_enabled? -%}
                     <span class="lv-blog-card__comments">
-                      {{ article.comments_count }} Comment{% if article.comments_count != 1 %}s{% endif %}
+                      {{ 'blog.comment_count' | t: count: article.comments_count }}
                     </span>
                   {%- endif -%}
                 </div>
@@ -93,7 +93,7 @@
                 {%- endif -%}
 
                 <a href="{{ article.url }}" class="lv-blog-card__link">
-                  Read more
+                  {{ 'blog.read_more' | t }}
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                 </a>
               </div>
@@ -101,7 +101,7 @@
           {%- endfor -%}
         </div>
       {%- else -%}
-        <p class="lv-blog__empty">No articles found.</p>
+        <p class="lv-blog__empty">{{ 'blog.no_articles_found' | t }}</p>
       {%- endif -%}
 
       {%- if paginate.pages > 1 -%}
@@ -110,6 +110,12 @@
         </div>
       {%- endif -%}
     {% endpaginate %}
+
+    {%- for block in section.blocks -%}
+      {%- if block.type == '@app' -%}
+        {% render block %}
+      {%- endif -%}
+    {%- endfor -%}
 
   </div>
 </div>
@@ -138,7 +144,7 @@
     {
       "type": "range",
       "id": "articles_per_page",
-      "label": "Articles per page",
+      "label": "t:labels.articles_per_page",
       "min": 3,
       "max": 24,
       "step": 1,
@@ -147,7 +153,7 @@
     {
       "type": "range",
       "id": "columns_desktop",
-      "label": "Columns (desktop)",
+      "label": "t:labels.columns_desktop",
       "min": 1,
       "max": 4,
       "step": 1,
@@ -156,7 +162,7 @@
     {
       "type": "range",
       "id": "columns_tablet",
-      "label": "Columns (tablet)",
+      "label": "t:labels.columns_tablet_parenthetical",
       "min": 1,
       "max": 3,
       "step": 1,
@@ -165,17 +171,17 @@
     {
       "type": "select",
       "id": "columns_mobile",
-      "label": "Columns (mobile)",
+      "label": "t:labels.columns_mobile_parenthetical",
       "options": [
-        { "value": "1", "label": "1" },
-        { "value": "2", "label": "2" }
+        { "value": "1", "label": "t:options.digit.1" },
+        { "value": "2", "label": "t:options.digit.2" }
       ],
       "default": "1"
     },
     {
       "type": "range",
       "id": "grid_gap",
-      "label": "Grid gap",
+      "label": "t:labels.grid_gap_2",
       "min": 12,
       "max": 64,
       "step": 4,
@@ -185,7 +191,7 @@
     {
       "type": "range",
       "id": "card_radius",
-      "label": "Card image radius",
+      "label": "t:labels.card_image_radius",
       "min": 0,
       "max": 30,
       "step": 2,
@@ -194,40 +200,40 @@
     },
     {
       "type": "header",
-      "content": "Card content"
+      "content": "t:labels.card_content"
     },
     {
       "type": "checkbox",
       "id": "show_author",
-      "label": "Show author",
+      "label": "t:labels.show_author",
       "default": true
     },
     {
       "type": "checkbox",
       "id": "show_date",
-      "label": "Show date",
+      "label": "t:labels.show_date",
       "default": true
     },
     {
       "type": "checkbox",
       "id": "show_comment_count",
-      "label": "Show comment count",
+      "label": "t:labels.show_comment_count",
       "default": true
     },
     {
       "type": "checkbox",
       "id": "show_excerpt",
-      "label": "Show excerpt",
+      "label": "t:labels.show_excerpt",
       "default": true
     },
     {
       "type": "header",
-      "content": "Filtering"
+      "content": "t:labels.filtering"
     },
     {
       "type": "checkbox",
       "id": "enable_tag_filter",
-      "label": "Enable tag filtering",
+      "label": "t:labels.enable_tag_filtering",
       "default": true
     },
     {

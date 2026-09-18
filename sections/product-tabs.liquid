@@ -31,7 +31,7 @@
             <span class="price-old">{{ placeholder_old[i] }}</span>
           </div>
           <button class="add-to-cart" disabled aria-disabled="true">
-            {{ section.settings.atc_label | default: 'Add To Cart' }}
+            {%- if section.settings.atc_label != blank -%}{{ section.settings.atc_label }}{%- else -%}{{ 'products.add_to_cart' | t }}{%- endif -%}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
           </button>
         </div>
@@ -98,7 +98,7 @@
             aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
             data-tab="{{ forloop.index }}"
             {{ block.shopify_attributes }}
-          >{{ block.settings.label | default: 'Tab' | escape }}</span>
+          >{%- if block.settings.label != blank -%}{{ block.settings.label | escape }}{%- else -%}{{ 'product_tabs.tab_default' | t }}{%- endif -%}</span>
         {%- endfor -%}
       </div>
       <button type="button" class="pt-bar-arrow pt-bar-arrow--next" data-pt-bar-arrow="next" aria-label="{{ 'accessibility.next' | t }}" hidden>
@@ -119,7 +119,8 @@
                       product: product,
                       card_context: 'product-tabs',
                       atc_label: section.settings.atc_label,
-                      image_ratio: section.settings.image_ratio
+                      image_ratio: section.settings.image_ratio,
+                      priority: forloop.first
                     %}
                   </div>
                 {%- endfor -%}
@@ -631,8 +632,7 @@
         document.dispatchEvent(new CustomEvent('cart:open'));
         closeModal();
       })
-      .catch(function (err) {
-        console.warn('[PT ATC]', err);
+      .catch(function () {
         if (btn) {
           btn.classList.remove('adding');
           btn.innerHTML = origHTML;
@@ -977,11 +977,11 @@
       "blocks": [
         {
           "type": "tab",
-          "settings": { "label": "New Arrivals" }
+          "settings": { "label": "t:labels.new_arrivals" }
         },
         {
           "type": "tab",
-          "settings": { "label": "Trending Now" }
+          "settings": { "label": "t:labels.trending_now" }
         }
       ]
     }
