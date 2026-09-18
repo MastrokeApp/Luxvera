@@ -1,4 +1,4 @@
-{% comment %}Instagram Carousel — updated with theme color schema support{% endcomment %}
+{% comment %}Media Carousel — updated with theme color schema support{% endcomment %}
 
 <style>
 #instagram-{{ section.id }} {
@@ -249,7 +249,7 @@
               {%- if block.settings.image != blank -%}
                 <img
                   src="{{ block.settings.image | image_url: width: 500, height: 660, crop: 'center' }}"
-                  alt="{{ block.settings.alt | default: 'Instagram post' | escape }}"
+                  alt="{{ block.settings.alt | default: 'Media post' | escape }}"
                   width="500"
                   height="660"
                   loading="lazy"
@@ -593,7 +593,7 @@
           "type": "text",
           "id": "alt",
           "label": "t:labels.alt_text",
-          "default": "Instagram post"
+          "default": "Media post"
         },
         {
           "type": "video",
