@@ -198,42 +198,42 @@
     ]
   },
   {
-  "name": "Breadcrumbs",
+  "name": "t:general.breadcrumbs",
   "settings": [
     {
       "type": "checkbox",
       "id": "breadcrumb_all_pages",
-      "label": "Show breadcrumbs on whole store",
+      "label": "t:labels.show_breadcrumbs_on_whole_store",
       "default": false
     },
     {
       "type": "checkbox",
       "id": "breadcrumb_product",
-      "label": "Show on product pages",
+      "label": "t:labels.show_on_product_pages",
       "default": true
     },
     {
       "type": "checkbox",
       "id": "breadcrumb_policy",
-      "label": "Show on policy pages",
+      "label": "t:labels.show_on_policy_pages",
       "default": true
     },
     {
       "type": "checkbox",
       "id": "breadcrumb_page",
-      "label": "Show on pages",
+      "label": "t:labels.show_on_pages",
       "default": true
     },
     {
       "type": "checkbox",
       "id": "breadcrumb_collection",
-      "label": "Show on collection pages",
+      "label": "t:labels.show_on_collection_pages",
       "default": true
     },
     {
       "type": "checkbox",
       "id": "breadcrumb_search",
-      "label": "Show on search pages",
+      "label": "t:labels.show_on_search_pages",
       "default": true
     }
   ]

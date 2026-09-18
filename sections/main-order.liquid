@@ -25,7 +25,7 @@
       </div>
       <div>
         <p>{{ 'customers.order.fulfillment_status' | t }}</p>
-        <p><span class="lv-acct-badge">{{ order.fulfillment_status | default: 'Unfulfilled' | capitalize }}</span></p>
+        <p><span class="lv-acct-badge">{%- if order.fulfillment_status != blank -%}{{ order.fulfillment_status | capitalize }}{%- else -%}{{ 'customers.order.unfulfilled' | t }}{%- endif -%}</span></p>
       </div>
     </div>
 

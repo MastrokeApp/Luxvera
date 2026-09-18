@@ -140,7 +140,7 @@
               {% if section.settings.show_count and collection != blank %}
 
                 <div class="lv-cl-count">
-                  {{ collection.all_products_count }} items
+                  {{ 'products.count' | t: count: collection.all_products_count }}
                 </div>
 
               {% endif %}
@@ -157,7 +157,7 @@
           <div class="lv-cl-empty">
 
             <p>
-              Add a Collection block to get started.
+              {{ 'collections.add_collection_block_hint' | t }}
             </p>
 
           </div>
@@ -172,7 +172,7 @@
           type="button"
           class="lv-cl-slider-btn lv-cl-slider-btn--prev"
           data-slider-prev
-          aria-label="Previous collections"
+          aria-label="{{ 'accessibility.previous_collections' | t }}"
         >
           <span aria-hidden="true">&#10094;</span>
         </button>
@@ -182,7 +182,7 @@
           type="button"
           class="lv-cl-slider-btn lv-cl-slider-btn--next"
           data-slider-next
-          aria-label="Next collections"
+          aria-label="{{ 'accessibility.next_collections' | t }}"
         >
           <span aria-hidden="true">&#10095;</span>
         </button>
@@ -859,7 +859,7 @@
 {% schema %}
 
 {
-  "name": "Collections List",
+  "name": "t:general.collections_list",
 
   "disabled_on": {
     "groups": ["header", "footer"]
@@ -877,7 +877,7 @@
 
       "id": "color_scheme",
 
-      "label": "Color scheme",
+      "label": "t:labels.color_scheme",
 
       "default": "scheme-1"
     },
@@ -886,7 +886,7 @@
     {
       "type": "header",
 
-      "content": "Heading"
+      "content": "t:labels.heading"
     },
 
 
@@ -895,7 +895,7 @@
 
       "id": "heading",
 
-      "label": "Heading",
+      "label": "t:labels.heading",
 
       "default": "Collections For You To Explore"
     },
@@ -906,7 +906,7 @@
 
       "id": "heading_size",
 
-      "label": "Heading font size",
+      "label": "t:labels.heading_font_size",
 
       "min": 18,
 
@@ -925,7 +925,7 @@
 
       "id": "subtitle",
 
-      "label": "Subtitle",
+      "label": "t:labels.subtitle",
 
       "default": "Everything you need to make your look fantastic"
     },
@@ -936,7 +936,7 @@
 
       "id": "subtitle_size",
 
-      "label": "Subtitle font size",
+      "label": "t:labels.subtitle_font_size",
 
       "min": 11,
 
@@ -953,7 +953,7 @@
     {
       "type": "header",
 
-      "content": "Layout"
+      "content": "t:labels.layout"
     },
 
 
@@ -962,7 +962,7 @@
 
       "id": "columns_desktop",
 
-      "label": "Columns on desktop",
+      "label": "t:labels.columns_on_desktop",
 
       "min": 2,
 
@@ -979,7 +979,7 @@
 
       "id": "columns_tablet",
 
-      "label": "Columns on tablet",
+      "label": "t:labels.columns_on_tablet",
 
       "min": 2,
 
@@ -996,20 +996,20 @@
 
       "id": "columns_mobile",
 
-      "label": "Columns on mobile",
+      "label": "t:labels.columns_on_mobile",
 
       "options": [
 
         {
           "value": "1",
 
-          "label": "1 column"
+          "label": "t:options.columns_mobile.1"
         },
 
         {
           "value": "2",
 
-          "label": "2 columns"
+          "label": "t:options.columns_mobile.2"
         }
 
       ],
@@ -1023,7 +1023,7 @@
 
       "id": "grid_gap",
 
-      "label": "Grid gap",
+      "label": "t:labels.grid_gap_2",
 
       "min": 0,
 
@@ -1042,26 +1042,26 @@
 
       "id": "image_ratio",
 
-      "label": "Image ratio",
+      "label": "t:labels.image_ratio",
 
       "options": [
 
         {
           "value": "square",
 
-          "label": "Square"
+          "label": "t:options.image_ratio.square_2"
         },
 
         {
           "value": "portrait",
 
-          "label": "Portrait"
+          "label": "t:options.image_ratio.portrait_2"
         },
 
         {
           "value": "landscape",
 
-          "label": "Landscape"
+          "label": "t:options.image_ratio.landscape_2"
         }
 
       ],
@@ -1075,7 +1075,7 @@
 
       "id": "card_radius",
 
-      "label": "Card radius",
+      "label": "t:labels.card_radius",
 
       "min": 0,
 
@@ -1092,7 +1092,7 @@
     {
       "type": "header",
 
-      "content": "Slider"
+      "content": "t:labels.slider"
     },
 
 
@@ -1101,7 +1101,7 @@
 
       "id": "enable_slider",
 
-      "label": "Enable collection slider",
+      "label": "t:labels.enable_collection_slider",
 
       "default": false
     },
@@ -1110,7 +1110,7 @@
     {
       "type": "header",
 
-      "content": "Options"
+      "content": "t:labels.options"
     },
 
 
@@ -1119,7 +1119,7 @@
 
       "id": "show_count",
 
-      "label": "Show product count",
+      "label": "t:labels.show_product_count",
 
       "default": false
     },
@@ -1128,7 +1128,7 @@
     {
       "type": "header",
 
-      "content": "Section padding"
+      "content": "t:labels.section_padding"
     },
 
 
@@ -1137,7 +1137,7 @@
 
       "id": "padding_top",
 
-      "label": "Padding top",
+      "label": "t:labels.padding_top_2",
 
       "min": 0,
 
@@ -1156,7 +1156,7 @@
 
       "id": "padding_bottom",
 
-      "label": "Padding bottom",
+      "label": "t:labels.padding_bottom_2",
 
       "min": 0,
 
@@ -1177,7 +1177,7 @@
     {
       "type": "collection",
 
-      "name": "Collection",
+      "name": "t:general.collection",
 
       "settings": [
 
@@ -1186,7 +1186,7 @@
 
           "id": "collection",
 
-          "label": "Collection"
+          "label": "t:general.collection"
         },
 
 
@@ -1195,9 +1195,9 @@
 
           "id": "image",
 
-          "label": "Custom image",
+          "label": "t:labels.custom_image",
 
-          "info": "Optional. Collection image will be used if empty."
+          "info": "t:labels.optional_collection_image_will_be_used_if_empty"
         },
 
 
@@ -1206,9 +1206,9 @@
 
           "id": "title",
 
-          "label": "Custom title",
+          "label": "t:labels.custom_title",
 
-          "info": "Optional. Collection title will be used if empty."
+          "info": "t:labels.optional_collection_title_will_be_used_if_empty"
         }
 
       ]
@@ -1221,7 +1221,7 @@
   "presets": [
 
     {
-      "name": "Collections List",
+      "name": "t:general.collections_list",
 
       "blocks": [
 

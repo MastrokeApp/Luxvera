@@ -62,19 +62,27 @@
     <div class="sale-right">
       <div class="count-box">
         <span class="count-num lv-days">00</span>
-        <span class="count-label">{{ section.settings.label_days | default: 'Days' | escape }}</span>
+        <span class="count-label">
+          {%- if section.settings.label_days != blank -%}{{ section.settings.label_days | escape }}{%- else -%}{{ 'countdown.days' | t }}{%- endif -%}
+        </span>
       </div>
       <div class="count-box">
         <span class="count-num lv-hours">00</span>
-        <span class="count-label">{{ section.settings.label_hours | default: 'Hours' | escape }}</span>
+        <span class="count-label">
+          {%- if section.settings.label_hours != blank -%}{{ section.settings.label_hours | escape }}{%- else -%}{{ 'countdown.hours' | t }}{%- endif -%}
+        </span>
       </div>
       <div class="count-box">
         <span class="count-num lv-minutes">00</span>
-        <span class="count-label">{{ section.settings.label_minutes | default: 'Minutes' | escape }}</span>
+        <span class="count-label">
+          {%- if section.settings.label_minutes != blank -%}{{ section.settings.label_minutes | escape }}{%- else -%}{{ 'countdown.minutes' | t }}{%- endif -%}
+        </span>
       </div>
       <div class="count-box">
         <span class="count-num lv-seconds">00</span>
-        <span class="count-label">{{ section.settings.label_seconds | default: 'Seconds' | escape }}</span>
+        <span class="count-label">
+          {%- if section.settings.label_seconds != blank -%}{{ section.settings.label_seconds | escape }}{%- else -%}{{ 'countdown.seconds' | t }}{%- endif -%}
+        </span>
       </div>
     </div>
   </div>
@@ -368,7 +376,7 @@
       "type": "text",
       "id": "button_label",
       "label": "t:labels.button_label",
-      "info": "Leave blank to hide the button.",
+      "info": "t:labels.leave_blank_to_hide_the_button",
       "default": "Shop Look"
     },
     {

@@ -730,31 +730,31 @@
       "label": "t:labels.icon",
       "default": "gift",
       "options": [
-        { "value": "none", "label": "None" },
-        { "value": "gift", "label": "Gift" },
-        { "value": "star", "label": "Star" },
-        { "value": "sparkle", "label": "Sparkle" },
-        { "value": "heart", "label": "Heart" },
-        { "value": "crown", "label": "Crown" },
-        { "value": "leaf", "label": "Leaf" },
-        { "value": "gem", "label": "Gem" },
-        { "value": "bag", "label": "Shopping bag" },
-        { "value": "truck", "label": "Delivery truck" },
-        { "value": "shield", "label": "Shield" },
-        { "value": "award", "label": "Award" },
-        { "value": "globe", "label": "Globe" }
+        { "value": "none", "label": "t:options.image_behavior.none" },
+        { "value": "gift", "label": "t:options.icon.gift" },
+        { "value": "star", "label": "t:options.icon.star" },
+        { "value": "sparkle", "label": "t:options.icon.sparkle" },
+        { "value": "heart", "label": "t:options.icon.heart" },
+        { "value": "crown", "label": "t:options.icon.crown" },
+        { "value": "leaf", "label": "t:options.icon.leaf" },
+        { "value": "gem", "label": "t:options.icon.gem" },
+        { "value": "bag", "label": "t:options.icon.bag" },
+        { "value": "truck", "label": "t:options.icon.truck" },
+        { "value": "shield", "label": "t:options.icon.shield" },
+        { "value": "award", "label": "t:options.icon.award" },
+        { "value": "globe", "label": "t:options.icon.globe" }
       ]
     },
     {
       "type": "image_picker",
       "id": "icon_image",
       "label": "t:labels.custom_image",
-      "info": "Overrides the icon above. Use a square, transparent PNG or SVG."
+      "info": "t:labels.overrides_the_icon_above_use_a_square"
     },
     {
       "type": "range",
       "id": "icon_size",
-      "label": "Icon size",
+      "label": "t:labels.icon_size",
       "min": 16,
       "max": 48,
       "step": 2,
@@ -834,7 +834,7 @@
       "type": "text",
       "id": "cta_label",
       "label": "t:labels.button_label",
-      "info": "Leave blank to hide the button.",
+      "info": "t:labels.leave_blank_to_hide_the_button",
       "default": "Explore Collections"
     },
     {
@@ -958,14 +958,14 @@
           "type": "url",
           "id": "link",
           "label": "t:labels.link",
-          "info": "Makes both images one clickable link."
+          "info": "t:labels.makes_both_images_one_clickable_link"
         },
         {
           "type": "text",
           "id": "cta_label",
           "label": "t:labels.button_label",
           "default": "Shop now",
-          "info": "Shown on the image on hover. Always visible on touch devices. Needs a link above."
+          "info": "t:labels.shown_on_the_image_on_hover"
         },
         {
           "type": "checkbox",
@@ -981,10 +981,10 @@
       "name": "t:general.brand_story",
       "category": "t:general.brand",
       "blocks": [
-        { "type": "brand_tab", "settings": { "label": "Best Sellers" } },
-        { "type": "brand_tab", "settings": { "label": "New Season Edit" } },
-        { "type": "brand_tab", "settings": { "label": "Vacation Looks" } },
-        { "type": "brand_tab", "settings": { "label": "Winter Luxe" } }
+        { "type": "brand_tab", "settings": { "label": "t:labels.best_sellers" } },
+        { "type": "brand_tab", "settings": { "label": "t:labels.new_season_edit" } },
+        { "type": "brand_tab", "settings": { "label": "t:labels.vacation_looks" } },
+        { "type": "brand_tab", "settings": { "label": "t:labels.winter_luxe" } }
       ]
     }
   ]

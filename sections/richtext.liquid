@@ -293,7 +293,7 @@
 
 {% schema %}
 {
-  "name": "Rich text",
+  "name": "t:general.rich_text",
   "tag": "section",
   "disabled_on": {
     "groups": ["header", "footer"]
@@ -318,7 +318,7 @@
     {
       "type": "range",
       "id": "max_width",
-      "label": "Section maximum width",
+      "label": "t:labels.section_maximum_width",
       "min": 800,
       "max": 1920,
       "step": 20,
@@ -328,7 +328,7 @@
     {
       "type": "range",
       "id": "content_width",
-      "label": "Text content width",
+      "label": "t:labels.text_content_width",
       "min": 400,
       "max": 1920,
       "step": 20,
@@ -348,7 +348,7 @@
     {
       "type": "range",
       "id": "text_size_mobile",
-      "label": "Mobile text size",
+      "label": "t:labels.mobile_text_size",
       "min": 12,
       "max": 20,
       "step": 1,
@@ -393,7 +393,7 @@
   "blocks": [
     {
       "type": "eyebrow",
-      "name": "Subheading",
+      "name": "t:labels.subheading",
       "limit": 1,
       "settings": [
         {
@@ -406,7 +406,7 @@
     },
     {
       "type": "heading",
-      "name": "Heading",
+      "name": "t:labels.heading",
       "limit": 1,
       "settings": [
         {
@@ -425,16 +425,16 @@
             { "value": "h3", "label": "t:options.heading_tag.h3" }
           ],
           "default": "h2",
-          "info": "Use H1 only if this is the main heading on the page."
+          "info": "t:labels.use_h1_only_if_this_is_the_main_heading"
         },
         {
           "type": "select",
           "id": "size",
           "label": "t:labels.heading_size",
           "options": [
-            { "value": "small", "label": "Small" },
-            { "value": "medium", "label": "Medium" },
-            { "value": "large", "label": "Large" }
+            { "value": "small", "label": "t:options.size.small" },
+            { "value": "medium", "label": "t:options.size.medium" },
+            { "value": "large", "label": "t:options.size.large" }
           ],
           "default": "medium"
         }
@@ -442,7 +442,7 @@
     },
     {
       "type": "text",
-      "name": "Text",
+      "name": "t:general.text",
       "settings": [
         {
           "type": "richtext",
@@ -454,18 +454,18 @@
     },
     {
       "type": "divider",
-      "name": "Divider",
+      "name": "t:general.divider",
       "settings": []
     },
     {
       "type": "button",
-      "name": "Button",
+      "name": "t:labels.button",
       "settings": [
         {
           "type": "text",
           "id": "label",
           "label": "t:labels.button_label",
-          "info": "Leave blank to hide the button.",
+          "info": "t:labels.leave_blank_to_hide_the_button",
           "default": "Shop now"
         },
         {
@@ -484,7 +484,7 @@
   ],
   "presets": [
     {
-      "name": "Rich text",
+      "name": "t:general.rich_text",
       "blocks": [
         { "type": "eyebrow" },
         { "type": "heading" },

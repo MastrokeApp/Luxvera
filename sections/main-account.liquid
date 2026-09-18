@@ -37,7 +37,7 @@
                 <td><a href="{{ order.customer_url }}">{{ order.name }}</a></td>
                 <td>{{ order.created_at | date: '%B %d, %Y' }}</td>
                 <td><span class="lv-acct-badge">{{ order.financial_status | capitalize }}</span></td>
-                <td><span class="lv-acct-badge">{{ order.fulfillment_status | default: 'Unfulfilled' | capitalize }}</span></td>
+                <td><span class="lv-acct-badge">{%- if order.fulfillment_status != blank -%}{{ order.fulfillment_status | capitalize }}{%- else -%}{{ 'customers.order.unfulfilled' | t }}{%- endif -%}</span></td>
                 <td>{{ order.total_price | money }}</td>
               </tr>
             {%- endfor -%}
