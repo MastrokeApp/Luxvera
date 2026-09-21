@@ -23,6 +23,7 @@
   data-lv-search-id="{{ section.id }}"
   data-search-terms="{{ search.terms | escape }}"
   data-default-view="{{ section.settings.default_view }}"
+  data-design-mode="{{ request.design_mode }}"
   style="
     --lv-search-pt: {{ section.settings.padding_top }}px;
     --lv-search-pb: {{ section.settings.padding_bottom }}px;
@@ -847,23 +848,29 @@
     var SID = root.dataset.lvSearchId;
     var searchTerms = root.dataset.searchTerms || '';
     var defaultView = root.dataset.defaultView || 'grid';
-    var storageKey = 'lv-search-view-' + SID;
+    var storageKey = 'lv-search-view-' + SID + '-' + defaultView;
     var grid = document.getElementById('lv-search-grid-' + SID);
+    var hasViewToggle = !!root.querySelector('.lv-view-btn');
+    var inEditor = root.dataset.designMode === 'true';
 
-    function setActiveView(view) {
+    function setActiveView(view, persist) {
       if (!grid) return;
       root.querySelectorAll('.lv-view-btn').forEach(function (btn) {
         btn.classList.toggle('active', btn.dataset.view === view);
       });
       if (view === 'list') grid.classList.add('list-view');
       else grid.classList.remove('list-view');
-      try { localStorage.setItem(storageKey, view); } catch (e) {}
+      if (persist && !inEditor) {
+        try { localStorage.setItem(storageKey, view); } catch (e) {}
+      }
     }
 
     if (grid) {
       var savedView = null;
-      try { savedView = localStorage.getItem(storageKey); } catch (e) {}
-      setActiveView(savedView || defaultView);
+      if (hasViewToggle && !inEditor) {
+        try { savedView = localStorage.getItem(storageKey); } catch (e) {}
+      }
+      setActiveView(savedView === 'list' || savedView === 'grid' ? savedView : defaultView, false);
     }
 
     var modal      = document.getElementById('lv-vm-search-' + SID);
@@ -1002,7 +1009,7 @@
       var viewBtn = e.target.closest('.lv-view-btn');
       if (viewBtn) {
         e.preventDefault();
-        setActiveView(viewBtn.dataset.view || 'grid');
+        setActiveView(viewBtn.dataset.view || 'grid', true);
         return;
       }
 

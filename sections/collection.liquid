@@ -20,6 +20,7 @@
     id="lv-col-page-{{ section.id }}"
     data-lv-col-id="{{ section.id }}"
     data-default-view="{{ section.settings.default_view }}"
+    data-design-mode="{{ request.design_mode }}"
     data-current-sort="{{ current_sort }}"
     style="
       --lv-col-pt: {{ section.settings.padding_top }}px;
@@ -967,7 +968,7 @@
     var grid = document.getElementById('lv-product-grid-' + SID);
     var defaultView = root.dataset.defaultView || 'grid';
     var currentSort = root.dataset.currentSort || '';
-    var storageKey = 'lv-collection-view-' + SID;
+    var storageKey = 'lv-collection-view-' + SID + '-' + defaultView;
 
     var modal = document.getElementById('lv-vm-col-' + SID);
     var modalTitle = document.getElementById('lv-vm-col-title-' + SID);
@@ -983,21 +984,28 @@
       adding: (modalAtc && modalAtc.dataset.labelAdding) || 'Adding…'
     };
 
-    function setActiveView(view) {
+    var hasViewToggle = !!root.querySelector('.lv-view-btn');
+    var inEditor = root.dataset.designMode === 'true';
+
+    function setActiveView(view, persist) {
       if (!grid) return;
       root.querySelectorAll('.lv-view-btn').forEach(function (btn) {
         btn.classList.toggle('active', btn.dataset.view === view);
       });
       if (view === 'list') grid.classList.add('list-view');
       else grid.classList.remove('list-view');
-      try { localStorage.setItem(storageKey, view); } catch (e) {}
+      if (persist && !inEditor) {
+        try { localStorage.setItem(storageKey, view); } catch (e) {}
+      }
     }
 
     function initView() {
       if (!grid) return;
       var saved = null;
-      try { saved = localStorage.getItem(storageKey); } catch (e) {}
-      setActiveView(saved || defaultView || 'grid');
+      if (hasViewToggle && !inEditor) {
+        try { saved = localStorage.getItem(storageKey); } catch (e) {}
+      }
+      setActiveView(saved === 'list' || saved === 'grid' ? saved : (defaultView || 'grid'), false);
     }
 
     function toggleFilterGroup(btn) {
@@ -1180,7 +1188,7 @@
       var viewBtn = e.target.closest('.lv-view-btn');
       if (viewBtn) {
         e.preventDefault();
-        setActiveView(viewBtn.dataset.view || 'grid');
+        setActiveView(viewBtn.dataset.view || 'grid', true);
         return;
       }
 
