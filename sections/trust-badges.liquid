@@ -516,6 +516,13 @@
       ]
     },
     {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "label": "t:labels.enable_slider",
+      "info": "t:labels.slide_shows_a_swipeable_carousel_with",
+      "default": false
+    },
+    {
       "type": "select",
       "id": "cards_per_row_mobile",
       "label": "t:labels.cards_per_row_mobile",
@@ -523,14 +530,8 @@
       "options": [
         { "value": "1", "label": "t:options.cards_per_row_mobile.1" },
         { "value": "2", "label": "t:options.cards_per_row_mobile.2" }
-      ]
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_slider",
-      "label": "t:labels.enable_slider",
-      "info": "t:labels.slide_shows_a_swipeable_carousel_with",
-      "default": false
+      ],
+      "visible_if": "{{ section.settings.enable_slider }}"
     }
   ],
   "blocks": [
