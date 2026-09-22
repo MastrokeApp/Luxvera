@@ -12,7 +12,8 @@
     "collection_banner": {
       "type": "collection-banner",
       "settings": {
-        "color_scheme": "scheme-1",
+        "color_scheme": "scheme-3",
+        "background_image": "shopify://shop_images/collection-banner.webp",
         "overlay_color": "#100a04",
         "overlay_opacity": 70,
         "height_desktop": 420,
@@ -20,7 +21,7 @@
         "height_mobile": 260,
         "content_alignment": "flex-start",
         "show_breadcrumbs": true,
-        "heading": "",
+        "heading": "{{ collection.title }}",
         "heading_size": 42,
         "subtext": ""
       }
@@ -60,28 +61,28 @@
         "collection_ffJFjW": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "western",
             "title": ""
           }
         },
         "collection_CfPXpN": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "boho",
             "title": ""
           }
         },
         "collection_R3mDnK": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "occasion",
             "title": ""
           }
         },
         "collection_MmNg6p": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "designer",
             "title": ""
           }
         }

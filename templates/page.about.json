@@ -1,0 +1,154 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "page_banner_with_breadcrumb_kcHVkY": {
+      "type": "page-banner-with-breadcrumb",
+      "name": "t:general.page_banner_breadcrumb",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "background_image": "shopify://shop_images/HeroSection.jpg",
+        "overlay_color": "#100a04",
+        "overlay_opacity": 70,
+        "height_desktop": 420,
+        "height_tablet": 320,
+        "height_mobile": 260,
+        "content_alignment": "flex-start",
+        "show_breadcrumbs": true,
+        "heading": "{{ page.title }}",
+        "heading_size": 42,
+        "subtext": "",
+        "button_label": "Explore now",
+        "button_url": "",
+        "button_open_new_tab": false
+      }
+    },
+    "image_text_section_LhWFWH": {
+      "type": "image-text-section",
+      "blocks": {
+        "heading_qcdTR7": {
+          "type": "heading",
+          "settings": {
+            "heading": "Welcome to Salt & Grace Boutique"
+          }
+        },
+        "subheading_d4dwbq": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "Hey there, beautiful soul. I’m Ashley, and I’m so glad you’re here.  Salt & Grace Boutique isn’t just a store. It’s a space that was built from a feeling, a desire to create something that celebrates you, exactly as you are.  Because the truth is, every woman deserves to feel confident, seen, and completely at home in her own skin. Here, we celebrate women of all shapes, sizes, and stories. No exceptions, no limitations, just real beauty, real confidence, and real connection."
+          }
+        }
+      },
+      "block_order": [
+        "heading_qcdTR7",
+        "subheading_d4dwbq"
+      ],
+      "name": "t:general.image_with_text",
+      "settings": {
+        "image": "shopify://shop_images/Image_Luxury_boutique.jpg",
+        "image_height": "medium",
+        "image_behavior": "none",
+        "heading_size": 48,
+        "layout": "text_first",
+        "desktop_image_width": "medium",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "",
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "image_text_section_AkWLPQ": {
+      "type": "image-text-section",
+      "blocks": {
+        "heading_xtgqXE": {
+          "type": "heading",
+          "settings": {
+            "heading": "Our Mission"
+          }
+        },
+        "subheading_QDT38i": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "At Salt & Grace Boutique, our mission is simple, but it means everything.  We’re here to empower women to feel confident and beautiful in their own skin, no matter their size or stage of life. We believe in the power of self adornment, the quiet confidence that comes from wearing something that truly feels like you, and the importance of fashion that does not ask you to change, only to shine.  Every piece you see here is thoughtfully chosen to bring together quality, affordability, and a touch of everyday luxury. Because feeling amazing should not come with a heavy price tag, it should come naturally."
+          }
+        }
+      },
+      "block_order": [
+        "heading_xtgqXE",
+        "subheading_QDT38i"
+      ],
+      "name": "t:general.image_with_text",
+      "settings": {
+        "image": "shopify://shop_images/Image_Luxury_boutique_1.jpg",
+        "image_height": "medium",
+        "image_behavior": "none",
+        "heading_size": 48,
+        "layout": "image_first",
+        "desktop_image_width": "medium",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "",
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "image_text_section_8MEjrV": {
+      "type": "image-text-section",
+      "blocks": {
+        "heading_gJ3NCQ": {
+          "type": "heading",
+          "settings": {
+            "heading": "Our Promise to You"
+          }
+        },
+        "subheading_WCbHAK": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "When you shop with us, you are not just buying clothes, you are becoming part of something bigger. We promise to bring you pieces that feel good, fit beautifully, and make you walk a little taller. From everyday outfits to statement pieces, from jewelry, everything is curated with love and intention.  We promise to keep showing up for you, listening to you, and evolving with you. And most importantly, we promise that you will always belong here. So take your time, explore a little, and find something that feels like you.  Because here at Salt & Grace Boutique, we do not just follow trends. We celebrate confidence, individuality, and grace in every form.  With love and grace, Ashley and The Salt & Grace Boutique Family."
+          }
+        }
+      },
+      "block_order": [
+        "heading_gJ3NCQ",
+        "subheading_WCbHAK"
+      ],
+      "name": "t:general.image_with_text",
+      "settings": {
+        "image": "shopify://shop_images/Image_Luxury_boutique_2.jpg",
+        "image_height": "medium",
+        "image_behavior": "none",
+        "heading_size": 48,
+        "layout": "text_first",
+        "desktop_image_width": "medium",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "",
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "page_banner_with_breadcrumb_kcHVkY",
+    "image_text_section_LhWFWH",
+    "image_text_section_AkWLPQ",
+    "image_text_section_8MEjrV"
+  ]
+}

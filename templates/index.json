@@ -29,6 +29,7 @@
         "slide_mf9RTD": {
           "type": "slide",
           "settings": {
+            "image": "shopify://shop_images/HeroSection.png",
             "overlay_color": "#100a04",
             "overlay_opacity": 60,
             "heading": "Western Soul, Modern Style",
@@ -41,11 +42,12 @@
             "content_position": "middle_left",
             "content_alignment": "left",
             "mobile_content_alignment": "left",
-            "color_scheme": "scheme-1"
+            "color_scheme": "scheme-3"
           }
         },
         "slide_VLKVTj": {
           "type": "slide",
+          "disabled": true,
           "settings": {
             "overlay_color": "#100a04",
             "overlay_opacity": 60,
@@ -110,7 +112,7 @@
         "color_scheme": "scheme-4",
         "separator_color": "#999999",
         "separator_char": "|",
-        "font_size": 12,
+        "font_size": 15,
         "scroll_speed": 25,
         "padding_top": 12,
         "padding_bottom": 12
@@ -119,10 +121,18 @@
     "category_grid_JzzWFE": {
       "type": "category-grid",
       "blocks": {
+        "category_card_MDXgYR": {
+          "type": "category_card",
+          "settings": {
+            "collection": "western",
+            "custom_label": "",
+            "custom_link": ""
+          }
+        },
         "category_card_UxkbDQ": {
           "type": "category_card",
           "settings": {
-            "collection": "",
+            "collection": "boho",
             "custom_label": "",
             "custom_link": ""
           }
@@ -130,7 +140,7 @@
         "category_card_3g4rGw": {
           "type": "category_card",
           "settings": {
-            "collection": "",
+            "collection": "designer",
             "custom_label": "",
             "custom_link": ""
           }
@@ -138,7 +148,7 @@
         "category_card_WBH4rC": {
           "type": "category_card",
           "settings": {
-            "collection": "",
+            "collection": "occasion",
             "custom_label": "",
             "custom_link": ""
           }
@@ -146,15 +156,7 @@
         "category_card_iVifn4": {
           "type": "category_card",
           "settings": {
-            "collection": "",
-            "custom_label": "",
-            "custom_link": ""
-          }
-        },
-        "category_card_MDXgYR": {
-          "type": "category_card",
-          "settings": {
-            "collection": "",
+            "collection": "vacation-look",
             "custom_label": "",
             "custom_link": ""
           }
@@ -162,7 +164,7 @@
         "category_card_VRRaFd": {
           "type": "category_card",
           "settings": {
-            "collection": "",
+            "collection": "winter-luxe",
             "custom_label": "",
             "custom_link": ""
           }
@@ -170,7 +172,7 @@
         "category_card_DnCQwn": {
           "type": "category_card",
           "settings": {
-            "collection": "",
+            "collection": "best-seller",
             "custom_label": "",
             "custom_link": ""
           }
@@ -178,18 +180,18 @@
         "category_card_LLjpGk": {
           "type": "category_card",
           "settings": {
-            "collection": "",
+            "collection": "new-arrival",
             "custom_label": "",
             "custom_link": ""
           }
         }
       },
       "block_order": [
+        "category_card_MDXgYR",
         "category_card_UxkbDQ",
         "category_card_3g4rGw",
         "category_card_WBH4rC",
         "category_card_iVifn4",
-        "category_card_MDXgYR",
         "category_card_VRRaFd",
         "category_card_DnCQwn",
         "category_card_LLjpGk"
@@ -200,8 +202,8 @@
         "subtitle": "Everything you need to make your look fantastic",
         "cards_to_show": "8",
         "columns_desktop": 4,
-        "padding_top": 48,
-        "padding_bottom": 48,
+        "padding_top": 60,
+        "padding_bottom": 60,
         "color_scheme": ""
       }
     },
@@ -227,24 +229,24 @@
     "product_tabs_fPhtgz": {
       "type": "product-tabs",
       "blocks": {
-        "tab_y3AmKL": {
+        "tab_fcfrL6": {
           "type": "tab",
           "settings": {
             "label": "New Arrivals",
-            "collection": ""
+            "collection": "boho"
           }
         },
-        "tab_fpyJbP": {
+        "tab_9DFKBQ": {
           "type": "tab",
           "settings": {
             "label": "Trending Now",
-            "collection": ""
+            "collection": "designer"
           }
         }
       },
       "block_order": [
-        "tab_y3AmKL",
-        "tab_fpyJbP"
+        "tab_fcfrL6",
+        "tab_9DFKBQ"
       ],
       "name": "t:general.product_tabs",
       "settings": {
@@ -268,20 +270,20 @@
         "heading_MFmbmN": {
           "type": "heading",
           "settings": {
-            "heading": "Image with text"
+            "heading": "Summer Styles"
           }
         },
         "subheading_qiDhK3": {
           "type": "subheading",
           "settings": {
-            "subheading": "Pair text with an image to focus on your chosen product, collection, or blog post."
+            "subheading": "✨ Whimsical, beautiful, and effortlessly stylish— perfect for any occasion and every side of you! Shop now! 🌼"
           }
         },
         "button_LLUfW3": {
           "type": "button",
           "settings": {
             "button_label": "Shop now",
-            "button_link": "#"
+            "button_link": "shopify://collections"
           }
         }
       },
@@ -292,11 +294,12 @@
       ],
       "name": "t:general.image_with_text",
       "settings": {
-        "image_height": "large",
+        "image": "shopify://shop_images/1.jpg",
+        "image_height": "adapt",
         "image_behavior": "zoom-in",
         "heading_size": 48,
         "layout": "image_first",
-        "desktop_image_width": "small",
+        "desktop_image_width": "medium",
         "content_layout": "no-overlap",
         "desktop_content_position": "middle",
         "desktop_content_alignment": "left",
@@ -314,6 +317,8 @@
           "type": "brand_tab",
           "settings": {
             "label": "Best Sellers",
+            "image_back": "shopify://shop_images/About_1_1.png",
+            "image_front": "shopify://shop_images/Image_Luxury_boutique.png",
             "link": "#",
             "cta_label": "Shop now",
             "link_new_tab": false
@@ -370,7 +375,7 @@
         "cta_url": "#",
         "cta_new_tab": false,
         "content_width": 340,
-        "image_height_desktop": 500,
+        "image_height_desktop": 660,
         "image_height_tablet": 380,
         "image_height_mobile": 260,
         "color_scheme": "scheme-1",
@@ -395,21 +400,22 @@
         "subtitle": "Some of our new looks you will love",
         "subtitle_size": 13,
         "atc_label": "Add To Cart",
-        "collection": "",
+        "collection": "designer",
         "products_limit": 8
       }
     },
-    "hero_banner_YdeLrP": {
+    "hero_banner_LiD3Vb": {
       "type": "hero-banner",
       "blocks": {
-        "slide_3y83Gt": {
+        "slide_cGbAm3": {
           "type": "slide",
           "settings": {
+            "image": "shopify://shop_images/Sustainability.webp",
             "overlay_color": "#100a04",
             "overlay_opacity": 60,
-            "heading": "Western Soul, Modern Style",
+            "heading": "One of A Kind,Just Like You",
             "heading_size": 48,
-            "subtext": "From laid-back daytime to summer nights — discover Western style crafted for you.",
+            "subtext": "We're here to empower women to feel confident and beautiful in their own skin",
             "button_label": "Shop the Collection",
             "button_url": "/collections/all",
             "button_outline": false,
@@ -417,12 +423,12 @@
             "content_position": "middle",
             "content_alignment": "left",
             "mobile_content_alignment": "left",
-            "color_scheme": "scheme-1"
+            "color_scheme": "scheme-3"
           }
         }
       },
       "block_order": [
-        "slide_3y83Gt"
+        "slide_cGbAm3"
       ],
       "name": "t:general.hero_banner",
       "settings": {
@@ -435,9 +441,53 @@
         "slideshow_description": ""
       }
     },
-    "instagram_carousel_E6wRtz": {
+    "instagram_carousel_X3EWCM": {
       "type": "instagram-carousel",
-      "name": "Media Carousel",
+      "blocks": {
+        "post_UyVC9y": {
+          "type": "post",
+          "settings": {
+            "alt": "Media post",
+            "video": "shopify://files/videos/Made to last, not made to trend.Slow fashion isn’t minimalism—it’s intentionality. One hand-dyed.mp4"
+          }
+        },
+        "post_kafqAB": {
+          "type": "post",
+          "settings": {
+            "alt": "Media post",
+            "video": "shopify://files/videos/insta.mp4.mp4"
+          }
+        },
+        "post_QmfjiU": {
+          "type": "post",
+          "settings": {
+            "alt": "Media post",
+            "video": "shopify://files/videos/intanew.mp4.mp4"
+          }
+        },
+        "post_W4nDjr": {
+          "type": "post",
+          "settings": {
+            "alt": "Media post",
+            "video": "shopify://files/videos/sud.mp4.mp4"
+          }
+        },
+        "post_6p8tgP": {
+          "type": "post",
+          "settings": {
+            "alt": "Media post",
+            "video": "shopify://files/videos/AQOfDm-5pYXjBSpyZPK9tIiJNUY3OFv1ZSRTkJYqt8qJFkcBH5cj_vPmtcJUuwW5cem7lMGajvGDu5ykSjau9JIU3OtWWq73CdACGBM.mp4"
+          }
+        }
+      },
+      "block_order": [
+        "post_UyVC9y",
+        "post_kafqAB",
+        "post_QmfjiU",
+        "post_W4nDjr",
+        "post_6p8tgP"
+      ],
+      "name": "t:general.instagram_carousel",
       "settings": {
         "color_scheme": "",
         "padding_top_desktop": 64,
@@ -570,7 +620,7 @@
         "padding_bottom": 48,
         "cards_per_row": "3",
         "cards_per_row_mobile": "1",
-        "enable_slider": false
+        "enable_slider": true
       }
     }
   },
@@ -584,8 +634,8 @@
     "image_text_section_TbVzTt",
     "brand_story_jEbFwR",
     "featured_collection_hpWcBt",
-    "hero_banner_YdeLrP",
-    "instagram_carousel_E6wRtz",
+    "hero_banner_LiD3Vb",
+    "instagram_carousel_X3EWCM",
     "testimonials_KBbzUQ",
     "trust_badges_Xyi6PV"
   ]

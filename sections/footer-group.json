@@ -13,9 +13,54 @@
   "sections": {
     "footer": {
       "type": "footer",
+      "blocks": {
+        "brand_QeHd6Y": {
+          "type": "brand",
+          "settings": {
+            "enable_block": true,
+            "logo": "shopify://shop_images/Luxvera_logo_Black-01.png",
+            "brand_name": "",
+            "brand_description": "This is more than a boutique, it’s a space where confidence feels natural and being yourself is enough. Thoughtfully curated pieces designed to fit beautifully, feel effortless, and celebrate you exactly as you are."
+          }
+        },
+        "menu_wi9Bz4": {
+          "type": "menu",
+          "settings": {
+            "enable_block": true,
+            "enable_accordion": true,
+            "heading": "Quick Links",
+            "menu": "footer-about-menu"
+          }
+        },
+        "menu_JHF4Qi": {
+          "type": "menu",
+          "settings": {
+            "enable_block": true,
+            "enable_accordion": true,
+            "heading": "Policies",
+            "menu": "store-guideline"
+          }
+        },
+        "newsletter_HC3xyX": {
+          "type": "newsletter",
+          "settings": {
+            "enable_block": true,
+            "enable_accordion": true,
+            "heading": "Stay Updated About Our Trending Offers",
+            "thankyou_msg": "Thanks for subscribing!",
+            "newsletter_consent": "I agree to receive marketing emails."
+          }
+        }
+      },
+      "block_order": [
+        "brand_QeHd6Y",
+        "menu_wi9Bz4",
+        "menu_JHF4Qi",
+        "newsletter_HC3xyX"
+      ],
       "settings": {
         "enable_accordion": false,
-        "color_scheme": "",
+        "color_scheme": "scheme-4",
         "brand_sub": "Fashion",
         "bottom_tagline": "Fashion. All rights reserved.",
         "show_social_icons": true,

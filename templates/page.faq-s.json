@@ -1,0 +1,96 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "faq_accordion_EjXwLg": {
+      "type": "faq-accordion",
+      "blocks": {
+        "faq_item_AimTFB": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "<p>Orders are processed within 1 to 3 business days. Delivery times vary based on location, and international orders to Canada typically take 5 to 10 business days.</p>"
+          }
+        },
+        "faq_item_B4xqw9": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Do you offer free shipping?",
+            "answer": "<p>Yes, we offer free standard shipping on all domestic orders over a certain threshold. Please check our shipping policy page for the latest details.</p>"
+          }
+        },
+        "faq_item_cr3adB": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How can I track my order?",
+            "answer": "<p>Once your order ships, you'll receive a confirmation email with a tracking number. You can use this to track your package directly on our website or the carrier's site.</p>"
+          }
+        },
+        "faq_item_J4WCWF": {
+          "type": "faq_item",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>We accept returns within 30 days of delivery for most items in their original, unused condition. Please visit our returns page to start a return request.</p>"
+          }
+        },
+        "faq_item_xGadzk": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Do you offer exchanges?",
+            "answer": "<p>Yes, exchanges are available for a different size or color of the same item, subject to stock availability. Contact our support team to initiate an exchange.</p>"
+          }
+        },
+        "faq_item_8pWYKM": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Are there items that cannot be returned?",
+            "answer": "<p>Certain items such as final sale products, gift cards, and personalized items are not eligible for return. These will be marked clearly on the product page.</p>"
+          }
+        },
+        "faq_item_e7BE7w": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Will the item look exactly like the photos?",
+            "answer": "<p>We strive for accurate product photography. However, slight color variations may occur due to monitor settings and lighting. Handmade items may also have minor natural variations.</p>"
+          }
+        },
+        "faq_item_ApAUqd": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Do you restock sold-out items?",
+            "answer": "<p>Restocks depend on the product. You can sign up for restock notifications on the product page by clicking \"Notify Me\" when an item is out of stock.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_item_AimTFB",
+        "faq_item_B4xqw9",
+        "faq_item_cr3adB",
+        "faq_item_J4WCWF",
+        "faq_item_xGadzk",
+        "faq_item_8pWYKM",
+        "faq_item_e7BE7w",
+        "faq_item_ApAUqd"
+      ],
+      "name": "t:general.faq_accordion",
+      "settings": {
+        "color_scheme": "",
+        "section_padding_top": 40,
+        "section_padding_bottom": 40,
+        "container_width": 1100,
+        "open_first": true,
+        "allow_multiple": false
+      }
+    }
+  },
+  "order": [
+    "faq_accordion_EjXwLg"
+  ]
+}

@@ -13,7 +13,8 @@
       "type": "page-banner-with-breadcrumb",
       "name": "t:general.page_banner_breadcrumb",
       "settings": {
-        "color_scheme": "",
+        "color_scheme": "scheme-3",
+        "background_image": "shopify://shop_images/HeroSection.jpg",
         "overlay_color": "#100a04",
         "overlay_opacity": 70,
         "height_desktop": 420,
@@ -21,8 +22,7 @@
         "height_mobile": 260,
         "content_alignment": "flex-start",
         "show_breadcrumbs": true,
-        "breadcrumb_home_label": "Home",
-        "heading": "Page heading",
+        "heading": "{{ page.title }}",
         "heading_size": 42,
         "subtext": "",
         "button_label": "Explore now",
@@ -50,7 +50,7 @@
         "form_heading": "Get in Touch",
         "btn_label": "Send Message",
         "show_map": true,
-        "map_embed": ""
+        "map_embed": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d227822.60371356923!2d80.77770172924532!3d26.84859648495782!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bfd991f32b16b%3A0x93ccba8909978be7!2sLucknow%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1789755458807!5m2!1sen!2sin\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"strict-origin-when-cross-origin\"></iframe>"
       }
     }
   },
