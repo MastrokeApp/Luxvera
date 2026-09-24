@@ -115,6 +115,10 @@
           <label for="contact-message-{{ section.id }}">{{ 'contact.form.message' | t }}</label>
           <textarea id="contact-message-{{ section.id }}" name="contact[body]" placeholder="{{ 'contact.form.message_placeholder' | t }}" required></textarea>
         </div>
+        <div class="lv-contact-hp" aria-hidden="true">
+          <label for="contact-hp-{{ section.id }}">{{ 'contact.form.leave_blank' | t }}</label>
+          <input type="text" id="contact-hp-{{ section.id }}" name="contact[company]" tabindex="-1" autocomplete="off">
+        </div>
 
         <button type="submit" class="lv-contact-form-submit">
           {%- if section.settings.btn_label != blank -%}{{ section.settings.btn_label | escape }}{%- else -%}{{ 'contact.form.send_message' | t }}{%- endif -%}
@@ -424,7 +428,47 @@
     padding: 28px 16px 48px;
   }
 }
+
+.lv-contact .lv-contact-hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  left: -9999px;
+  top: -9999px;
+}
 {% endstylesheet %}
+
+{% javascript %}
+(function () {
+  'use strict';
+
+  function initContactHoneypot(form) {
+    var hp = form.querySelector('.lv-contact-hp input');
+    if (!hp) return;
+
+    form.addEventListener('submit', function (e) {
+      if (hp.value.trim() !== '') {
+        e.preventDefault();
+      }
+    });
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('.lv-contact-form').forEach(initContactHoneypot);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    initAll(e.target);
+  });
+})();
+{% endjavascript %}
 
 {% schema %}
 {
