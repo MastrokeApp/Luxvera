@@ -131,7 +131,8 @@
 }
 
 #instagram-{{ section.id }} .swiper-nav .sw-prev,
-#instagram-{{ section.id }} .swiper-nav .sw-next {
+#instagram-{{ section.id }} .swiper-nav .sw-next,
+#instagram-{{ section.id }} .swiper-nav .sw-pause {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -147,9 +148,22 @@
 }
 
 #instagram-{{ section.id }} .swiper-nav .sw-prev:hover,
-#instagram-{{ section.id }} .swiper-nav .sw-next:hover {
+#instagram-{{ section.id }} .swiper-nav .sw-next:hover,
+#instagram-{{ section.id }} .swiper-nav .sw-pause:hover {
   opacity: 0.82;
   transform: scale(1.06);
+}
+
+#instagram-{{ section.id }} .swiper-nav .sw-pause__icon--play {
+  display: none;
+}
+
+#instagram-{{ section.id }} .swiper-nav .sw-pause.is-paused .sw-pause__icon--pause {
+  display: none;
+}
+
+#instagram-{{ section.id }} .swiper-nav .sw-pause.is-paused .sw-pause__icon--play {
+  display: block;
 }
 
 #instagram-{{ section.id }} .swiper-nav svg {
@@ -212,6 +226,14 @@
   object-fit: cover;
 }
 </style>
+
+{%- assign has_video = false -%}
+{%- for block in section.blocks -%}
+  {%- if block.settings.video != blank -%}
+    {%- assign has_video = true -%}
+    {%- break -%}
+  {%- endif -%}
+{%- endfor -%}
 
 <section class="section instagram-section color-{{ section.settings.color_scheme }}" id="instagram-{{ section.id }}">
   <div class="container">
@@ -315,6 +337,25 @@
           <polyline points="15 18 9 12 15 6"/>
         </svg>
       </button>
+      {%- if section.settings.autoplay or has_video -%}
+        <button
+          class="sw-pause"
+          id="lv-insta-pause-{{ section.id }}"
+          type="button"
+          aria-pressed="false"
+          data-label-pause="{{ 'accessibility.pause_slideshow' | t }}"
+          data-label-play="{{ 'accessibility.play_slideshow' | t }}"
+          aria-label="{{ 'accessibility.pause_slideshow' | t }}"
+        >
+          <svg class="sw-pause__icon sw-pause__icon--pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <rect x="6" y="4" width="4" height="16" rx="1"/>
+            <rect x="14" y="4" width="4" height="16" rx="1"/>
+          </svg>
+          <svg class="sw-pause__icon sw-pause__icon--play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <polygon points="6 4 20 12 6 20 6 4"/>
+          </svg>
+        </button>
+      {%- endif -%}
       <button class="sw-next" id="lv-insta-next-{{ section.id }}" aria-label="{{ 'accessibility.next' | t }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <polyline points="9 18 15 12 9 6"/>
@@ -362,19 +403,69 @@
     if (autoplay) {
       config.autoplay = {
         delay: delay,
-        disableOnInteraction: false,
-        pauseOnMouseEnter: true
+        disableOnInteraction: false
       };
     }
 
     var sw = new Swiper(el, config);
+    var videos = el.querySelectorAll('.insta-video');
 
-    if (!prefersReducedMotion) {
-      var videos = el.querySelectorAll('.insta-video');
+    // pauseOnMouseEnter is intentionally NOT used here (Swiper would resume
+    // autoplay itself on mouseleave and silently override an explicit pause
+    // from the button below). Hover, keyboard focus and the pause button are
+    // all handled by this one userPaused/hovering/focused state machine so
+    // they can't fight each other -- see the matching pattern in
+    // sections/hero-banner.liquid.
+    var userPaused = prefersReducedMotion;
+    var hovering = false;
+    var focused = false;
+    var pauseBtn = document.getElementById('lv-insta-pause-' + sid);
+
+    function updatePauseButton() {
+      if (!pauseBtn) return;
+      pauseBtn.classList.toggle('is-paused', userPaused);
+      pauseBtn.setAttribute('aria-pressed', userPaused ? 'true' : 'false');
+      pauseBtn.setAttribute('aria-label', userPaused ? pauseBtn.dataset.labelPlay : pauseBtn.dataset.labelPause);
+    }
+
+    function syncAutoplay() {
+      if (autoplay && !userPaused && !hovering && !focused) {
+        sw.autoplay.start();
+      } else if (autoplay) {
+        sw.autoplay.stop();
+      }
+
       videos.forEach(function (v) {
-        v.play().catch(function () {});
+        if (userPaused) {
+          v.pause();
+        } else {
+          v.play().catch(function () {});
+        }
+      });
+
+      updatePauseButton();
+    }
+
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', function () {
+        userPaused = !userPaused;
+        syncAutoplay();
       });
     }
+
+    if (autoplay) {
+      el.addEventListener('mouseenter', function () { hovering = true; syncAutoplay(); });
+      el.addEventListener('mouseleave', function () { hovering = false; syncAutoplay(); });
+
+      el.addEventListener('focusin', function () { focused = true; syncAutoplay(); });
+      el.addEventListener('focusout', function (e) {
+        if (el.contains(e.relatedTarget)) return;
+        focused = false;
+        syncAutoplay();
+      });
+    }
+
+    syncAutoplay();
 
     var prevBtn = document.getElementById('lv-insta-prev-' + sid);
     var nextBtn = document.getElementById('lv-insta-next-' + sid);
@@ -382,7 +473,7 @@
     if (prevBtn) {
       prevBtn.addEventListener('click', function () {
         sw.slidePrev();
-        if (autoplay) {
+        if (autoplay && !userPaused && !hovering && !focused) {
           sw.autoplay.stop();
           sw.autoplay.start();
         }
@@ -392,7 +483,7 @@
     if (nextBtn) {
       nextBtn.addEventListener('click', function () {
         sw.slideNext();
-        if (autoplay) {
+        if (autoplay && !userPaused && !hovering && !focused) {
           sw.autoplay.stop();
           sw.autoplay.start();
         }

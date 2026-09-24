@@ -198,6 +198,26 @@
           ></button>
         {%- endfor -%}
       </div>
+
+      {%- if section.settings.autoplay -%}
+        <button
+          class="hero-pause"
+          type="button"
+          data-lv-hero-pause
+          aria-pressed="false"
+          data-label-pause="{{ 'accessibility.pause_slideshow' | t }}"
+          data-label-play="{{ 'accessibility.play_slideshow' | t }}"
+          aria-label="{{ 'accessibility.pause_slideshow' | t }}"
+        >
+          <svg class="hero-pause__icon hero-pause__icon--pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <rect x="6" y="4" width="4" height="16" rx="1"/>
+            <rect x="14" y="4" width="4" height="16" rx="1"/>
+          </svg>
+          <svg class="hero-pause__icon hero-pause__icon--play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <polygon points="7 4 20 12 7 20 7 4"/>
+          </svg>
+        </button>
+      {%- endif -%}
     {%- endif -%}
 
   {%- else -%}
@@ -411,6 +431,41 @@
   transform: scale(1.35);
 }
 
+.hero-slideshow .hero-pause {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  z-index: 10;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(var(--color-background), 0.35);
+  border: 1px solid rgba(var(--color-foreground), 0.25);
+  color: rgb(var(--color-foreground));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.25s;
+}
+
+.hero-slideshow .hero-pause:hover {
+  background: rgba(var(--color-background), 0.55);
+}
+
+.hero-slideshow .hero-pause__icon--play {
+  display: none;
+}
+
+.hero-slideshow .hero-pause.is-paused .hero-pause__icon--pause {
+  display: none;
+}
+
+.hero-slideshow .hero-pause.is-paused .hero-pause__icon--play {
+  display: block;
+}
+
 @media (max-width: 768px) {
   .hero-slideshow:not(.hero-slideshow--adaptive) {
     height: var(--hero-height-tablet, 420px);
@@ -515,12 +570,23 @@
     var prev = root.querySelector('.hero-arrow--prev');
     var next = root.querySelector('.hero-arrow--next');
     var dots = Array.prototype.slice.call(root.querySelectorAll('.hero-dot'));
+    var pauseBtn = root.querySelector('[data-lv-hero-pause]');
 
     var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var current = 0;
-    var autoplay = root.dataset.autoplay === 'true' && !prefersReducedMotion;
+    var autoplayIntent = root.dataset.autoplay === 'true';
     var speed = parseInt(root.dataset.speed, 10) || 5000;
     var timer = null;
+
+    // Three independent reasons autoplay can be suspended: the visitor's own
+    // reduced-motion preference or an explicit pause-button click (userPaused,
+    // sticky until they toggle it again), and transient hover/keyboard-focus
+    // (auto-resumes on mouseleave/focusout). WCAG 2.2.2 needs the explicit
+    // control; hover/focus pausing is defense in depth for touch/mouse users
+    // who haven't found the button yet.
+    var userPaused = prefersReducedMotion;
+    var hovering = false;
+    var focused = false;
 
     function goTo(index) {
       current = (index + total) % total;
@@ -528,7 +594,6 @@
     }
 
     function startAuto() {
-      if (!autoplay) return;
       clearInterval(timer);
       timer = setInterval(function () {
         goTo(current + 1);
@@ -539,10 +604,25 @@
       clearInterval(timer);
     }
 
+    function updatePauseButton() {
+      if (!pauseBtn) return;
+      pauseBtn.classList.toggle('is-paused', userPaused);
+      pauseBtn.setAttribute('aria-pressed', userPaused ? 'true' : 'false');
+      pauseBtn.setAttribute('aria-label', userPaused ? pauseBtn.dataset.labelPlay : pauseBtn.dataset.labelPause);
+    }
+
+    function sync() {
+      if (autoplayIntent && !userPaused && !hovering && !focused) {
+        startAuto();
+      } else {
+        stopAuto();
+      }
+      updatePauseButton();
+    }
+
     function step(delta) {
-      stopAuto();
       goTo(current + delta);
-      startAuto();
+      sync();
     }
 
     if (prev) {
@@ -559,14 +639,29 @@
 
     dots.forEach(function (dot) {
       dot.addEventListener('click', function () {
-        stopAuto();
         goTo(parseInt(dot.dataset.index, 10));
-        startAuto();
+        sync();
       });
     });
 
-    root.addEventListener('mouseenter', stopAuto);
-    root.addEventListener('mouseleave', startAuto);
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', function () {
+        userPaused = !userPaused;
+        sync();
+      });
+    }
+
+    if (autoplayIntent) {
+      root.addEventListener('mouseenter', function () { hovering = true; sync(); });
+      root.addEventListener('mouseleave', function () { hovering = false; sync(); });
+
+      root.addEventListener('focusin', function () { focused = true; sync(); });
+      root.addEventListener('focusout', function (e) {
+        if (root.contains(e.relatedTarget)) return;
+        focused = false;
+        sync();
+      });
+    }
 
     var touchStartX = 0;
 
@@ -582,10 +677,13 @@
     }, { passive: true });
 
     // Let the theme editor pause autoplay and jump between slides
-    root.lvHeroStop = stopAuto;
+    root.lvHeroStop = function () {
+      userPaused = true;
+      sync();
+    };
     root.lvHeroGoTo = goTo;
 
-    startAuto();
+    sync();
   }
 
   function initAll(scope) {

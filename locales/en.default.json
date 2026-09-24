@@ -40,6 +40,8 @@
     "slide_navigation": "Slide navigation",
     "previous_slide": "Previous slide",
     "next_slide": "Next slide",
+    "pause_slideshow": "Pause slideshow",
+    "play_slideshow": "Play slideshow",
     "collection_view": "Collection view",
     "grid_view": "Grid view",
     "list_view": "List view",
