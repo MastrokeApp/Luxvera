@@ -76,3 +76,59 @@
   );
 
 });
+
+window.lvTrapFocus = (function () {
+  var FOCUSABLE_SELECTOR = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled]):not([type="hidden"])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+  ].join(',');
+
+  function isVisible(el) {
+    return el.offsetParent !== null || el.getClientRects().length > 0;
+  }
+
+  function getFocusable(container) {
+    return Array.prototype.slice
+      .call(container.querySelectorAll(FOCUSABLE_SELECTOR))
+      .filter(isVisible);
+  }
+
+  return function lvTrapFocus(container) {
+    if (!container) return function release() {};
+
+    function handleKeydown(e) {
+      if (e.key !== 'Tab') return;
+
+      var focusable = getFocusable(container);
+      if (!focusable.length) {
+        e.preventDefault();
+        return;
+      }
+
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      var active = document.activeElement;
+
+      if (!container.contains(active)) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener('keydown', handleKeydown, true);
+
+    return function release() {
+      document.removeEventListener('keydown', handleKeydown, true);
+    };
+  };
+})();

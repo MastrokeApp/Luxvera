@@ -58,6 +58,9 @@
     }
   }
 
+  var releaseDrawerTrap = null;
+  var releaseSearchTrap = null;
+
   function openDrawer() {
     var wasOpen = els.mobileMenu && els.mobileMenu.classList.contains('open');
     if (els.mobileMenu) {
@@ -69,6 +72,8 @@
       els.hamburger.setAttribute('aria-expanded', 'true');
     }
     if (!wasOpen) lockScroll();
+    if (releaseDrawerTrap) releaseDrawerTrap();
+    if (els.mobileMenu && window.lvTrapFocus) releaseDrawerTrap = window.lvTrapFocus(els.mobileMenu);
     setTimeout(function () {
       if (els.drawerClose) els.drawerClose.focus();
     }, 50);
@@ -86,12 +91,15 @@
     }
     if (wasOpen) unlockScroll();
     if (wasOpen && els.hamburger) els.hamburger.focus();
+    if (releaseDrawerTrap) { releaseDrawerTrap(); releaseDrawerTrap = null; }
   }
 
   function openSearch() {
     var wasOpen = els.searchOverlay && els.searchOverlay.classList.contains('open');
     if (els.searchOverlay) els.searchOverlay.classList.add('open');
     if (!wasOpen) lockScroll();
+    if (releaseSearchTrap) releaseSearchTrap();
+    if (els.searchOverlay && window.lvTrapFocus) releaseSearchTrap = window.lvTrapFocus(els.searchOverlay);
     setTimeout(function () {
       if (els.searchInput) els.searchInput.focus();
     }, 50);
@@ -103,6 +111,7 @@
     if (wasOpen) unlockScroll();
     if (wasOpen && els.searchBtn) els.searchBtn.focus();
     clearPredictive();
+    if (releaseSearchTrap) { releaseSearchTrap(); releaseSearchTrap = null; }
   }
 
   var predictiveTimer = null;

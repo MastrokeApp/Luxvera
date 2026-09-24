@@ -294,6 +294,8 @@
   /*
    * Open drawer
    */
+  var releaseCartTrap = null;
+
   function openDrawer(cartData) {
     if (!cartData) return;
 
@@ -320,6 +322,9 @@
         'cart-notif--open'
       );
 
+      if (releaseCartTrap) releaseCartTrap();
+      if (window.lvTrapFocus) releaseCartTrap = window.lvTrapFocus(drawer);
+
       if (closeBtn) {
         closeBtn.focus();
       }
@@ -339,6 +344,8 @@
     document.body.classList.remove(
       'cart-notif--open'
     );
+
+    if (releaseCartTrap) { releaseCartTrap(); releaseCartTrap = null; }
 
     setTimeout(function () {
       drawer.hidden = true;

@@ -533,6 +533,7 @@
     var modalClose = document.getElementById('lv-vm-close-' + SID);
     var selectedVid = null;
     var lastTrigger = null;
+    var releaseModalTrap = null;
 
     function openModal(btn) {
       lastTrigger = btn;
@@ -567,6 +568,8 @@
 
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
+      if (releaseModalTrap) releaseModalTrap();
+      if (window.lvTrapFocus) releaseModalTrap = window.lvTrapFocus(modal);
       setTimeout(function () {
         if (modalClose) modalClose.focus();
       }, 50);
@@ -576,6 +579,7 @@
       if (modal) modal.classList.remove('open');
       document.body.style.overflow = '';
       selectedVid = null;
+      if (releaseModalTrap) { releaseModalTrap(); releaseModalTrap = null; }
       if (lastTrigger) {
         lastTrigger.focus();
         lastTrigger = null;
