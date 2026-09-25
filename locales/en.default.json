@@ -40,6 +40,8 @@
     "slide_navigation": "Slide navigation",
     "previous_slide": "Previous slide",
     "next_slide": "Next slide",
+    "pause_slideshow": "Pause slideshow",
+    "play_slideshow": "Play slideshow",
     "collection_view": "Collection view",
     "grid_view": "Grid view",
     "list_view": "List view",
@@ -133,7 +135,8 @@
       "message_placeholder": "Write your message here…",
       "success": "Thanks for reaching out! We'll get back to you within 24-48 hours.",
       "map_placeholder": "Add your Google Maps embed URL in Theme Editor",
-      "send_message": "Send Message"
+      "send_message": "Send Message",
+      "leave_blank": "Leave this field blank"
     },
     "info": {
       "email_us": "Email Us",

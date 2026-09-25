@@ -169,6 +169,7 @@
       var modalClose = root.querySelector('#lv-vm-recs-close-' + SID);
       var selectedVid = null;
       var lastTrigger = null;
+      var releaseModalTrap = null;
 
       var L = {
         choose: (modalAtc && modalAtc.dataset.labelChoose) || 'Choose a size',
@@ -212,6 +213,8 @@
 
         modal.classList.add('open');
         document.body.style.overflow = 'hidden';
+        if (releaseModalTrap) releaseModalTrap();
+        if (window.lvTrapFocus) releaseModalTrap = window.lvTrapFocus(modal);
         setTimeout(function () {
           if (modalClose) modalClose.focus();
         }, 50);
@@ -222,6 +225,7 @@
         modal.classList.remove('open');
         document.body.style.overflow = '';
         selectedVid = null;
+        if (releaseModalTrap) { releaseModalTrap(); releaseModalTrap = null; }
         if (lastTrigger) {
           lastTrigger.focus();
           lastTrigger = null;

@@ -775,6 +775,7 @@
       var lightboxNext = root.querySelector('[data-lightbox-nav="next"]');
       var lightboxMediaEls = Array.prototype.slice.call(lightbox.querySelectorAll('.lv-pdp-lightbox__media'));
       var lastZoomTrigger = null;
+      var releaseLightboxTrap = null;
 
       var showLightboxMediaAt = function (index) {
         if (!lightboxMediaEls.length) return;
@@ -798,6 +799,8 @@
         lightbox.classList.add('open');
         if (lightboxBackdrop) lightboxBackdrop.hidden = false;
         document.body.style.overflow = 'hidden';
+        if (releaseLightboxTrap) releaseLightboxTrap();
+        if (window.lvTrapFocus) releaseLightboxTrap = window.lvTrapFocus(lightbox);
         if (lightboxClose) lightboxClose.focus();
       };
 
@@ -805,6 +808,7 @@
         lightbox.classList.remove('open');
         if (lightboxBackdrop) lightboxBackdrop.hidden = true;
         document.body.style.overflow = '';
+        if (releaseLightboxTrap) { releaseLightboxTrap(); releaseLightboxTrap = null; }
         if (lastZoomTrigger) lastZoomTrigger.focus();
       };
 

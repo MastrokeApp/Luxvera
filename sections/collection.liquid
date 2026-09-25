@@ -158,7 +158,15 @@
       {% endif %}
 
         {%- if section.settings.enable_mobile_filter_button -%}
-          <div class="lv-mobile-filter-drawer" id="lv-mobile-filter-drawer-{{ section.id }}" aria-hidden="true">
+          <div
+            class="lv-mobile-filter-drawer"
+            id="lv-mobile-filter-drawer-{{ section.id }}"
+            aria-hidden="true"
+            inert
+            role="dialog"
+            aria-modal="true"
+            aria-label="{% if section.settings.filter_heading != blank %}{{ section.settings.filter_heading | escape }}{% else %}{{ 'collections.filter_by' | t }}{% endif %}"
+          >
             <div class="lv-mobile-filter-overlay" data-close-mobile-filter></div>
             <div class="lv-mobile-filter-panel">
               <div class="lv-mobile-filter-head">
@@ -977,6 +985,7 @@
     var modalClose = document.getElementById('lv-vm-col-close-' + SID);
     var selectedVid = null;
     var lastTrigger = null;
+    var releaseModalTrap = null;
 
     var L = {
       choose: (modalAtc && modalAtc.dataset.labelChoose) || 'Choose a size',
@@ -1074,6 +1083,8 @@
 
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
+      if (releaseModalTrap) releaseModalTrap();
+      if (window.lvTrapFocus) releaseModalTrap = window.lvTrapFocus(modal);
       setTimeout(function () {
         if (modalClose) modalClose.focus();
       }, 50);
@@ -1084,6 +1095,7 @@
       modal.classList.remove('open');
       document.body.style.overflow = '';
       selectedVid = null;
+      if (releaseModalTrap) { releaseModalTrap(); releaseModalTrap = null; }
       if (lastTrigger) {
         lastTrigger.focus();
         lastTrigger = null;
@@ -1260,19 +1272,35 @@
 
     var mobileOpen = document.getElementById('lv-mobile-filter-open-' + SID);
     var mobileDrawer = document.getElementById('lv-mobile-filter-drawer-' + SID);
+    var mobileDrawerClose = mobileDrawer && mobileDrawer.querySelector('.lv-mobile-filter-close');
+    var releaseMobileFilterTrap = null;
+    var lastMobileFilterTrigger = null;
 
     function openMobileFilters() {
       if (!mobileDrawer) return;
-      mobileDrawer.classList.add('is-open');
+      lastMobileFilterTrigger = mobileOpen;
+      mobileDrawer.removeAttribute('inert');
       mobileDrawer.setAttribute('aria-hidden', 'false');
+      mobileDrawer.classList.add('is-open');
       document.body.style.overflow = 'hidden';
+      if (releaseMobileFilterTrap) releaseMobileFilterTrap();
+      if (window.lvTrapFocus) releaseMobileFilterTrap = window.lvTrapFocus(mobileDrawer);
+      setTimeout(function () {
+        if (mobileDrawerClose) mobileDrawerClose.focus();
+      }, 50);
     }
 
     function closeMobileFilters() {
       if (!mobileDrawer) return;
       mobileDrawer.classList.remove('is-open');
-      mobileDrawer.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      if (releaseMobileFilterTrap) { releaseMobileFilterTrap(); releaseMobileFilterTrap = null; }
+      if (lastMobileFilterTrigger) {
+        lastMobileFilterTrigger.focus();
+        lastMobileFilterTrigger = null;
+      }
+      mobileDrawer.setAttribute('aria-hidden', 'true');
+      mobileDrawer.setAttribute('inert', '');
     }
 
     if (mobileOpen) mobileOpen.addEventListener('click', openMobileFilters);
@@ -1281,6 +1309,11 @@
         el.addEventListener('click', closeMobileFilters);
       });
     }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && mobileDrawer && mobileDrawer.classList.contains('is-open')) {
+        closeMobileFilters();
+      }
+    });
 
     initView();
   }

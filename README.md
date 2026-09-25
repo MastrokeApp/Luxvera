@@ -1,15 +1,9 @@
-<h1 align="center" style="position: relative;">
-  <br>
-    <img src="./assets/shoppy-x-ray.svg" alt="logo" width="200">
-  <br>
-  Shopify Skeleton Theme
-</h1>
+<h1 align="center">Luxvera</h1>
 
-A minimal, carefully structured Shopify theme designed to help you quickly get started. Designed with modularity, maintainability, and Shopify's best practices in mind.
+<p align="center">A premium Shopify Online Store 2.0 theme built around modular, editor-driven sections and blocks — designed for modern fashion and lifestyle brands.</p>
 
 <p align="center">
-  <a href="./LICENSE.md"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
-  <a href="./actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shopify/skeleton-theme/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="./LICENSE.md"><img src="https://img.shields.io/badge/License-Proprietary-blue.svg" alt="License"></a>
 </p>
 
 ## Getting started
@@ -26,12 +20,10 @@ If you use VS Code:
 
 ### Clone
 
-Clone this repository using Git or Shopify CLI:
+Clone this repository using Git:
 
 ```bash
-git clone git@github.com:Shopify/skeleton-theme.git
-# or
-shopify theme init
+git clone https://github.com/MastrokeApp/Luxvera.git
 ```
 
 ### Preview
@@ -53,18 +45,14 @@ shopify theme dev
 ├── locales         # Translation files for theme internationalization
 ├── sections        # Modular full-width page components
 ├── snippets        # Reusable Liquid code or HTML fragments
-└── templates       # Templates combining sections to define page structures
+└── templates       # Templates combining sections and blocks to define page structures
 ```
 
 To learn more, refer to the [theme architecture documentation](https://shopify.dev/docs/storefronts/themes/architecture).
 
 ### Templates
 
-[Templates](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) control what's rendered on each type of page in a theme.
-
-The Skeleton Theme scaffolds [JSON templates](https://shopify.dev/docs/storefronts/themes/architecture/templates/json-templates) to make it easy for merchants to customize their store.
-
-None of the template types are required, and not all of them are included in the Skeleton Theme. Refer to the [template types reference](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) for a full list.
+[Templates](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) control what's rendered on each type of page in a theme. Refer to the [template types reference](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) for a full list.
 
 ### Sections
 
@@ -147,14 +135,12 @@ For CSS and JavaScript, we recommend using the [`{% stylesheet %}`](https://shop
 
 ### `critical.css`
 
-The Skeleton Theme explicitly separates essential CSS necessary for every page into a dedicated `critical.css` file.
+Luxvera explicitly separates essential CSS necessary for every page into a dedicated `critical.css` file.
 
-## Contributing
+## Support
 
-We're excited for your contributions to the Skeleton Theme! This repository aims to remain as lean, lightweight, and fundamental as possible, and we kindly ask your contributions to align with this intention.
-
-Visit our [CONTRIBUTING.md](./CONTRIBUTING.md) for a detailed overview of our process, guidelines, and recommendations.
+Need help customizing Luxvera? Check the [documentation](https://luxvera.com/docs) or reach out via [support](https://luxvera.com/support).
 
 ## License
 
-Skeleton Theme is open-sourced under the [MIT](./LICENSE.md) License.
+Luxvera is proprietary software distributed through the Shopify Theme Store. See [LICENSE.md](./LICENSE.md) for details.

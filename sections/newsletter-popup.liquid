@@ -274,15 +274,27 @@
 
     var storageKey = 'lv-popup-dismissed-' + root.id;
     var delay = (parseFloat(root.dataset.delay) || 0) * 1000;
+    var releasePopupTrap = null;
+    var previouslyFocused = null;
+    var closeBtn = root.querySelector('.lv-popup__close');
 
     function open() {
+      previouslyFocused = document.activeElement;
       root.classList.add('is-open');
       document.body.style.overflow = 'hidden';
+      if (releasePopupTrap) releasePopupTrap();
+      if (window.lvTrapFocus) releasePopupTrap = window.lvTrapFocus(root);
+      if (closeBtn) closeBtn.focus();
     }
 
     function close(remember) {
       root.classList.remove('is-open');
       document.body.style.overflow = '';
+      if (releasePopupTrap) { releasePopupTrap(); releasePopupTrap = null; }
+      if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+        previouslyFocused.focus();
+      }
+      previouslyFocused = null;
       if (remember) {
         try { localStorage.setItem(storageKey, '1'); } catch (e) {}
       }

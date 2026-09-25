@@ -20,6 +20,10 @@
   flex-direction: column;
 }
 
+.cart-notif[hidden] {
+  display: none;
+}
+
 .cart-notif[aria-modal="true"] {
   transform: translateX(0);
 }
@@ -32,6 +36,10 @@
   opacity: 0;
   transition: opacity 0.3s;
   cursor: pointer;
+}
+
+.cart-notif__backdrop[hidden] {
+  display: none;
 }
 
 .cart-notif__backdrop[aria-modal="true"] {
