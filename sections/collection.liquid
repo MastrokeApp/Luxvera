@@ -158,7 +158,14 @@
       {% endif %}
 
         {%- if section.settings.enable_mobile_filter_button -%}
-          <div class="lv-mobile-filter-drawer" id="lv-mobile-filter-drawer-{{ section.id }}" aria-hidden="true">
+          <div
+            class="lv-mobile-filter-drawer"
+            id="lv-mobile-filter-drawer-{{ section.id }}"
+            aria-hidden="true"
+            role="dialog"
+            aria-modal="true"
+            aria-label="{% if section.settings.filter_heading != blank %}{{ section.settings.filter_heading | escape }}{% else %}{{ 'collections.filter_by' | t }}{% endif %}"
+          >
             <div class="lv-mobile-filter-overlay" data-close-mobile-filter></div>
             <div class="lv-mobile-filter-panel">
               <div class="lv-mobile-filter-head">
@@ -1264,12 +1271,21 @@
 
     var mobileOpen = document.getElementById('lv-mobile-filter-open-' + SID);
     var mobileDrawer = document.getElementById('lv-mobile-filter-drawer-' + SID);
+    var mobileDrawerClose = mobileDrawer && mobileDrawer.querySelector('.lv-mobile-filter-close');
+    var releaseMobileFilterTrap = null;
+    var lastMobileFilterTrigger = null;
 
     function openMobileFilters() {
       if (!mobileDrawer) return;
+      lastMobileFilterTrigger = mobileOpen;
       mobileDrawer.classList.add('is-open');
       mobileDrawer.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      if (releaseMobileFilterTrap) releaseMobileFilterTrap();
+      if (window.lvTrapFocus) releaseMobileFilterTrap = window.lvTrapFocus(mobileDrawer);
+      setTimeout(function () {
+        if (mobileDrawerClose) mobileDrawerClose.focus();
+      }, 50);
     }
 
     function closeMobileFilters() {
@@ -1277,6 +1293,11 @@
       mobileDrawer.classList.remove('is-open');
       mobileDrawer.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      if (releaseMobileFilterTrap) { releaseMobileFilterTrap(); releaseMobileFilterTrap = null; }
+      if (lastMobileFilterTrigger) {
+        lastMobileFilterTrigger.focus();
+        lastMobileFilterTrigger = null;
+      }
     }
 
     if (mobileOpen) mobileOpen.addEventListener('click', openMobileFilters);
@@ -1285,6 +1306,11 @@
         el.addEventListener('click', closeMobileFilters);
       });
     }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && mobileDrawer && mobileDrawer.classList.contains('is-open')) {
+        closeMobileFilters();
+      }
+    });
 
     initView();
   }
