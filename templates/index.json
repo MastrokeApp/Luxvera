@@ -328,7 +328,9 @@
           "type": "brand_tab",
           "settings": {
             "label": "New Season Edit",
-            "link": "",
+            "image_back": "shopify://shop_images/6E202AF1-C256-42DD-A376-21E2894BB434.jpg",
+            "image_front": "shopify://shop_images/F9C4B22A-D583-4CEE-8826-F0D56DFC5F47.jpg",
+            "link": "shopify://collections/boho",
             "cta_label": "Shop now",
             "link_new_tab": false
           }
@@ -337,7 +339,9 @@
           "type": "brand_tab",
           "settings": {
             "label": "Vacation Looks",
-            "link": "",
+            "image_back": "shopify://shop_images/5C2A9D17-1DF6-4D39-AA2A-5D7DCDBA06AE_d774f762-8e1a-46d2-8b30-02f21129ee55.png",
+            "image_front": "shopify://shop_images/C20E79B8-E5AD-4071-B357-A782BEF93905_17332efb-4e66-478a-8645-b027cfefa16e.jpg",
+            "link": "shopify://collections/designer",
             "cta_label": "Shop now",
             "link_new_tab": false
           }
@@ -346,7 +350,9 @@
           "type": "brand_tab",
           "settings": {
             "label": "Winter Luxe",
-            "link": "",
+            "image_back": "shopify://shop_images/A889295C-DE7E-48F4-8101-BB50956017E7.jpg",
+            "image_front": "shopify://shop_images/556087DC-11F5-4DC4-AFB5-E55D44855CBB.jpg",
+            "link": "shopify://collections/western",
             "cta_label": "Shop now",
             "link_new_tab": false
           }
@@ -372,10 +378,10 @@
         "body_size": 13,
         "explore_label": "Explore",
         "cta_label": "Explore Collections",
-        "cta_url": "#",
+        "cta_url": "shopify://collections",
         "cta_new_tab": false,
         "content_width": 340,
-        "image_height_desktop": 660,
+        "image_height_desktop": 800,
         "image_height_tablet": 380,
         "image_height_mobile": 260,
         "color_scheme": "scheme-1",
@@ -387,7 +393,7 @@
       "type": "featured-collection",
       "name": "Featured Collection",
       "settings": {
-        "padding_top_desktop": 64,
+        "padding_top_desktop": 60,
         "padding_bottom_desktop": 64,
         "padding_top_tablet": 44,
         "padding_bottom_tablet": 44,
@@ -444,6 +450,13 @@
     "instagram_carousel_X3EWCM": {
       "type": "instagram-carousel",
       "blocks": {
+        "post_Vnq4Hk": {
+          "type": "post",
+          "settings": {
+            "alt": "Media post",
+            "video": "shopify://files/videos/insta.mp4.mp4"
+          }
+        },
         "post_UyVC9y": {
           "type": "post",
           "settings": {
@@ -481,6 +494,7 @@
         }
       },
       "block_order": [
+        "post_Vnq4Hk",
         "post_UyVC9y",
         "post_kafqAB",
         "post_QmfjiU",
@@ -619,8 +633,8 @@
         "padding_top": 48,
         "padding_bottom": 48,
         "cards_per_row": "3",
-        "cards_per_row_mobile": "1",
-        "enable_slider": true
+        "enable_slider": true,
+        "cards_per_row_mobile": "1"
       }
     }
   },
