@@ -162,6 +162,7 @@
             class="lv-mobile-filter-drawer"
             id="lv-mobile-filter-drawer-{{ section.id }}"
             aria-hidden="true"
+            inert
             role="dialog"
             aria-modal="true"
             aria-label="{% if section.settings.filter_heading != blank %}{{ section.settings.filter_heading | escape }}{% else %}{{ 'collections.filter_by' | t }}{% endif %}"
@@ -1278,8 +1279,9 @@
     function openMobileFilters() {
       if (!mobileDrawer) return;
       lastMobileFilterTrigger = mobileOpen;
-      mobileDrawer.classList.add('is-open');
+      mobileDrawer.removeAttribute('inert');
       mobileDrawer.setAttribute('aria-hidden', 'false');
+      mobileDrawer.classList.add('is-open');
       document.body.style.overflow = 'hidden';
       if (releaseMobileFilterTrap) releaseMobileFilterTrap();
       if (window.lvTrapFocus) releaseMobileFilterTrap = window.lvTrapFocus(mobileDrawer);
@@ -1291,13 +1293,14 @@
     function closeMobileFilters() {
       if (!mobileDrawer) return;
       mobileDrawer.classList.remove('is-open');
-      mobileDrawer.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
       if (releaseMobileFilterTrap) { releaseMobileFilterTrap(); releaseMobileFilterTrap = null; }
       if (lastMobileFilterTrigger) {
         lastMobileFilterTrigger.focus();
         lastMobileFilterTrigger = null;
       }
+      mobileDrawer.setAttribute('aria-hidden', 'true');
+      mobileDrawer.setAttribute('inert', '');
     }
 
     if (mobileOpen) mobileOpen.addEventListener('click', openMobileFilters);

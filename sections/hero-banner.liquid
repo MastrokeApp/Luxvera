@@ -114,6 +114,8 @@
 
       <div
         class="hero-slide color-{{ block.settings.color_scheme }}{% if is_first %} is-active{% endif %}"
+        aria-hidden="{% if is_first %}false{% else %}true{% endif %}"
+        {% unless is_first %}inert{% endunless %}
         {{ block.shopify_attributes }}
         style="
           --slide-overlay-color:{{ block.settings.overlay_color }};
@@ -552,6 +554,11 @@
       var active = i === index;
       slide.classList.toggle('is-active', active);
       slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+      if (active) {
+        slide.removeAttribute('inert');
+      } else {
+        slide.setAttribute('inert', '');
+      }
 
       if (dots[i]) {
         dots[i].classList.toggle('is-active', active);
