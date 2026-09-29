@@ -8,9 +8,9 @@
  * ------------------------------------------------------------
  */
 {
-  "current": "Default",
+  "current": "Luxvera",
   "presets": {
-    "Default": {
+    "Luxvera": {
       "font_heading": "sans_serif_n4",
       "font_body": "inter_n4",
       "breadcrumb_all_pages": true,
