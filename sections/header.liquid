@@ -1,16 +1,10 @@
-{% comment %}
-  Section: Header
-
-  Optional top bar, main navigation with dropdown and mega-menu support,
-  logo, account, search and cart controls, plus the mobile drawer and
-  search overlay. Colours come from the selected colour schemes.
-{% endcomment %}
-
-{{ 'lv-currency.css' | asset_url | stylesheet_tag }}
 {{ 'lv-header.css' | asset_url | stylesheet_tag }}
-
-<script src="{{ 'lv-currency.js' | asset_url }}" defer></script>
 <script src="{{ 'lv-header.js' | asset_url }}" defer></script>
+
+{%- if section.settings.show_currency_switcher -%}
+  {{ 'lv-currency.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'lv-currency.js' | asset_url }}" defer></script>
+{%- endif -%}
 
 {%- liquid
   assign main_menu = linklists[section.settings.menu]
@@ -151,14 +145,15 @@
               </div>
 
             {%- elsif link.links.size > 0 -%}
+              {%- assign dropdown_id = 'lv-dropdown-' | append: section.id | append: '-' | append: forloop.index -%}
               <div class="lv-nav__item{% if is_mega %} lv-nav__item--mega{% endif %}" data-lv-dropdown>
                 <span class="lv-nav__link-group">
                   <a class="lv-nav__link" href="{{ link.url }}">{{ link.title | escape }}</a>
                   <button
                     type="button"
                     class="lv-nav__caret"
-                    aria-haspopup="true"
                     aria-expanded="false"
+                    aria-controls="{{ dropdown_id }}"
                     aria-label="{{ link.title | escape }}"
                   >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true" focusable="false">
@@ -168,9 +163,9 @@
                 </span>
 
                 {%- if is_mega -%}
-                  {% render 'lv-menu-mega', link: link, blocks: section.blocks %}
+                  {% render 'lv-menu-mega', link: link, blocks: section.blocks, panel_id: dropdown_id %}
                 {%- else -%}
-                  {% render 'lv-menu-dropdown', link: link %}
+                  {% render 'lv-menu-dropdown', link: link, panel_id: dropdown_id %}
                 {%- endif -%}
               </div>
 
@@ -222,12 +217,11 @@
 
         {%- if shop.customer_accounts_enabled -%}
           <shopify-account menu="customer-account-main-menu" class="lv-icon-btn">
-            <div slot="signed-out-avatar" aria-label="{{ 'accessibility.account' | t }}">{{ icon_account }}</div>
+            <div slot="signed-out-avatar">
+              {{ icon_account }}
+              <span class="visually-hidden">{{ 'accessibility.account' | t }}</span>
+            </div>
           </shopify-account>
-        {%- else -%}
-          <a href="{{ routes.account_url }}" class="lv-icon-btn" aria-label="{{ 'accessibility.account' | t }}">
-            {{ icon_account }}
-          </a>
         {%- endif -%}
 
         {%- liquid
@@ -275,12 +269,13 @@
     <div class="lv-drawer-head">
       {%- if settings.logo != blank -%}
         {%- assign drawer_logo_width = logo_h_mobile | times: settings.logo.aspect_ratio | round -%}
+        {%- assign drawer_logo_width_2x = drawer_logo_width | times: 2 -%}
         <img
           class="lv-drawer-logo"
           src="{{ settings.logo | image_url: width: drawer_logo_width }}"
           srcset="
             {{ settings.logo | image_url: width: drawer_logo_width }} 1x,
-            {{ settings.logo | image_url: width: drawer_logo_width | times: 2 }} 2x
+            {{ settings.logo | image_url: width: drawer_logo_width_2x }} 2x
           "
           alt="{{ shop.name | escape }}"
           width="{{ drawer_logo_width }}"
@@ -362,11 +357,6 @@
             {{ 'header.my_account' | t }}
           </div>
         </shopify-account>
-      {%- else -%}
-        <a href="{{ routes.account_url }}">
-          {{ icon_account }}
-          {{ 'header.my_account' | t }}
-        </a>
       {%- endif -%}
     </div>
   </div>
@@ -393,8 +383,7 @@
           >
           <button
             type="submit"
-            class="lv-search-submit"
-            style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;"
+            class="visually-hidden"
           >{{ 'search.submit' | t }}</button>
         </form>
         <button type="button" class="lv-search-close" id="lvSearchClose" aria-label="{{ 'accessibility.close_search' | t }}">
@@ -470,7 +459,7 @@
     {
       "type": "range",
       "id": "logo_height",
-      "label": "t:labels.logo_max_width",
+      "label": "t:labels.logo_height",
       "min": 24,
       "max": 100,
       "step": 2,

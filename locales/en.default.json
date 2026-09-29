@@ -300,6 +300,8 @@
     "add_to_cart_prefix": "Add To Cart — ",
     "adding": "Adding…",
     "added": "Added",
+    "add_to_cart_error": "Couldn't add this item to your cart. Please try again.",
+    "placeholder_title": "Example product title",
     "sold_out": "Sold Out",
     "in_stock": "In stock",
     "unavailable": "Unavailable",

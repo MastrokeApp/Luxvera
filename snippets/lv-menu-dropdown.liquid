@@ -9,12 +9,13 @@
                            right of its parent item when that item is toggled
 
   @param {link} link - the top-level navigation link whose sub-menu to render
+  @param {string} [panel_id] - id for the panel, referenced by the trigger's aria-controls
 
   @example
-  {% render 'lv-menu-dropdown', link: link %}
+  {% render 'lv-menu-dropdown', link: link, panel_id: dropdown_id %}
 {% enddoc %}
 
-<div class="lv-dropdown">
+<div class="lv-dropdown"{% if panel_id != blank %} id="{{ panel_id }}"{% endif %}>
 
   {%- for child in link.links -%}
 

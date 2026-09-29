@@ -10,12 +10,14 @@
 
   @param {link} link - the top-level navigation link whose mega-menu columns to render
   @param blocks - the section's blocks, filtered for type 'mega_menu_image'
+  @param {string} [panel_id] - id for the panel, referenced by the trigger's aria-controls
 
   @example
-  {% render 'lv-menu-mega', link: link, blocks: section.blocks %}
+  {% render 'lv-menu-mega', link: link, blocks: section.blocks, panel_id: dropdown_id %}
 {% enddoc %}
 <div
   class="lv-dropdown lv-dropdown--mega"
+  {% if panel_id != blank %}id="{{ panel_id }}"{% endif %}
   style="--lv-mega-cols: {{ link.links.size }};"
 >
   <div class="lv-mega-menu__content">

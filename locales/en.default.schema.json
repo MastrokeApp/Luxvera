@@ -391,6 +391,7 @@
     "logo": "Logo",
     "logo_max_width": "Logo Max Width",
     "logo_overrides_text": "Logo (overrides text)",
+    "logo_height": "Logo height",
     "logo_position": "Logo position",
     "lower_faster_higher_slower": "Lower = faster. Higher = slower.",
     "map": "Map",

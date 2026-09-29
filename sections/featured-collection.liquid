@@ -11,27 +11,27 @@
 {{ 'lv-variant-modal.css' | asset_url | stylesheet_tag }}
 {{ 'dress-looks.css' | asset_url | stylesheet_tag }}
 
-{%- assign dl_col = collections[section.settings.collection] -%}
+{%- assign dl_col = section.settings.collection -%}
 {%- assign products_limit = section.settings.products_limit | default: 8 -%}
 
 {%- capture placeholder_cards -%}
-  {%- assign placeholder_titles = 'Floral Midi Dress,Summer Wrap Dress,Boho Maxi Dress,Classic Shirt Dress,Off-Shoulder Dress,Linen Slip Dress,Ruffle Hem Dress,Belted Blazer Dress' | split: ',' -%}
-  {%- assign placeholder_prices = '$49.00,$59.00,$39.00,$69.00,$45.00,$55.00,$35.00,$75.00' | split: ',' -%}
-  {%- assign placeholder_old = '$79.00,$89.00,$59.00,$99.00,$65.00,$85.00,$55.00,$105.00' | split: ',' -%}
+  {%- comment -%} Prices in cents, formatted by the money filter. {%- endcomment -%}
+  {%- assign placeholder_prices = '4900,5900,3900,6900,4500,5500,3500,7500' | split: ',' -%}
+  {%- assign placeholder_old = '7900,8900,5900,9900,6500,8500,5500,10500' | split: ',' -%}
   {%- assign placeholder_svgs = 'product-1,product-2,product-3,product-4,product-1,product-2,product-3,product-4' | split: ',' -%}
 
   {%- for i in (0..7) -%}
     <div class="swiper-slide">
-      <div class="product-card product-card--placeholder">
+      <div class="product-card--placeholder">
         <div class="product-img-wrap" aria-hidden="true">
           {{ placeholder_svgs[i] | placeholder_svg_tag: 'placeholder-svg' }}
         </div>
 
         <div class="product-info">
-          <span class="product-name">{{ placeholder_titles[i] }}</span>
+          <span class="product-name">{{ 'products.placeholder_title' | t }}</span>
           <div class="price-color-row">
-            <span class="price-new">{{ placeholder_prices[i] }}</span>
-            <span class="price-old">{{ placeholder_old[i] }}</span>
+            <span class="price-new">{{ placeholder_prices[i] | times: 1 | money }}</span>
+            <span class="price-old">{{ placeholder_old[i] | times: 1 | money }}</span>
           </div>
           <button class="add-to-cart" disabled aria-disabled="true">
             {%- if section.settings.atc_label != blank -%}{{ section.settings.atc_label }}{%- else -%}{{ 'products.add_to_cart' | t }}{%- endif -%}
@@ -55,6 +55,7 @@
     </div>
     <p class="lv-variant-modal__label">{{ 'products.select_size' | t }}</p>
     <div class="lv-variant-modal__options" id="lv-vm-dl-opts-{{ section.id }}"></div>
+    <p class="lv-variant-modal__error" id="lv-vm-dl-error-{{ section.id }}" role="alert" hidden></p>
     <button
       class="lv-variant-modal__atc"
       id="lv-vm-dl-atc-{{ section.id }}"
@@ -62,6 +63,7 @@
       data-label-add-prefix="{{ 'products.add_to_cart_prefix' | t }}"
       data-label-adding="{{ 'products.adding' | t }}"
       data-label-sold-out="{{ 'products.sold_out' | t }}"
+      data-label-error="{{ 'products.add_to_cart_error' | t }}"
       disabled
     >{{ 'products.choose_a_size' | t }}</button>
   </div>
@@ -135,6 +137,25 @@
 (function () {
   'use strict';
 
+  var BAG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
+
+  var instances = {};
+
+  function cartAddUrl() {
+    var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+    return root + 'cart/add.js';
+  }
+
+  function parseVariants(btn) {
+    if (btn.dataset.variantsJson) {
+      try { return JSON.parse(btn.dataset.variantsJson); } catch (e) {}
+    }
+    return (btn.dataset.variants || '').split('::').map(function (v) {
+      var p = v.split('||');
+      return { id: p[0], title: p[1], available: p[2] !== 'false' };
+    });
+  }
+
   function whenSwiperReady(cb) {
     if (typeof Swiper !== 'undefined') { cb(); return; }
     var n = 0;
@@ -155,9 +176,21 @@
     var modalOpts  = document.getElementById('lv-vm-dl-opts-' + SID);
     var modalAtc   = document.getElementById('lv-vm-dl-atc-' + SID);
     var modalClose = document.getElementById('lv-vm-dl-close-' + SID);
+    var modalError = document.getElementById('lv-vm-dl-error-' + SID);
     var selectedVid = null;
+    var selectedTitle = '';
     var lastTrigger = null;
     var releaseModalTrap = null;
+
+    function isModalOpen() {
+      return !!(modal && modal.classList.contains('open'));
+    }
+
+    function setModalError(message) {
+      if (!modalError) return;
+      modalError.textContent = message || '';
+      modalError.hidden = !message;
+    }
 
     function openModal(btn) {
       if (!modal || !modalTitle || !modalOpts || !modalAtc) return;
@@ -165,25 +198,21 @@
       lastTrigger = btn;
       modalTitle.textContent = btn.dataset.productTitle || '';
       modalOpts.innerHTML = '';
+      setModalError('');
       selectedVid = null;
+      selectedTitle = '';
       modalAtc.disabled = true;
       modalAtc.textContent = modalAtc.dataset.labelChoose || 'Choose a size';
 
-      (btn.dataset.variants || '').split('::').forEach(function (v) {
-        if (!v) return;
-
-        var p = v.split('||'),
-            vid = p[0],
-            vtitle = p[1],
-            avail = p[2];
-
-        if (!vid || !vtitle) return;
+      parseVariants(btn).forEach(function (v) {
+        if (!v || !v.id || !v.title) return;
 
         var opt = document.createElement('button');
+        opt.type = 'button';
         opt.className = 'lv-variant-modal__opt';
-        opt.textContent = vtitle;
+        opt.textContent = v.title;
 
-        if (avail === 'false') {
+        if (!v.available) {
           opt.disabled = true;
           opt.title = modalAtc.dataset.labelSoldOut || 'Sold out';
         }
@@ -196,16 +225,18 @@
           });
 
           opt.classList.add('selected');
-          selectedVid = vid;
+          selectedVid = String(v.id);
+          selectedTitle = v.title;
+          setModalError('');
           modalAtc.disabled = false;
-          modalAtc.textContent = (modalAtc.dataset.labelAddPrefix || 'Add To Cart — ') + vtitle;
+          modalAtc.textContent = (modalAtc.dataset.labelAddPrefix || 'Add To Cart — ') + v.title;
         });
 
         modalOpts.appendChild(opt);
       });
 
+      if (!isModalOpen()) document.body.style.overflow = 'hidden';
       modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
       if (releaseModalTrap) releaseModalTrap();
       if (window.lvTrapFocus) releaseModalTrap = window.lvTrapFocus(modal);
       setTimeout(function () {
@@ -213,36 +244,47 @@
       }, 50);
     }
 
-    function closeModal() {
-      if (!modal) return;
+    // Pass false when the cart drawer is about to take focus.
+    function closeModal(restoreFocus) {
+      if (!isModalOpen()) return;
       modal.classList.remove('open');
       document.body.style.overflow = '';
       selectedVid = null;
       if (releaseModalTrap) { releaseModalTrap(); releaseModalTrap = null; }
-      if (lastTrigger) {
-        lastTrigger.focus();
-        lastTrigger = null;
-      }
+      if (restoreFocus !== false && lastTrigger) lastTrigger.focus();
+      lastTrigger = null;
     }
 
-    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modalClose) modalClose.addEventListener('click', function () { closeModal(); });
     if (modal) {
       modal.addEventListener('click', function (e) {
         if (e.target === modal) closeModal();
       });
     }
 
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && modal && modal.classList.contains('open')) {
-        closeModal();
+    function showCardError(btn, message) {
+      var info = btn.parentNode;
+      if (!info) return;
+      var el = info.querySelector('.dl-atc-error');
+      if (!el) {
+        el = document.createElement('p');
+        el.className = 'dl-atc-error';
+        el.setAttribute('role', 'alert');
+        info.appendChild(el);
       }
-    });
+      el.textContent = message;
+      clearTimeout(el._lvTimer);
+      el._lvTimer = setTimeout(function () {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 5000);
+    }
 
-    function doATC(vid, btn, origHTML) {
-      fetch('/cart/add.js', {
+    function addToCart(vid) {
+      return fetch(cartAddUrl(), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
           'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify({
@@ -250,49 +292,47 @@
           quantity: 1
         })
       })
+      .catch(function () { return null; })
       .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
-      .then(function () {
-        if (btn) {
-          btn.classList.remove('adding');
-          btn.classList.add('added');
-          btn.innerHTML = (btn.dataset.labelAdded || 'Added') + ' &#10003;<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
-
-          setTimeout(function () {
-            if (btn) {
-              btn.innerHTML = origHTML;
-              btn.classList.remove('added');
-            }
-          }, 2200);
-        }
-
-        document.dispatchEvent(new CustomEvent('cart:updated', {
-          bubbles: true,
-          detail: { variantId: vid }
-        }));
-        document.dispatchEvent(new CustomEvent('cart:open'));
-
-        closeModal();
-      })
-      .catch(function () {
-        if (btn) {
-          btn.classList.remove('adding');
-          btn.innerHTML = origHTML;
-        }
-        closeModal();
+        if (!r) throw new Error('');
+        return r.json().catch(function () { return {}; }).then(function (data) {
+          if (!r.ok || data.status) throw new Error(data.description || data.message || '');
+          return data;
+        });
       });
+    }
+
+    function announceAdded(vid) {
+      document.dispatchEvent(new CustomEvent('cart:updated', {
+        bubbles: true,
+        detail: { variantId: vid }
+      }));
+      document.dispatchEvent(new CustomEvent('cart:open'));
+    }
+
+    function errorText(err) {
+      return (err && err.message) || modalAtc && modalAtc.dataset.labelError || 'Could not add to cart.';
     }
 
     if (modalAtc) {
       modalAtc.addEventListener('click', function () {
         if (!selectedVid) return;
 
-        var orig = modalAtc.textContent;
+        var vid = selectedVid;
+        var label = modalAtc.textContent;
         modalAtc.disabled = true;
         modalAtc.textContent = modalAtc.dataset.labelAdding || 'Adding…';
-        doATC(selectedVid, null, orig);
+        setModalError('');
+
+        addToCart(vid).then(function () {
+          modalAtc.textContent = label;
+          closeModal(false);
+          announceAdded(vid);
+        }, function (err) {
+          modalAtc.disabled = false;
+          modalAtc.textContent = label;
+          setModalError(errorText(err));
+        });
       });
     }
 
@@ -342,9 +382,35 @@
 
       var origHTML = btn.innerHTML;
       btn.classList.add('adding');
-      btn.innerHTML = (btn.dataset.labelAdding || 'Adding…') + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
-      doATC(vid, btn, origHTML);
+      btn.innerHTML = (btn.dataset.labelAdding || 'Adding…') + BAG_SVG;
+
+      addToCart(vid).then(function () {
+        btn.classList.remove('adding');
+        btn.classList.add('added');
+        btn.innerHTML = (btn.dataset.labelAdded || 'Added') + ' &#10003;' + BAG_SVG;
+
+        setTimeout(function () {
+          btn.innerHTML = origHTML;
+          btn.classList.remove('added');
+        }, 2200);
+
+        announceAdded(vid);
+      }, function (err) {
+        btn.classList.remove('adding');
+        btn.innerHTML = origHTML;
+        showCardError(btn, errorText(err));
+      });
     });
+
+    instances[SID] = {
+      root: root,
+      isModalOpen: isModalOpen,
+      closeModal: closeModal,
+      destroy: function () {
+        closeModal(false);
+        if (sw && !sw.destroyed) sw.destroy(true, true);
+      }
+    };
   }
 
   function initAll(scope) {
@@ -352,6 +418,13 @@
       whenSwiperReady(function () { initDressLooks(root); });
     });
   }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    Object.keys(instances).forEach(function (sid) {
+      if (instances[sid].isModalOpen()) instances[sid].closeModal();
+    });
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () { initAll(); });
@@ -361,6 +434,15 @@
 
   document.addEventListener('shopify:section:load', function (e) {
     initAll(e.target);
+  });
+
+  document.addEventListener('shopify:section:unload', function (e) {
+    Object.keys(instances).forEach(function (sid) {
+      if (e.target.contains(instances[sid].root)) {
+        instances[sid].destroy();
+        delete instances[sid];
+      }
+    });
   });
 })();
 {% endjavascript %}
@@ -452,7 +534,7 @@
       "type": "text",
       "id": "title",
       "label": "t:labels.section_title",
-      "default": "Dresses Looks"
+      "default": "Dress looks"
     },
     {
       "type": "range",
