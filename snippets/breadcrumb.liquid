@@ -1,3 +1,12 @@
+{% doc %}
+  Renders the breadcrumb trail for the current page. Visibility per page type
+  is controlled by the breadcrumb_* theme settings; never shown on the home
+  page or 404 page.
+
+  @example
+  {% render 'breadcrumb' %}
+{% enddoc %}
+
 {%- unless template == 'index' or template == '404' -%}
 
     {%- assign show_breadcrumb = false -%}

@@ -111,15 +111,15 @@
     "remove": "Remove",
     "empty_title": "Your cart is empty",
     "empty_text": "Looks like you haven't added anything yet.",
-    "start_shopping": "Start Shopping",
+    "start_shopping": "Start shopping",
     "subtotal": "Subtotal",
-    "view_cart": "View Cart",
+    "view_cart": "View cart",
     "added_to_cart": "Added to cart",
-    "continue_shopping": "Continue Shopping",
+    "continue_shopping": "Continue shopping",
     "free_shipping_remaining_template": "You're {{amount}} away from free shipping!",
     "free_shipping_qualified": "🎉 You qualify for free shipping!",
     "savings": "Savings",
-    "gift_message": "Gift Message",
+    "gift_message": "Gift message",
     "gift_message_placeholder": "Add a gift message (optional)",
     "proceed_to_checkout": "Proceed to Checkout"
   },
@@ -135,14 +135,14 @@
       "message_placeholder": "Write your message here…",
       "success": "Thanks for reaching out! We'll get back to you within 24-48 hours.",
       "map_placeholder": "Add your Google Maps embed URL in Theme Editor",
-      "send_message": "Send Message",
+      "send_message": "Send message",
       "leave_blank": "Leave this field blank"
     },
     "info": {
-      "email_us": "Email Us",
-      "call_us": "Call Us",
-      "our_location": "Our Location",
-      "response_time": "Response Time"
+      "email_us": "Email us",
+      "call_us": "Call us",
+      "our_location": "Our location",
+      "response_time": "Response time"
     }
   },
   "footer": {
@@ -277,7 +277,7 @@
     "filter_min": "Min",
     "filter_max": "Max",
     "filters_unavailable": "Filters are not available for this collection.",
-    "continue_shopping": "Continue Shopping",
+    "continue_shopping": "Continue shopping",
     "filter_by": "Filter by",
     "product_count": {
       "one": "{{ count }} product",
@@ -287,14 +287,14 @@
     "add_collection_block_hint": "Add a Collection block to get started."
   },
   "header": {
-    "my_account": "My Account"
+    "my_account": "My account"
   },
   "hero_banner": {
-    "add_first_slide": "Add Your First Slide",
+    "add_first_slide": "Add your first slide",
     "add_first_slide_hint": "Click \"Add block → Slide\" in the theme editor to get started."
   },
   "products": {
-    "select_size": "Select Size",
+    "select_size": "Select size",
     "choose_a_size": "Choose a size",
     "add_to_cart": "Add to Cart",
     "add_to_cart_prefix": "Add To Cart — ",
@@ -302,7 +302,7 @@
     "added": "Added",
     "add_to_cart_error": "Couldn't add this item to your cart. Please try again.",
     "placeholder_title": "Example product title",
-    "sold_out": "Sold Out",
+    "sold_out": "Sold out",
     "in_stock": "In stock",
     "unavailable": "Unavailable",
     "home": "Home",
@@ -314,7 +314,7 @@
     },
     "description": "Description",
     "share": "Share",
-    "example_brand": "Example Brand",
+    "example_brand": "Example brand",
     "size": "Size",
     "size_small": "Small",
     "size_medium": "Medium",

@@ -7,7 +7,7 @@
 
   @param {product} product - product object
   @param {string} [card_context] - 'collection' | 'product-tabs' | 'dress-looks' (adds a modifier class)
-  @param {string} [atc_label] - button label for single-variant products (default: 'Add To Cart')
+  @param {string} [atc_label] - button label for single-variant products (default: products.add_to_cart translation)
   @param {string} [image_ratio] - image aspect-ratio modifier (default: 'portrait')
   @param {boolean} [priority] - true for the first card in a grid (likely the LCP element); renders the image eager with fetchpriority="high" instead of lazy
 
@@ -17,7 +17,8 @@
 
 {%- liquid
   assign card_context = card_context | default: 'default'
-  assign atc_label = atc_label | default: 'Add To Cart'
+  assign atc_default = 'products.add_to_cart' | t
+  assign atc_label = atc_label | default: atc_default
   assign image_ratio = image_ratio | default: 'portrait'
 
   assign fv = product.selected_or_first_available_variant | default: product.variants.first
