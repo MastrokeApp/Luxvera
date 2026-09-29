@@ -284,3 +284,10 @@
     padding: 0 16px;
   }
 }
+
+.dress-section .dl-atc-error {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #b3261e;
+}

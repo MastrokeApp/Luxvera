@@ -27,7 +27,26 @@
     assign multi = true
   endif
 
+  comment
+    variants_json is safe for titles containing || or ::
+  endcomment
   assign variants_data = ''
+  capture variants_json
+    echo '['
+    for v in product.variants
+      unless forloop.first
+        echo ','
+      endunless
+      echo '{"id":'
+      echo v.id
+      echo ',"title":'
+      echo v.title | json
+      echo ',"available":'
+      echo v.available | json
+      echo '}'
+    endfor
+    echo ']'
+  endcapture
   for v in product.variants
     assign vdata = v.id | append: '||' | append: v.title | append: '||' | append: v.available
     unless forloop.first
@@ -85,6 +104,7 @@
       data-product-title="{{ product.title | escape }}"
       data-multi="{{ multi }}"
       data-variants="{{ variants_data | escape }}"
+      data-variants-json="{{ variants_json | escape }}"
       data-label-adding="{{ 'products.adding' | t }}"
       data-label-added="{{ 'products.added' | t }}"
       {%- unless product.available %} disabled aria-disabled="true"{% endunless -%}

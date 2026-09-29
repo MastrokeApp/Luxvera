@@ -218,3 +218,14 @@
     font-size: 13px;
   }
 }
+
+.lv-variant-modal__error {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #b3261e;
+}
+
+.lv-variant-modal__error[hidden] {
+  display: none;
+}

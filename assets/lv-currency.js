@@ -7,6 +7,9 @@
 (function () {
   'use strict';
 
+  if (window.__lvCurrencyLoaded) return;
+  window.__lvCurrencyLoaded = true;
+
   function initCurrencySwitchers() {
     var selects = document.querySelectorAll('[data-lv-currency-select]');
     if (!selects.length) return;

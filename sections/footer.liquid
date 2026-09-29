@@ -1,4 +1,8 @@
 {{ 'lv-footer.css' | asset_url | stylesheet_tag }}
+{%- if section.settings.show_currency_switcher -%}
+  {{ 'lv-currency.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'lv-currency.js' | asset_url }}" defer></script>
+{%- endif -%}
 
 {%- assign nl_form_id = 'FooterNewsletterForm-' | append: section.id -%}
 
