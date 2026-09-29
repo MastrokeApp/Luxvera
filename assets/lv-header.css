@@ -243,19 +243,44 @@
   margin: 6px 0;
 }
 
-/* .lv-dropdown--mega {
-  min-width: 1000px;
-  display: grid;
-  grid-template-columns: repeat(var(--lv-mega-cols, 2), minmax(160px, 1fr));
-  padding: 0;
-} */
- 
+.lv-nav {
+  position: relative;
+  --lv-nav-gutter: 56px;
+}
+
+.lv-nav .lv-nav__item.lv-nav__item--mega {
+  position: static;
+}
+
 .lv-dropdown--mega {
-  min-width: 900px;
+  left: var(--lv-nav-gutter);
+  right: var(--lv-nav-gutter);
+  width: auto;
+  min-width: 0;
   max-width: 1200px;
-  grid-template-columns: repeat(3, minmax(180px, 1fr));
-  gap: 30px 45px;
+  margin: 0 auto;
   padding: 30px 40px;
+}
+
+/* Keeps hover alive while the pointer crosses the gap between the menu
+   item and the panel, which now starts at the bottom of the nav bar. */
+.lv-dropdown--mega::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 24px;
+}
+
+@media (max-width: 1024px) {
+  .lv-nav {
+    --lv-nav-gutter: 32px;
+  }
+
+  .lv-dropdown--mega {
+    padding: 20px 24px;
+  }
 }
 
 .lv-mega-col {
@@ -1045,7 +1070,21 @@ img.lv-drawer-logo {
 
 .lv-mega-menu__content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+}
+
+.lv-mega-image-card__image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+@media (max-width: 1024px) {
+  .lv-mega-menu__content {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 16px;
+  }
 }
 
 .lv-mega-heading a {
